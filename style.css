@@ -20,9 +20,14 @@ div.dokuwiki table.topic td {
   border-bottom: 1px solid __border__;
 }
 
-div.dokuwiki table.topic td.date, div.dokuwiki table.topic td.user {
+div.dokuwiki table.topic td.date,
+div.dokuwiki table.topic td.user {
   color: __text_neu__;
   font-size: 80%;
+}
+
+div.dokuwiki table.topic td.date {
+  text-align: right;
 }
 
 div.dokuwiki a.feed {

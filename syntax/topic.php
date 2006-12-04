@@ -23,7 +23,7 @@ class syntax_plugin_tag_topic extends DokuWiki_Syntax_Plugin {
     return array(
       'author' => 'Esther Brunner',
       'email'  => 'wikidesign@gmail.com',
-      'date'   => '2006-08-17',
+      'date'   => '2006-12-04',
       'name'   => 'Tag Plugin (topic component)',
       'desc'   => 'Displays a list of wiki pages with a given category tag',
       'url'    => 'http://wiki.splitbrain.org/plugin:tag',
@@ -74,17 +74,19 @@ class syntax_plugin_tag_topic extends DokuWiki_Syntax_Plugin {
         if (!$title) $title = str_replace('_', ' ', noNS($id));
         $renderer->doc .= $renderer->internallink(':'.$id, $title).'</td>';
         
+        // creation date
+        if ($this->getConf('topic_showdate')){
+          if (!$page['date']) $page['date'] = filectime(wikiFN($id));
+          $renderer->doc .= '<td class="date">'.
+            date($conf['dformat'], $page['date']).'</td>';
+        }
+        
         // author
         if ($this->getConf('topic_showuser')){
           if ($page['user']) $renderer->doc .= '<td class="user">'.$page['user'].'</td>';
           else $renderer->doc .= '<td class="user">&nbsp;</td>';
         }
         
-        // creation date
-        if ($this->getConf('topic_showdate')){
-          if (!$page['date']) $page['date'] = filectime(wikiFN($id));
-          $renderer->doc .= '<td class="date">'.date($conf['dformat'],$page['date']).'</td>';
-        }
         $renderer->doc .= '</tr>';
       }
       $renderer->doc .= '</table>';

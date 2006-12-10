@@ -8,7 +8,5 @@
  
 // for the configuration manager
 $lang['namespace']      = 'namespace padrão para as tags';
-$lang['topic_showdate'] = 'mostrar datas nas listas de arquivo';
-$lang['topic_showuser'] = 'mostrar usernames nas listas de arquivo';
 
 //Setup VIM: ex: et ts=2 enc=utf-8 :

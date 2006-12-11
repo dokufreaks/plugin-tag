@@ -61,7 +61,7 @@ class syntax_plugin_tag_topic extends DokuWiki_Syntax_Plugin {
     if (($ns == '*') || ($ns == ':')) $ns = '';
     elseif ($ns == '.') $ns = getNS($ID);
     
-    if ($my =& plugin_load('helper', 'tag')) $pages = $my->getPages($ns, '', $tag);
+    if ($my =& plugin_load('helper', 'tag')) $pages = $my->getTopic($ns, '', $tag);
     if (!$pages) return true; // nothing to display
     
     if ($mode == 'xhtml'){

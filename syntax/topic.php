@@ -22,7 +22,7 @@ class syntax_plugin_tag_topic extends DokuWiki_Syntax_Plugin {
     return array(
       'author' => 'Esther Brunner',
       'email'  => 'wikidesign@gmail.com',
-      'date'   => '2006-12-10',
+      'date'   => '2006-12-14',
       'name'   => 'Tag Plugin (topic component)',
       'desc'   => 'Displays a list of wiki pages with a given category tag',
       'url'    => 'http://www.wikidesign.ch/en/plugin/tag/start',
@@ -47,7 +47,7 @@ class syntax_plugin_tag_topic extends DokuWiki_Syntax_Plugin {
       $tag = $ns;
       $ns   = '';
     }
-    return array(trim($ns), trim($tag));
+    return array(cleanID($ns), trim($tag));
   }
 
   /**

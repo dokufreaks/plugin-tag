@@ -70,7 +70,8 @@ class syntax_plugin_tag_topic extends DokuWiki_Syntax_Plugin {
       $renderer->info['cache'] = false;
       
       // let Pagelist Plugin do the work for us
-      if (!$pagelist = plugin_load('helper', 'pagelist')){
+      if (plugin_isdisabled('pagelist')
+        || (!$pagelist = plugin_load('helper', 'pagelist'))){
         msg('The Pagelist Plugin must be installed for topic lists.', -1);
         return false;
       }

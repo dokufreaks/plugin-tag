@@ -22,7 +22,7 @@ class syntax_plugin_tag_tag extends DokuWiki_Syntax_Plugin {
     return array(
       'author' => 'Esther Brunner',
       'email'  => 'wikidesign@gmail.com',
-      'date'   => '2006-12-09',
+      'date'   => '2007-01-05',
       'name'   => 'Tag Plugin (tag component)',
       'desc'   => 'Displays links to categories the page belongs to',
       'url'    => 'http://www.wikidesign.ch/en/plugin/tag/start',
@@ -47,7 +47,9 @@ class syntax_plugin_tag_tag extends DokuWiki_Syntax_Plugin {
     
     // XHTML output
     if ($mode == 'xhtml'){
-      $renderer->doc .= '<div class="tags">'.DOKU_LF.$tags.DOKU_LF.'</div>'.DOKU_LF;
+      $renderer->doc .= '<div class="tags"><span>'.DOKU_LF.
+        $tags.DOKU_LF.
+        '</span></div>'.DOKU_LF;
       return true;
       
     // for metadata renderer

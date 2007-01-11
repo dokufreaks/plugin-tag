@@ -15,14 +15,11 @@ require_once(DOKU_PLUGIN.'syntax.php');
 
 class syntax_plugin_tag_topic extends DokuWiki_Syntax_Plugin {
 
-  /**
-   * return some info
-   */
   function getInfo(){
     return array(
       'author' => 'Esther Brunner',
       'email'  => 'wikidesign@gmail.com',
-      'date'   => '2006-12-14',
+      'date'   => '2007-01-11',
       'name'   => 'Tag Plugin (topic component)',
       'desc'   => 'Displays a list of wiki pages with a given category tag',
       'url'    => 'http://www.wikidesign.ch/en/plugin/tag/start',
@@ -37,30 +34,30 @@ class syntax_plugin_tag_topic extends DokuWiki_Syntax_Plugin {
     $this->Lexer->addSpecialPattern('\{\{topic>.+?\}\}',$mode,'plugin_tag_topic');
   }
 
-  /**
-   * Handle the match
-   */
   function handle($match, $state, $pos, &$handler){
+    global $ID;
+    
     $match = substr($match, 8, -2); // strip {{topic> from start and }} from end
     list($ns, $tag) = explode('?', $match);
+    
     if (!$tag){
       $tag = $ns;
       $ns   = '';
     }
-    return array(cleanID($ns), trim($tag));
+    
+    if (($ns == '*') || ($ns == ':')) $ns = '';
+    elseif ($ns == '.') $ns = getNS($ID);
+    else $ns = cleanID($ns);
+    
+    return array($ns, trim($tag));
   }
 
   /**
    * Create output
    */
   function render($mode, &$renderer, $data){
-    global $ID;
-    
     list($ns, $tag) = $data;
-    
-    if (($ns == '*') || ($ns == ':')) $ns = '';
-    elseif ($ns == '.') $ns = getNS($ID);
-    
+        
     if ($my =& plugin_load('helper', 'tag')) $pages = $my->getTopic($ns, '', $tag);
     if (!$pages) return true; // nothing to display
     

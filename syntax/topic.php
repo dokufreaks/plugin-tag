@@ -19,7 +19,7 @@ class syntax_plugin_tag_topic extends DokuWiki_Syntax_Plugin {
     return array(
       'author' => 'Esther Brunner',
       'email'  => 'wikidesign@gmail.com',
-      'date'   => '2007-01-11',
+      'date'   => '2007-01-12',
       'name'   => 'Tag Plugin (topic component)',
       'desc'   => 'Displays a list of wiki pages with a given category tag',
       'url'    => 'http://www.wikidesign.ch/en/plugin/tag/start',
@@ -38,6 +38,8 @@ class syntax_plugin_tag_topic extends DokuWiki_Syntax_Plugin {
     global $ID;
     
     $match = substr($match, 8, -2); // strip {{topic> from start and }} from end
+    list($match, $flags) = explode('&', $match, 2);
+    $flags = explode('&', $flags);
     list($ns, $tag) = explode('?', $match);
     
     if (!$tag){
@@ -49,14 +51,11 @@ class syntax_plugin_tag_topic extends DokuWiki_Syntax_Plugin {
     elseif ($ns == '.') $ns = getNS($ID);
     else $ns = cleanID($ns);
     
-    return array($ns, trim($tag));
+    return array($ns, trim($tag), $flags);
   }
 
-  /**
-   * Create output
-   */
   function render($mode, &$renderer, $data){
-    list($ns, $tag) = $data;
+    list($ns, $tag, $flags) = $data;
         
     if ($my =& plugin_load('helper', 'tag')) $pages = $my->getTopic($ns, '', $tag);
     if (!$pages) return true; // nothing to display
@@ -72,6 +71,7 @@ class syntax_plugin_tag_topic extends DokuWiki_Syntax_Plugin {
         msg('The Pagelist Plugin must be installed for topic lists.', -1);
         return false;
       }
+      $pagelist->setFlags($flags);
       $pagelist->startList();
       foreach ($pages as $page){
         $pagelist->addPage($page);

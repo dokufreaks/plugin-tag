@@ -28,7 +28,7 @@ class helper_plugin_tag extends DokuWiki_Plugin {
     return array(
       'author' => 'Esther Brunner',
       'email'  => 'wikidesign@gmail.com',
-      'date'   => '2006-12-10',
+      'date'   => '2007-01-12',
       'name'   => 'Tag Plugin (helper class)',
       'desc'   => 'Functions to return tag links and topic lists',
       'url'    => 'http://www.wikidesign/en/plugin/tag/start',
@@ -136,7 +136,7 @@ class helper_plugin_tag extends DokuWiki_Plugin {
     foreach ($docs as $match){
     
       // filter by namespace
-      if (strpos(':'.getNS($match), ':'.$ns) !== 0) continue;
+      if ($ns && (strpos(':'.getNS($match), ':'.$ns) !== 0)) continue;
           
       // get metadata
       $meta = array();
@@ -152,7 +152,7 @@ class helper_plugin_tag extends DokuWiki_Plugin {
           $perm = auth_quickaclcheck($match);
           if ($perm >= AUTH_READ){
             $title = $meta['title'];
-            $result[$title] = array(
+            $result[$match] = array(
               'id'     => $match,
               'title'  => $title,
               'date'   => $meta['date']['created'],

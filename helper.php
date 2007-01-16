@@ -219,6 +219,8 @@ class helper_plugin_tag extends DokuWiki_Plugin {
    * Update tag index
    */
   function _updateTagIndex($id, $tags){
+    global $ID, $INFO;
+    
     if (!is_array($tags) || empty($tags)) return false;
     $changed = false;
   
@@ -231,17 +233,35 @@ class helper_plugin_tag extends DokuWiki_Plugin {
       $this->_saveIndex('page');
     }
     
+    // clean array first
+    $c = count($tags);
+    for ($i = 0; $i <= $c; $i++){
+      $tags[$i] = utf8_strtolower($tags[$i]);
+    }
+    
+    // clear no longer used tags
+    if ($ID == $id){
+      $oldtags = $INFO['meta']['subject'];
+      if (!is_array($oldtags)) $oldtags = explode(' ', $oldtags);
+      foreach ($oldtags as $oldtag){
+        if (!$oldtag) continue;                 // skip empty tags
+        $oldtag = utf8_strtolower($oldtag);
+        if (in_array($oldtag, $tags)) continue; // tag is still there
+        $this->tag_idx[$oldtag] = array_diff($this->tag_idx[$oldtag], array($pid));
+        $changed = true;
+      }
+    }
+        
     // fill tag in
     foreach ($tags as $tag){
       if (!$tag) continue; // skip empty tags
-      $tag = utf8_strtolower($tag);
       if (!is_array($this->tag_idx[$tag])) $this->tag_idx[$tag] = array();
       if (!in_array($pid, $this->tag_idx[$tag])){
         $this->tag_idx[$tag][] = $pid;
         $changed = true;
       }
     }
-    
+        
     // save tag index
     if ($changed) return $this->_saveIndex('tag');
     else return true;
@@ -256,8 +276,9 @@ class helper_plugin_tag extends DokuWiki_Plugin {
     if ($idx == 'page'){
       fwrite($fh, join('', $this->page_idx));
     } else {
+      $tag_index = array();
       foreach ($this->tag_idx as $key => $value){
-        $tag_index[] = $key.' '.join(';', $value)."\n";
+        $tag_index[] = $key.' '.join(':', $value)."\n";
       }
       fwrite($fh, join('', $tag_index));
     }

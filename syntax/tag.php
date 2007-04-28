@@ -41,7 +41,7 @@ class syntax_plugin_tag_tag extends DokuWiki_Syntax_Plugin {
     global $ID;
     
     $tags = explode(' ', substr($match, 6, -2)); // strip markup and split tags
-    if empty($tags) return false;
+    if (empty($tags)) return false;
     if (!$my =& plugin_load('helper', 'tag')) return false;
     $my->_updateTagIndex($ID, $tags);
     return $tags;

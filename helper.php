@@ -147,8 +147,6 @@ class helper_plugin_tag extends DokuWiki_Plugin {
    * @author  Esther Brunner <wikidesign@gmail.com>
    */
   function getTopic($ns = '', $num = NULL, $tag = ''){
-    global $conf;
-    
     if (!$tag) $tag = $_REQUEST['tag'];
     $tag = explode(' ', utf8_strtolower($this->_applyMacro($tag)));
     $result = array();
@@ -181,8 +179,7 @@ class helper_plugin_tag extends DokuWiki_Plugin {
       $taglinks = $this->tagLinks($tags);
       
       // determine the sort key
-      if ($conf['useheading']) $key = $this->_uniqueKey($title, $result);
-      else $key = $match; // id is always unique
+      $key = $this->_uniqueKey($title, $result);
       
       // does it match?
       foreach ($tags as $word){

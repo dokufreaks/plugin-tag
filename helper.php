@@ -13,7 +13,8 @@ class helper_plugin_tag extends DokuWiki_Plugin {
   
   var $doc        = '';      // the final output XHTML string
   var $references = array(); // $meta['relation']['references'] data for metadata renderer
-  
+
+  var $sort       = '';      // sort key
   var $idx_dir    = '';      // directory for index files
   var $page_idx   = array(); // array of existing pages
   var $tag_idx    = array(); // array of tags and index in which pages they are found
@@ -26,6 +27,7 @@ class helper_plugin_tag extends DokuWiki_Plugin {
     
     $this->namespace = $this->getConf('namespace');
     if (!$this->namespace) $this->namespace = getNS($ID);
+    $this->sort = $this->getConf('sortkey');
         
     // determine where index files are saved
     if (@file_exists($conf['indexdir'].'/page.idx')){ // new word length based index
@@ -51,7 +53,7 @@ class helper_plugin_tag extends DokuWiki_Plugin {
     return array(
       'author' => 'Esther Brunner',
       'email'  => 'wikidesign@gmail.com',
-      'date'   => '2007-08-03',
+      'date'   => '2007-08-04',
       'name'   => 'Tag Plugin (helper class)',
       'desc'   => 'Functions to return tag links and topic lists',
       'url'    => 'http://www.wikidesign/en/plugin/tag/start',
@@ -175,11 +177,18 @@ class helper_plugin_tag extends DokuWiki_Plugin {
       
       $title = $meta['title'];
       $tags  = $meta['subject'];
+      $date  = ($this->sort == 'mdate' ? $meta['date']['modified'] : $meta['date']['created'] );
       if (!is_array($tags)) $tags = explode(' ', $tags);
       $taglinks = $this->tagLinks($tags);
       
       // determine the sort key
-      $key = $this->_uniqueKey($title, $result);
+      if ($this->sort == 'id') $key = $id;
+      elseif ($this->sort == 'pagename') $key = noNS($id);
+      elseif ($this->sort == 'title') $key = $title;
+      else $key = $date;
+
+      // check if key is unique
+      $key = $this->_uniqueKey($key, $result);
       
       // does it match?
       foreach ($tags as $word){
@@ -187,7 +196,7 @@ class helper_plugin_tag extends DokuWiki_Plugin {
           $result[$key] = array(
             'id'     => $match,
             'title'  => $title,
-            'date'   => $meta['date']['created'],
+            'date'   => $date,
             'user'   => $meta['creator'],
             'desc'   => $meta['description']['abstract'],
             'cat'    => $tags[0],
@@ -200,7 +209,11 @@ class helper_plugin_tag extends DokuWiki_Plugin {
         }
       }
     }        
-    ksort($result);
+    
+    // finally sort by sort key
+    if ($this->getConf('sortorder') == 'ascending') ksort($result);
+    else krsort($result);
+    
     return $result;
   }
   
@@ -390,15 +403,21 @@ class helper_plugin_tag extends DokuWiki_Plugin {
   
   /**
    * Recursive function to check whether an array key is unique
-   *
-   * Simplyfied from the more complex version in the Blog Plugin
    */
   function _uniqueKey($key, &$result, $num = 0){
-    $testkey = $key.($num > 0 ? $num : '');
-    if (!array_key_exists($testkey, $result)) return $testkey;
-    return $this->_uniqueKey($key, $result, $num++);
-  }
-  
+    
+    // increase numeric keys by one
+    if (is_numeric($key)){
+      if (!array_key_exists($key, $result)) return $key;
+      return $this->_uniqueKey($key++, $result);
+      
+    // append a number to literal keys
+    } else {
+      $testkey = $key.($num > 0 ? $num : '');
+      if (!array_key_exists($testkey, $result)) return $testkey;
+      return $this->_uniqueKey($key, $result, $num++);
+    }
+  }  
 }
   
 //Setup VIM: ex: et ts=4 enc=utf-8 :

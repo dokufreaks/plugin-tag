@@ -8,5 +8,9 @@
 
 $meta['namespace']      = array('string');
 $meta['pingtechnorati'] = array('onoff');
+$meta['sortkey']        = array('multichoice',
+                          '_choices' => array('cdate', 'mdate', 'pagename', 'id', 'title'));
+$meta['sortorder']      = array('multichoice',
+                          '_choices' => array('ascending', 'descending'));
 
 //Setup VIM: ex: et ts=2 enc=utf-8 :

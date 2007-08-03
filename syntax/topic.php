@@ -19,7 +19,7 @@ class syntax_plugin_tag_topic extends DokuWiki_Syntax_Plugin {
     return array(
       'author' => 'Esther Brunner',
       'email'  => 'wikidesign@gmail.com',
-      'date'   => '2007-01-12',
+      'date'   => '2007-08-03',
       'name'   => 'Tag Plugin (topic component)',
       'desc'   => 'Displays a list of wiki pages with a given category tag',
       'url'    => 'http://www.wikidesign.ch/en/plugin/tag/start',
@@ -68,7 +68,7 @@ class syntax_plugin_tag_topic extends DokuWiki_Syntax_Plugin {
       // let Pagelist Plugin do the work for us
       if (plugin_isdisabled('pagelist')
         || (!$pagelist = plugin_load('helper', 'pagelist'))){
-        msg('The Pagelist Plugin must be installed for topic lists.', -1);
+        msg($this->getLang('missing_pagelistplugin'), -1);
         return false;
       }
       $pagelist->setFlags($flags);

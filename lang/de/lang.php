@@ -10,4 +10,6 @@
 $lang['tags']  = 'Tags';
 $lang['topic'] = 'Thema';
 
+$lang['missing_pagelistplugin'] = 'Ohne Pagelist Plugin können Themenlisten nicht angezeigt werden.';
+
 //Setup VIM: ex: et ts=2 enc=utf-8 :

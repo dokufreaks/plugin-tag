@@ -4,9 +4,8 @@ All documentation for the Tag Plugin is available online at:
 http://www.wikidesign.ch/en/plugin/tag/start
 http://wiki.splitbrain.org/plugin:tag
 
-This plugin requires DokuWiki 2006-11-06 and these helper plugins:
+This plugin requires DokuWiki 2006-11-06 or later and these helper plugins:
 
-  * Feed Plugin      http://www.wikidesign.ch/en/plugin/feed/start
   * Pagelist Plugin  http://www.wikidesign.ch/en/plugin/pagelist/start
 
 There's a Google Groups mailing list to discuss all issues:

@@ -20,7 +20,7 @@ class action_plugin_tag extends DokuWiki_Action_Plugin {
     return array(
       'author' => 'Esther Brunner',
       'email'  => 'wikidesign@gmail.com',
-      'date'   => '2007-04-27',
+      'date'   => '2007-08-03',
       'name'   => 'Tag Plugin (ping component)',
       'desc'   => 'Ping technorati when a new page is created',
       'url'    => 'http://www.wikidesign.ch/en/plugin/tag/start',
@@ -61,6 +61,11 @@ class action_plugin_tag extends DokuWiki_Action_Plugin {
     $header[] = 'Content-type: text/xml';
     $header[] = 'Content-length: '.strlen($request);
     
+    $http = new DokuHTTPClient();
+    // $http->headers = $header;
+    return $http->post($url, $request);
+    
+    /*
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -76,6 +81,7 @@ class action_plugin_tag extends DokuWiki_Action_Plugin {
       curl_close($ch);
       return true;
     }
+    */
   }
 }
 

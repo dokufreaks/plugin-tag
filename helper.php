@@ -51,7 +51,7 @@ class helper_plugin_tag extends DokuWiki_Plugin {
     return array(
       'author' => 'Esther Brunner',
       'email'  => 'wikidesign@gmail.com',
-      'date'   => '2007-01-16',
+      'date'   => '2007-08-03',
       'name'   => 'Tag Plugin (helper class)',
       'desc'   => 'Functions to return tag links and topic lists',
       'url'    => 'http://www.wikidesign/en/plugin/tag/start',
@@ -160,33 +160,39 @@ class helper_plugin_tag extends DokuWiki_Plugin {
     
       // filter by namespace
       if ($ns && (strpos(':'.getNS($match), ':'.$ns) !== 0)) continue;
+      
+      // check ACL permission; if okay, then add the page
+      $perm = auth_quickaclcheck($match);
+      if ($perm < AUTH_READ) continue;
           
       // get metadata
       $meta = array();
       $meta = p_get_metadata($match);
-      $tags = $meta['subject'];
+      
+      // skip drafts unless for users with create priviledge
+      $draft = ($meta['type'] == 'draft');
+      if ($draft && ($perm < AUTH_CREATE)) continue;
+      
+      $title = $meta['title'];
+      $tags  = $meta['subject'];
       if (!is_array($tags)) $tags = explode(' ', $tags);
+      $taglinks = $this->tagLinks($tags);
       
       // does it match?
       foreach ($tags as $word){
         if (in_array(utf8_strtolower($word), $tag)){
-  
-          // check ACL permission; if okay, then add the page
-          $perm = auth_quickaclcheck($match);
-          if ($perm >= AUTH_READ){
-            $title = $meta['title'];
-            $result[$match] = array(
-              'id'     => $match,
-              'title'  => $title,
-              'date'   => $meta['date']['created'],
-              'user'   => $meta['creator'],
-              'desc'   => $meta['description']['abstract'],
-              'cat'    => $tags[0],
-              'tags'   => $this->tagLinks($tags),
-              'perm'   => $perm,
-              'exists' => true,
-            );
-          }
+          $result[$match] = array(
+            'id'     => $match,
+            'title'  => $title,
+            'date'   => $meta['date']['created'],
+            'user'   => $meta['creator'],
+            'desc'   => $meta['description']['abstract'],
+            'cat'    => $tags[0],
+            'tags'   => $taglinks,
+            'perm'   => $perm,
+            'exists' => true,
+            'draft'  => $draft,
+          );
           break;
         }
       }
@@ -346,7 +352,7 @@ class helper_plugin_tag extends DokuWiki_Plugin {
   }
   
   /**
-   * Converts an array of pages numbers to IDs
+   * Converts an array of page numbers to IDs
    */
   function _numToID($nums){
     if (is_array($nums)){

@@ -147,6 +147,8 @@ class helper_plugin_tag extends DokuWiki_Plugin {
    * @author  Esther Brunner <wikidesign@gmail.com>
    */
   function getTopic($ns = '', $num = NULL, $tag = ''){
+    global $conf;
+    
     if (!$tag) $tag = $_REQUEST['tag'];
     $tag = explode(' ', utf8_strtolower($this->_applyMacro($tag)));
     $result = array();
@@ -178,10 +180,14 @@ class helper_plugin_tag extends DokuWiki_Plugin {
       if (!is_array($tags)) $tags = explode(' ', $tags);
       $taglinks = $this->tagLinks($tags);
       
+      // determine the sort key
+      if ($conf['useheading']) $key = $this->_uniqueKey($title, $result);
+      else $key = $match; // id is always unique
+      
       // does it match?
       foreach ($tags as $word){
         if (in_array(utf8_strtolower($word), $tag)){
-          $result[$match] = array(
+          $result[$key] = array(
             'id'     => $match,
             'title'  => $title,
             'date'   => $meta['date']['created'],
@@ -383,6 +389,17 @@ class helper_plugin_tag extends DokuWiki_Plugin {
       '@DAY@'   => date('d'), 
     ); 
     return str_replace(array_keys($replace), array_values($replace), $id); 
+  }
+  
+  /**
+   * Recursive function to check whether an array key is unique
+   *
+   * Simplyfied from the more complex version in the Blog Plugin
+   */
+  function _uniqueKey($key, &$result, $num = 0){
+    $testkey = $key.($num > 0 ? $num : '');
+    if (!array_key_exists($testkey, $result)) return $testkey;
+    return $this->_uniqueKey($key, $result, $num++);
   }
   
 }

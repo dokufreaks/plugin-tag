@@ -389,12 +389,14 @@ class helper_plugin_tag extends DokuWiki_Plugin {
    * Makes user or date dependent topic lists possible
    */
   function _applyMacro($id){
-    global $INFO;
+    global $INFO, $auth;
     
-    list($group, $rest) = explode(',', $INFO['username']['grps']);
+    $user     = $_SERVER['REMOTE_USER'];
+    $userdata = $auth->getUserData($user);
+    $group    = $userdata['grps'][0];
  
     $replace = array( 
-      '@USER@'  => cleanID($_SERVER['REMOTE_USER']), 
+      '@USER@'  => cleanID($user), 
       '@NAME@'  => cleanID($INFO['userinfo']['name']),
       '@GROUP@' => cleanID($group),
       '@YEAR@'  => date('Y'), 

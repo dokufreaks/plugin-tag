@@ -7,6 +7,9 @@
 // must be run within Dokuwiki
 if (!defined('DOKU_INC')) die();
 
+if (!defined('DOKU_LF')) define('DOKU_LF', "\n");
+if (!defined('DOKU_TAB')) define('DOKU_TAB', "\t");
+
 class helper_plugin_tag extends DokuWiki_Plugin {
 
   var $namespace  = '';      // namespace tag links point to
@@ -53,7 +56,7 @@ class helper_plugin_tag extends DokuWiki_Plugin {
     return array(
       'author' => 'Esther Brunner',
       'email'  => 'wikidesign@gmail.com',
-      'date'   => '2007-08-04',
+      'date'   => '2007-08-11',
       'name'   => 'Tag Plugin (helper class)',
       'desc'   => 'Functions to return tag links and topic lists',
       'url'    => 'http://www.wikidesign/en/plugin/tag/start',
@@ -140,7 +143,7 @@ class helper_plugin_tag extends DokuWiki_Plugin {
       $this->references[$tag] = $exists;
     }
         
-    return implode(', ', $links);
+    return implode(','.DOKU_LF.DOKU_TAB, $links);
   }
   
   /**

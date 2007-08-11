@@ -13,6 +13,8 @@
 // must be run within Dokuwiki
 if (!defined('DOKU_INC')) die();
 
+if (!defined('DOKU_LF')) define('DOKU_LF', "\n");
+if (!defined('DOKU_TAB')) define('DOKU_TAB', "\t");
 if (!defined('DOKU_PLUGIN')) define('DOKU_PLUGIN',DOKU_INC.'lib/plugins/');
 require_once(DOKU_PLUGIN.'syntax.php');
  
@@ -22,7 +24,7 @@ class syntax_plugin_tag_tag extends DokuWiki_Syntax_Plugin {
     return array(
       'author' => 'Esther Brunner',
       'email'  => 'wikidesign@gmail.com',
-      'date'   => '2007-04-27',
+      'date'   => '2007-08-11',
       'name'   => 'Tag Plugin (tag component)',
       'desc'   => 'Displays links to categories the page belongs to',
       'url'    => 'http://www.wikidesign.ch/en/plugin/tag/start',
@@ -56,7 +58,7 @@ class syntax_plugin_tag_tag extends DokuWiki_Syntax_Plugin {
     // XHTML output
     if ($mode == 'xhtml'){
       $renderer->doc .= '<div class="tags"><span>'.DOKU_LF.
-        $tags.DOKU_LF.
+        DOKU_TAB.$tags.DOKU_LF.
         '</span></div>'.DOKU_LF;
       return true;
       

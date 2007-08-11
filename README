@@ -1,12 +1,13 @@
 ====== Tag Plugin for DokuWiki ======
 
 All documentation for the Tag Plugin is available online at:
-http://www.wikidesign.ch/en/plugin/tag/start
-http://wiki.splitbrain.org/plugin:tag
+
+  * http://www.wikidesign.ch/en/plugin/tag/start
+  * http://wiki.splitbrain.org/plugin:tag
 
 This plugin requires DokuWiki 2006-11-06 or later and these helper plugins:
 
-  * Pagelist Plugin  http://www.wikidesign.ch/en/plugin/pagelist/start
+  * [[http://www.wikidesign.ch/en/plugin/pagelist/start|Pagelist Plugin]], version 1.2 recommended
 
 There's a Google Groups mailing list to discuss all issues:
 http://groups-beta.google.com/group/tag-plugin/

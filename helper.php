@@ -420,7 +420,7 @@ class helper_plugin_tag extends DokuWiki_Plugin {
     } else {
       $testkey = $key.($num > 0 ? $num : '');
       if (!array_key_exists($testkey, $result)) return $testkey;
-      return $this->_uniqueKey($key, $result, $num++);
+      return $this->_uniqueKey($key, $result, ++$num);
     }
   }  
 }

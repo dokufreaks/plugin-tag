@@ -357,11 +357,12 @@ class helper_plugin_tag extends DokuWiki_Plugin {
     
     // get the line numbers in page index
     foreach ($tags as $tag){
+      if (($tag{0} == '+') || ($tag{0} == '-')) $tag = substr($tag, 1);
+      if (!is_array($this->tag_idx[$tag])) $this->tag_idx[$tag] = array();
+      
       if ($tag{0} == '+'){       // AND: add only if in both arrays
-        $tag = substr($tag, 1);
         $result = array_intersect($result, $this->tag_idx[$tag]);
       } elseif ($tag{0} == '-'){ // NOT: remove array from docs
-        $tag = substr($tag, 1);
         $result = array_diff($result, $this->tag_idx[$tag]);
       } else {                   // OR: add array to docs
         $result = array_unique(array_merge($result, $this->tag_idx[$tag]));

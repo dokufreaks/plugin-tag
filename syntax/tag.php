@@ -24,7 +24,7 @@ class syntax_plugin_tag_tag extends DokuWiki_Syntax_Plugin {
     return array(
       'author' => 'Esther Brunner',
       'email'  => 'wikidesign@gmail.com',
-      'date'   => '2007-08-11',
+      'date'   => '2007-08-22',
       'name'   => 'Tag Plugin (tag component)',
       'desc'   => 'Displays links to categories the page belongs to',
       'url'    => 'http://www.wikidesign.ch/en/plugin/tag/start',
@@ -42,9 +42,10 @@ class syntax_plugin_tag_tag extends DokuWiki_Syntax_Plugin {
   function handle($match, $state, $pos, &$handler){
     global $ID;
     
-    $tags = explode(' ', substr($match, 6, -2)); // strip markup and split tags
-    if (empty($tags)) return false;
+    $tags = substr($match, 6, -2);     // strip markup
+    if (!$tags) return false;
     if (!$my =& plugin_load('helper', 'tag')) return false;
+    $tags = $my->_parseTagList($tags); // split tags
     $my->_updateTagIndex($ID, $tags);
     return $tags;
   }      

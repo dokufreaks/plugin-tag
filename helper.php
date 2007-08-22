@@ -56,7 +56,7 @@ class helper_plugin_tag extends DokuWiki_Plugin {
     return array(
       'author' => 'Esther Brunner',
       'email'  => 'wikidesign@gmail.com',
-      'date'   => '2007-08-11',
+      'date'   => '2007-08-22',
       'name'   => 'Tag Plugin (helper class)',
       'desc'   => 'Functions to return tag links and topic lists',
       'url'    => 'http://www.wikidesign/en/plugin/tag/start',
@@ -131,14 +131,16 @@ class helper_plugin_tag extends DokuWiki_Plugin {
       resolve_pageid($this->namespace, $tag, $exists); // resolve shortcuts
       if ($exists){
         $class = 'wikilink1';
+        $url   = wl($tag);
         if ($conf['useheading']){
           $heading = p_get_first_heading($tag);
           if ($heading) $title = $heading;
         }
       } else {
         $class = 'wikilink2';
+        $url   = wl($tag, 'do=backlink');
       }
-      $links[] = '<a href="'.wl($tag).'" class="'.$class.'" title="'.hsc($tag).
+      $links[] = '<a href="'.$url.'" class="'.$class.'" title="'.hsc($tag).
         '" rel="tag">'.hsc($title).'</a>';
       $this->references[$tag] = $exists;
     }
@@ -153,7 +155,7 @@ class helper_plugin_tag extends DokuWiki_Plugin {
    */
   function getTopic($ns = '', $num = NULL, $tag = ''){
     if (!$tag) $tag = $_REQUEST['tag'];
-    $tag = explode(' ', utf8_strtolower($this->_applyMacro($tag)));
+    $tag = $this->_parseTagList($tag, true);
     $result = array();
     
     $docs = $this->_tagIndexLookup($tag);
@@ -225,7 +227,7 @@ class helper_plugin_tag extends DokuWiki_Plugin {
    */
   function tagRefine($pages, $refine){
     if (!is_array($pages)) return $pages; // wrong data type
-    $tags = explode(' ', $this->_applyMacro($refine));
+    $tags = $this->_parseTagList($refine, true);
     foreach ($tags as $tag){
       if (!(($tag{0} == '+') || ($tag{0} == '-'))) continue;
       $cleaned_tag = substr($tag, 1);
@@ -383,6 +385,23 @@ class helper_plugin_tag extends DokuWiki_Plugin {
     } else {
       return trim($this->page_idx[$nums]);
     }
+  }
+  
+  /**
+   * Splits a string into an array of tags
+   */
+  function _parseTagList($tags, $clean = false){
+    
+    // support for "quoted phrase tags"
+    if (preg_match_all('#".*?"#', $tags, $matches)){
+      foreach ($matches[0] as $match){
+        $replace = str_replace(' ', '_', substr($match, 1, -1));
+        $tags = str_replace($match, $replace, $tags);
+      }
+    }
+    
+    if ($clean) $tags = utf8_strtolower($this->_applyMacro($tags));
+    return explode(' ', $tags);
   }
   
   /**

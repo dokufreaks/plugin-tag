@@ -69,7 +69,8 @@ class syntax_plugin_tag_tag extends DokuWiki_Syntax_Plugin {
       foreach ($my->references as $ref => $exists){
         $renderer->meta['relation']['references'][$ref] = $exists;
       }
-      $renderer->meta['subject'] = $data;
+      if (!is_array($renderer->meta['subject'])) $renderer->meta['subject'] = array();
+      $renderer->meta['subject'] = array_merge($renderer->meta['subject'], $data);
       return true;
     }
     return false;

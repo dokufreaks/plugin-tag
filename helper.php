@@ -133,7 +133,8 @@ class helper_plugin_tag extends DokuWiki_Plugin {
         $class = 'wikilink1';
         $url   = wl($tag);
         if ($conf['useheading']){
-          $heading = p_get_first_heading($tag);
+          // important: set sendond param to false to prevent recursion!
+          $heading = p_get_first_heading($tag, false);
           if ($heading) $title = $heading;
         }
       } else {

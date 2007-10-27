@@ -428,22 +428,30 @@ class helper_plugin_tag extends DokuWiki_Plugin {
   }
   
   /**
-   * Recursive function to check whether an array key is unique
+   * Non-recursive function to check whether an array key is unique
+   *
+   * @author    Esther Brunner <wikidesign@gmail.com>
+   * @author    Ilya S. Lebedev <ilya@lebedev.net>
    */
-  function _uniqueKey($key, &$result, $num = 0){
+  function _uniqueKey($key, &$result){
     
     // increase numeric keys by one
     if (is_numeric($key)){
-      if (!array_key_exists($key, $result)) return $key;
-      return $this->_uniqueKey($key++, $result);
+      while (array_key_exists($key, $result)) $key++;
+      return $key;
       
     // append a number to literal keys
     } else {
-      $testkey = $key.($num > 0 ? $num : '');
-      if (!array_key_exists($testkey, $result)) return $testkey;
-      return $this->_uniqueKey($key, $result, ++$num);
+      $num     = 0;
+      $testkey = $key;
+      while (array_key_exists($testkey, $result)){
+        $testkey = $key.$num;
+        $num++;
+      }
+      return $testkey;
     }
-  }  
+  }
+
 }
   
 //Setup VIM: ex: et ts=4 enc=utf-8 :

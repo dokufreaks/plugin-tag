@@ -18,12 +18,12 @@ class action_plugin_tag extends DokuWiki_Action_Plugin {
    */
   function getInfo(){
     return array(
-      'author' => 'Esther Brunner',
-      'email'  => 'wikidesign@gmail.com',
+      'author' => 'Gina Häußge, Michael Klier, Esther Brunner',
+      'email'  => 'dokuwiki@chimeric.de',
       'date'   => '2007-08-03',
       'name'   => 'Tag Plugin (ping component)',
       'desc'   => 'Ping technorati when a new page is created',
-      'url'    => 'http://www.wikidesign.ch/en/plugin/tag/start',
+      'url'    => 'http://wiki.splitbrain.org/plugin:tag',
     );
   }
 

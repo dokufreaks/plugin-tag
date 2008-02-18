@@ -22,12 +22,12 @@ class syntax_plugin_tag_tag extends DokuWiki_Syntax_Plugin {
 
   function getInfo(){
     return array(
-      'author' => 'Esther Brunner',
-      'email'  => 'wikidesign@gmail.com',
+      'author' => 'Gina Häußge, Michael Klier, Esther Brunner',
+      'email'  => 'dokuwiki@chimeric.de',
       'date'   => '2007-08-22',
       'name'   => 'Tag Plugin (tag component)',
       'desc'   => 'Displays links to categories the page belongs to',
-      'url'    => 'http://www.wikidesign.ch/en/plugin/tag/start',
+      'url'    => 'http://wiki.splitbrain.org/plugin:tag',
     );
   }
 

@@ -392,11 +392,18 @@ class helper_plugin_tag extends DokuWiki_Plugin {
     $pages = array();
     search($pages, $conf['datadir'], 'search_allpages', array());
     foreach ($pages as $page){
-      $tags = p_get_metadata($page['id'], 'subject');
-      if (!is_array($tags)) $tags = explode(' ', $tags);
-      $this->_updateTagIndex($page['id'], $tags);
+      $this->_generateTagData($page);
     }
     return true;
+  }
+  
+  /**
+   * Generates the tag data for a single page.
+   */
+  function _generateTagData($page){
+    $tags = p_get_metadata($page['id'], 'subject');
+    if (!is_array($tags)) $tags = explode(' ', $tags);
+    $this->_updateTagIndex($page['id'], $tags);
   }
   
   /**

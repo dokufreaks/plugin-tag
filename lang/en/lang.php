@@ -12,4 +12,6 @@ $lang['topic'] = 'Topic';
 
 $lang['missing_pagelistplugin'] = 'The Pagelist Plugin must be installed for topic lists.';
 
+$lang['menu'] = 'Tagindex Manager';
+
 //Setup VIM: ex: et ts=2 enc=utf-8 :

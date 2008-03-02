@@ -24,7 +24,7 @@ class syntax_plugin_tag_tag extends DokuWiki_Syntax_Plugin {
     return array(
       'author' => 'Gina Häußge, Michael Klier, Esther Brunner',
       'email'  => 'dokuwiki@chimeric.de',
-      'date'   => '2007-08-22',
+      'date'   => '2008-03-02',
       'name'   => 'Tag Plugin (tag component)',
       'desc'   => 'Displays links to categories the page belongs to',
       'url'    => 'http://wiki.splitbrain.org/plugin:tag',
@@ -42,7 +42,7 @@ class syntax_plugin_tag_tag extends DokuWiki_Syntax_Plugin {
   function handle($match, $state, $pos, &$handler){
     global $ID;
     
-    $tags = substr($match, 6, -2);     // strip markup
+    $tags = trim(substr($match, 6, -2));     // strip markup & whitespace
     if (!$tags) return false;
     if (!$my =& plugin_load('helper', 'tag')) return false;
     $tags = $my->_parseTagList($tags); // split tags

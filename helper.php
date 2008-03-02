@@ -306,7 +306,8 @@ class helper_plugin_tag extends DokuWiki_Plugin {
     } else {
       $tag_index = array();
       foreach ($this->tag_idx as $key => $value){
-        $tag_index[] = $key.' '.join(':', $value)."\n";
+        if (!empty($value))
+          $tag_index[] = $key.' '.join(':', $value)."\n";
       }
       fwrite($fh, join('', $tag_index));
     }

@@ -188,15 +188,15 @@ class helper_plugin_tag extends DokuWiki_Plugin {
       $taglinks = $this->tagLinks($tags);
       
       // determine the sort key
-      if ($this->sort == 'id') $key = $id;
-      elseif ($this->sort == 'pagename') $key = noNS($id);
+      if ($this->sort == 'id') $key = $match;
+      elseif ($this->sort == 'pagename') $key = noNS($match);
       elseif ($this->sort == 'title') $key = $title;
       else $key = $date;
 
-      // check if key is unique
+      // make sure that the key is unique
       $key = $this->_uniqueKey($key, $result);
       
-      // does it match?
+      // is the page really tagged with one of our tags?
       foreach ($tags as $word){
         if (in_array(utf8_strtolower($word), $tag)){
           $result[$key] = array(
@@ -214,6 +214,10 @@ class helper_plugin_tag extends DokuWiki_Plugin {
           break;
         }
       }
+      
+      // if not, the tag index was out of date: refresh it!
+      if (!is_array($result[$key]))
+      	$this->_refreshTagIndex($match, $tag);
     }        
     
     // finally sort by sort key
@@ -242,7 +246,50 @@ class helper_plugin_tag extends DokuWiki_Plugin {
     }
     return $pages;
   }
+
+  /**
+   * Refresh tag index
+   * Deletes all tags of page id which are not defined in the page's metadata
+   * as well.
+   * 
+   * @param id the page id
+   * @param tags tags as defined in the index to double-check
+   */
+  function _refreshTagIndex($id, $tags){
+    if (!is_array($tags) || empty($tags)) return false;
+    $changed = false;
   
+    // get page id (this is the linenumber in page.idx)
+    $pid = array_search("$id\n", $this->page_idx);
+    if (!is_int($pid)){
+      $this->page_idx[] = "$id\n";
+      $pid = count($this->page_idx) - 1;
+      // page was new - write back
+      $this->_saveIndex('page');
+    }
+    
+    // clean array first
+    $c = count($tags);
+    for ($i = 0; $i <= $c; $i++){
+      $tags[$i] = utf8_strtolower($tags[$i]);
+    }
+    
+    // get actual tags as saved in metadata
+    $meta = p_get_metadata($id);
+    $metatags = $meta['subject'];
+    if (!is_array($metatags)) $metatags = array();
+
+    foreach ($tags as $tag){
+      if (!$tag) continue;                     // skip empty tags
+      if (in_array($tag, $metatags)) continue; // tag is still there
+      $this->tag_idx[$tag] = array_diff($this->tag_idx[$tag], array($pid));
+      $changed = true;
+    }
+    
+    if ($changed) return $this->_saveIndex('tag');
+    else return true;
+  }
+
   /**
    * Update tag index
    */
@@ -306,6 +353,7 @@ class helper_plugin_tag extends DokuWiki_Plugin {
     } else {
       $tag_index = array();
       foreach ($this->tag_idx as $key => $value){
+      	$value = array_filter($value, array($this, '_notEmpty'));
         if (!empty($value))
           $tag_index[] = $key.' '.join(':', $value)."\n";
       }
@@ -452,7 +500,11 @@ class helper_plugin_tag extends DokuWiki_Plugin {
       return $testkey;
     }
   }
-
+  
+  function _notEmpty($val) {
+  	return !empty($val);
+  }
+  
 }
   
 //Setup VIM: ex: et ts=4 enc=utf-8 :

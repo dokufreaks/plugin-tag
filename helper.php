@@ -414,15 +414,18 @@ class helper_plugin_tag extends DokuWiki_Plugin {
     
     // get the line numbers in page index
     foreach ($tags as $tag){
-      if (($tag{0} == '+') || ($tag{0} == '-')) $tag = substr($tag, 1);
-      if (!is_array($this->tag_idx[$tag])) $this->tag_idx[$tag] = array();
+      if (($tag{0} == '+') || ($tag{0} == '-')) 
+      	$t = substr($tag, 1);
+      else
+      	$t = $tag;
+      if (!is_array($this->tag_idx[$t])) $this->tag_idx[$t] = array();
       
       if ($tag{0} == '+'){       // AND: add only if in both arrays
-        $result = array_intersect($result, $this->tag_idx[$tag]);
+        $result = array_intersect($result, $this->tag_idx[$t]);
       } elseif ($tag{0} == '-'){ // NOT: remove array from docs
-        $result = array_diff($result, $this->tag_idx[$tag]);
+        $result = array_diff($result, $this->tag_idx[$t]);
       } else {                   // OR: add array to docs
-        $result = array_unique(array_merge($result, $this->tag_idx[$tag]));
+        $result = array_unique(array_merge($result, $this->tag_idx[$t]));
       }
     }
     

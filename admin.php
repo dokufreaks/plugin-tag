@@ -48,11 +48,11 @@ class admin_plugin_tag extends DokuWiki_Admin_Plugin {
      * output appropriate html
      */
     function html() {
-        print $this->plugin_locale_xhtml('index');
+        print $this->plugin_locale_xhtml('intro');
 
         print '<fieldset class="pl_si_out">';
         
-        print '<button class="button" id="pl_si_gobtn" onclick="plugin_searchindex_go()">';
+        print '<button class="button" id="pl_si_gobtn" onclick="plugin_tagindex_go()">';
         print 'Rebuild Tagindex'; #FIXME localize
         print '</button>';
         print '<div id="pl_si_out"></div>';

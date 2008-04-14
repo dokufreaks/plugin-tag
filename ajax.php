@@ -9,7 +9,7 @@
 
 //fix for Opera XMLHttpRequests
 if(!count($_POST) && $HTTP_RAW_POST_DATA){
-  parse_str($HTTP_RAW_POST_DATA, $_POST);
+	parse_str($HTTP_RAW_POST_DATA, $_POST);
 }
 
 if (!defined('DOKU_INC'))
@@ -37,9 +37,9 @@ if (auth_quickaclcheck($conf['start']) < AUTH_ADMIN){
 
 //clear all index files
 if (@file_exists($conf['indexdir'].'/page.idx')){ // new word length based index
-  $tag_idx = $conf['indexdir'].'/tag.idx';
+	$tag_idx = $conf['indexdir'].'/tag.idx';
 } else {                                          // old index
-  $tag_idx = $conf['cachedir'].'/tag.idx';
+	$tag_idx = $conf['cachedir'].'/tag.idx';
 }
 
 $tag_helper =& plugin_load('helper', 'tag');

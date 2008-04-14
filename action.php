@@ -20,7 +20,7 @@ class action_plugin_tag extends DokuWiki_Action_Plugin {
     return array(
       'author' => 'Gina Häußge, Michael Klier, Esther Brunner',
       'email'  => 'dokuwiki@chimeric.de',
-      'date'   => '2007-08-03',
+      'date'   => '2008-04-14',
       'name'   => 'Tag Plugin (ping component)',
       'desc'   => 'Ping technorati when a new page is created',
       'url'    => 'http://wiki.splitbrain.org/plugin:tag',

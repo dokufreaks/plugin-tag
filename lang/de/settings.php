@@ -21,4 +21,6 @@ $lang['sortorder']              = 'Sortierrichtung';
 $lang['sortorder_o_ascending']  = 'aufsteigend';
 $lang['sortorder_o_descending'] = 'absteigend';
 
+$lang['pagelist_flags'] = 'Formatieroptionen für die Tagliste (kommasepariert, für eine Liste der verfügbaren Optionen siehe die Dokumentation des Pagelist Plugins)';
+
 //Setup VIM: ex: et ts=2 enc=utf-8 :

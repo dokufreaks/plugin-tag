@@ -4,7 +4,7 @@ All documentation for the Tag Plugin is available online at:
 
   * http://wiki.splitbrain.org/plugin:tag
 
-This plugin requires DokuWiki 2006-11-06 or later and these helper plugins:
+This plugin requires DokuWiki 2007-06-26b or later and these helper plugins:
 
   * [[http://wiki.splitbrain.org/plugin:pagelist|Pagelist Plugin]], version 1.2 recommended
 

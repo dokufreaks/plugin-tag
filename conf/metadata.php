@@ -12,5 +12,6 @@ $meta['sortkey']        = array('multichoice',
                           '_choices' => array('cdate', 'mdate', 'pagename', 'id', 'title'));
 $meta['sortorder']      = array('multichoice',
                           '_choices' => array('ascending', 'descending'));
+$meta['pagelist_flags'] = array('string');
 
 //Setup VIM: ex: et ts=2 enc=utf-8 :

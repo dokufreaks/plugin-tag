@@ -1,6 +1,5 @@
 <?php
 /**
- *
  * @license    GPL 2 (http://www.gnu.org/licenses/gpl.html)
  * @author     Esther Brunner <wikidesign@gmail.com>
  */
@@ -20,7 +19,7 @@ class action_plugin_tag extends DokuWiki_Action_Plugin {
     return array(
       'author' => 'Gina Häußge, Michael Klier, Esther Brunner',
       'email'  => 'dokuwiki@chimeric.de',
-      'date'   => '2008-04-14',
+      'date'   => '2008-04-20',
       'name'   => 'Tag Plugin (ping component)',
       'desc'   => 'Ping technorati when a new page is created',
       'url'    => 'http://wiki.splitbrain.org/plugin:tag',
@@ -32,6 +31,8 @@ class action_plugin_tag extends DokuWiki_Action_Plugin {
    */
   function register(&$contr){
     $contr->register_hook('IO_WIKIPAGE_WRITE', 'BEFORE', $this, 'ping', array());
+    $contr->register_hook('ACTION_ACT_PREPROCESS', 'BEFORE', $this, '_handle_act', array());
+    $contr->register_hook('TPL_ACT_UNKNOWN', 'BEFORE', $this, '_handle_tpl_act', array());
   }
 
   /**
@@ -64,24 +65,54 @@ class action_plugin_tag extends DokuWiki_Action_Plugin {
     $http = new DokuHTTPClient();
     // $http->headers = $header;
     return $http->post($url, $request);
-    
-    /*
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $url);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-    curl_setopt($ch, CURLOPT_TIMEOUT, 1);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, $request);
-    
-    curl_exec($ch);
-    if (curl_errno($ch)){
-      curl_close($ch);
-      return false;
-    } else {
-      curl_close($ch);
-      return true;
-    }
-    */
+  }
+
+  /**
+   * catch tag action
+   *
+   * @author Michael Klier <chi@chimeric.de>
+   */
+  function _handle_act(&$event, $param) {
+      if($event->data != 'showtag') return;
+      $event->preventDefault();
+  }
+
+  function _handle_tpl_act(&$event, $param) {
+      global $lang;
+
+      if($event->data != 'showtag') return;
+      $event->preventDefault();
+
+      $tagns = $this->getConf('namespace');
+      $flags = explode(',', trim($this->getConf('pagelist_flags')));
+      print_r($flags);
+      $tag   = trim($_REQUEST['tag']);
+      $ns    = trim($_REQUEST['ns']);
+
+      if ($helper =& plugin_load('helper', 'tag')) $pages = $helper->getTopic($ns, '', $tag);
+
+      if(!empty($pages)) {
+
+          // let Pagelist Plugin do the work for us
+          if (plugin_isdisabled('pagelist') || (!$pagelist = plugin_load('helper', 'pagelist'))) {
+            msg($this->getLang('missing_pagelistplugin'), -1);
+            return false;
+          }
+
+          $pagelist->setFlags($flags);
+          $pagelist->startList();
+          foreach ($pages as $page){
+              $pagelist->addPage($page);
+          }
+
+          print '<h1>TAG: ' . $tag . '</h1>' . DOKU_LF;
+          print '<div class="level1">' . DOKU_LF;
+          print $pagelist->finishList();      
+          print '</div>' . DOKU_LF;
+
+      } else {
+          print '<div class="level1"><p>' . $lang['nothingfound'] . '</p></div>';
+      }
   }
 }
 

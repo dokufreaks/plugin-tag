@@ -21,6 +21,6 @@ $lang['sortorder']              = 'sort order';
 $lang['sortorder_o_ascending']  = 'ascending';
 $lang['sortorder_o_descending'] = 'descending';
 
-$lang['pagelist_flags'] = 'Formatting flags for the taglist (see [[doku>plugin:pagelist#flags|Flags]])';
+$lang['pagelist_flags'] = 'Formatting flags for the taglist (see plugin pageliste)';
 
 //Setup VIM: ex: et ts=2 enc=utf-8 :

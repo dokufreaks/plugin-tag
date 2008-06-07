@@ -15,81 +15,79 @@ require_once(DOKU_PLUGIN.'syntax.php');
 
 class syntax_plugin_tag_topic extends DokuWiki_Syntax_Plugin {
 
-  function getInfo(){
-    return array(
-      'author' => 'Gina Häußge, Michael Klier, Esther Brunner',
-      'email'  => 'dokuwiki@chimeric.de',
-      'date'   => '2007-08-03',
-      'name'   => 'Tag Plugin (topic component)',
-      'desc'   => 'Displays a list of wiki pages with a given category tag',
-      'url'    => 'http://wiki.splitbrain.org/plugin:tag',
-    );
-  }
-
-  function getType(){ return 'substition'; }
-  function getPType(){ return 'block'; }
-  function getSort(){ return 306; }
-  
-  function connectTo($mode){
-    $this->Lexer->addSpecialPattern('\{\{topic>.+?\}\}',$mode,'plugin_tag_topic');
-  }
-
-  function handle($match, $state, $pos, &$handler){
-    global $ID;
-    
-    $match = substr($match, 8, -2); // strip {{topic> from start and }} from end
-    list($match, $flags) = explode('&', $match, 2);
-    $flags = explode('&', $flags);
-    list($ns, $tag) = explode('?', $match);
-    
-    if (!$tag){
-      $tag = $ns;
-      $ns   = '';
+    function getInfo() {
+        return array(
+                'author' => 'Gina Häußge, Michael Klier, Esther Brunner',
+                'email'  => 'dokuwiki@chimeric.de',
+                'date'   => '2007-08-03',
+                'name'   => 'Tag Plugin (topic component)',
+                'desc'   => 'Displays a list of wiki pages with a given category tag',
+                'url'    => 'http://wiki.splitbrain.org/plugin:tag',
+                );
     }
-    
-    if (($ns == '*') || ($ns == ':')) $ns = '';
-    elseif ($ns == '.') $ns = getNS($ID);
-    else $ns = cleanID($ns);
-    
-    return array($ns, trim($tag), $flags);
-  }
 
-  function render($mode, &$renderer, $data){
-    list($ns, $tag, $flags) = $data;
-        
-    if ($my =& plugin_load('helper', 'tag')) $pages = $my->getTopic($ns, '', $tag);
-    if (!$pages) return true; // nothing to display
-    
-    if ($mode == 'xhtml'){
-      
-      // prevent caching to ensure content is always fresh
-      $renderer->info['cache'] = false;
-      
-      // let Pagelist Plugin do the work for us
-      if (plugin_isdisabled('pagelist')
-        || (!$pagelist = plugin_load('helper', 'pagelist'))){
-        msg($this->getLang('missing_pagelistplugin'), -1);
+    function getType() { return 'substition'; }
+    function getPType() { return 'block'; }
+    function getSort() { return 306; }
+
+    function connectTo($mode) {
+        $this->Lexer->addSpecialPattern('\{\{topic>.+?\}\}',$mode,'plugin_tag_topic');
+    }
+
+    function handle($match, $state, $pos, &$handler) {
+        global $ID;
+
+        $match = substr($match, 8, -2); // strip {{topic> from start and }} from end
+        list($match, $flags) = explode('&', $match, 2);
+        $flags = explode('&', $flags);
+        list($ns, $tag) = explode('?', $match);
+
+        if (!$tag) {
+            $tag = $ns;
+            $ns   = '';
+        }
+
+        if (($ns == '*') || ($ns == ':')) $ns = '';
+        elseif ($ns == '.') $ns = getNS($ID);
+        else $ns = cleanID($ns);
+
+        return array($ns, trim($tag), $flags);
+    }
+
+    function render($mode, &$renderer, $data) {
+        list($ns, $tag, $flags) = $data;
+
+        if ($my =& plugin_load('helper', 'tag')) $pages = $my->getTopic($ns, '', $tag);
+        if (!$pages) return true; // nothing to display
+
+        if ($mode == 'xhtml') {
+
+            // prevent caching to ensure content is always fresh
+            $renderer->info['cache'] = false;
+
+            // let Pagelist Plugin do the work for us
+            if (plugin_isdisabled('pagelist')
+                    || (!$pagelist = plugin_load('helper', 'pagelist'))) {
+                msg($this->getLang('missing_pagelistplugin'), -1);
+                return false;
+            }
+            $pagelist->setFlags($flags);
+            $pagelist->startList();
+            foreach ($pages as $page) {
+                $pagelist->addPage($page);
+            }
+            $renderer->doc .= $pagelist->finishList();      
+            return true;
+
+        // for metadata renderer
+        } elseif ($mode == 'metadata') {
+            foreach ($pages as $page) {
+                $renderer->meta['relation']['references'][$page['id']] = true;
+            }
+
+            return true;
+        }
         return false;
-      }
-      $pagelist->setFlags($flags);
-      $pagelist->startList();
-      foreach ($pages as $page){
-        $pagelist->addPage($page);
-      }
-      $renderer->doc .= $pagelist->finishList();      
-      return true;
-      
-    // for metadata renderer
-    } elseif ($mode == 'metadata'){
-      foreach ($pages as $page){
-        $renderer->meta['relation']['references'][$page['id']] = true;
-      }
-      
-      return true;
     }
-    return false;
-  }
-        
 }
-
-//Setup VIM: ex: et ts=4 enc=utf-8 :
+//vim:ts=4:sw=4:et:enc=utf-8: 

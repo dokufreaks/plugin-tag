@@ -13,14 +13,14 @@ class admin_plugin_tag extends DokuWiki_Admin_Plugin {
     /**
      * Constructor
      */
-    function admin_plugin_tag(){
+    function admin_plugin_tag() {
         $this->setupLocale();
     }
 
     /**
      * return some info
      */
-    function getInfo(){
+    function getInfo() {
         return array(
             'author' => 'Gina Häußge, Michael Klier',
             'email'  => 'dokuwiki@chimeric.de',
@@ -61,7 +61,5 @@ class admin_plugin_tag extends DokuWiki_Admin_Plugin {
         print '</fieldset>';
         
     }
-
- 
 }
-//Setup VIM: ex: et ts=4 enc=utf-8 :
+//vim:ts=4:sw=4:et:enc=utf-8:

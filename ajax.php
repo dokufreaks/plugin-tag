@@ -8,7 +8,7 @@
  */
 
 //fix for Opera XMLHttpRequests
-if(!count($_POST) && $HTTP_RAW_POST_DATA){
+if(!count($_POST) && $HTTP_RAW_POST_DATA) {
 	parse_str($HTTP_RAW_POST_DATA, $_POST);
 }
 
@@ -31,12 +31,12 @@ session_write_close();
 header('Content-Type: text/plain; charset=utf-8');
 
 //we only work for admins!
-if (auth_quickaclcheck($conf['start']) < AUTH_ADMIN){
+if (auth_quickaclcheck($conf['start']) < AUTH_ADMIN) {
     die('access denied');
 }
 
 //clear all index files
-if (@file_exists($conf['indexdir'].'/page.idx')){ // new word length based index
+if (@file_exists($conf['indexdir'].'/page.idx')) { // new word length based index
 	$tag_idx = $conf['indexdir'].'/tag.idx';
 } else {                                          // old index
 	$tag_idx = $conf['cachedir'].'/tag.idx';
@@ -46,7 +46,7 @@ $tag_helper =& plugin_load('helper', 'tag');
 
 //call the requested function
 $call = 'ajax_'.$_POST['call'];
-if(function_exists($call)){
+if(function_exists($call)) {
     $call();
 }else{
     print "The called function '".htmlspecialchars($call)."' does not exist!";
@@ -57,13 +57,13 @@ if(function_exists($call)){
  *
  * @author Andreas Gohr <andi@splitbrain.org>
  */
-function ajax_pagelist(){
+function ajax_pagelist() {
     global $conf;
 
     $pages = array();
     search($pages, $conf['datadir'], 'search_allpages', array());
 
-    foreach($pages as $page){
+    foreach($pages as $page) {
         print $page['id']."\n";
     }
 }
@@ -71,7 +71,7 @@ function ajax_pagelist(){
 /**
  * Clear all index files
  */
-function ajax_clearindex(){
+function ajax_clearindex() {
     global $conf;
     global $tag_idx;
     
@@ -80,8 +80,8 @@ function ajax_clearindex(){
 
     // try to aquire a lock
     $lock = $conf['lockdir'].'/_tagindexer.lock';
-    while(!@mkdir($lock)){
-        if(time()-@filemtime($lock) > 60*5){
+    while(!@mkdir($lock)) {
+        if(time()-@filemtime($lock) > 60*5) {
             // looks like a stale lock - remove it
             @rmdir($lock);
         }else{
@@ -102,11 +102,11 @@ function ajax_clearindex(){
 /**
  * Index the given page's tags
  */
-function ajax_indexpage(){
+function ajax_indexpage() {
     global $conf;
     global $tag_helper;
 
-    if(!$_POST['page']){
+    if(!$_POST['page']) {
         print 1;
         exit;
     }
@@ -116,8 +116,8 @@ function ajax_indexpage(){
 
     // try to aquire a lock
     $lock = $conf['lockdir'].'/_tagindexer.lock';
-    while(!@mkdir($lock)){
-        if(time()-@filemtime($lock) > 60*5){
+    while(!@mkdir($lock)) {
+        if(time()-@filemtime($lock) > 60*5) {
             // looks like a stale lock - remove it
             @rmdir($lock);
         }else{
@@ -139,6 +139,5 @@ function ajax_indexpage(){
 
     print 1; 
 }
-
-//Setup VIM: ex: et ts=4 enc=utf-8 :
+//vim:ts=4:sw=4:et:enc=utf-8:
 ?>

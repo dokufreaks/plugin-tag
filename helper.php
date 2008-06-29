@@ -11,6 +11,8 @@ if (!defined('DOKU_INC')) die();
 if (!defined('DOKU_LF')) define('DOKU_LF', "\n");
 if (!defined('DOKU_TAB')) define('DOKU_TAB', "\t");
 
+require_once(DOKU_INC.'inc/indexer.php');
+
 class helper_plugin_tag extends DokuWiki_Plugin {
 
     var $namespace  = '';      // namespace tag links point to
@@ -20,8 +22,7 @@ class helper_plugin_tag extends DokuWiki_Plugin {
 
     var $sort       = '';      // sort key
     var $idx_dir    = '';      // directory for index files
-    var $page_idx   = array(); // array of existing pages
-    var $tag_idx    = array(); // array of tags and index in which pages they are found
+    var $topic_idx  = array();
 
     /**
      * Constructor gets default preferences and language strings
@@ -36,21 +37,14 @@ class helper_plugin_tag extends DokuWiki_Plugin {
         // determine where index files are saved
         if (@file_exists($conf['indexdir'].'/page.idx')) { // new word length based index
             $this->idx_dir = $conf['indexdir'];
-            if (!@file_exists($this->idx_dir.'/tag.idx')) $this->_importTagIndex();
+            if (!@file_exists($this->idx_dir.'/topic.idx')) $this->_importTagIndex();
         } else {                                          // old index
             $this->idx_dir = $conf['cachedir'];
-            if (!@file_exists($this->idx_dir.'/tag.idx')) $this->_generateTagIndex();
+            if (!@file_exists($this->idx_dir.'/topic.idx')) $this->_generateTagIndex();
         }
 
         // load page and tag index
-        $this->page_idx = @file($this->idx_dir.'/page.idx');
-        $tag_index      = @file($this->idx_dir.'/tag.idx');
-        if (is_array($tag_index)) {
-            foreach ($tag_index as $idx_line) {
-                list($key, $value) = explode(' ', $idx_line, 2);
-                $this->tag_idx[$key] = explode(':', trim($value));
-            }
-        }
+        $this->topic_idx = unserialize(io_readFile($this->idx_dir.'/topic.idx', false));
     }
 
     function getInfo() {
@@ -237,7 +231,7 @@ class helper_plugin_tag extends DokuWiki_Plugin {
         foreach ($tags as $tag) {
             if (!(($tag{0} == '+') || ($tag{0} == '-'))) continue;
             $cleaned_tag = substr($tag, 1);
-            $tagpages = $this->_numToID($this->tag_idx[$cleaned_tag]);
+            $tagpages = $this->topic_idx[$cleaned_tag];
             $and = ($tag{0} == '+');
             foreach ($pages as $key => $page) {
                 $cond = in_array($page['id'], $tagpages);
@@ -260,15 +254,6 @@ class helper_plugin_tag extends DokuWiki_Plugin {
         if (!is_array($tags) || empty($tags)) return false;
         $changed = false;
 
-        // get page id (this is the linenumber in page.idx)
-        $pid = array_search("$id\n", $this->page_idx);
-        if (!is_int($pid)) {
-            $this->page_idx[] = "$id\n";
-            $pid = count($this->page_idx) - 1;
-            // page was new - write back
-            $this->_saveIndex('page');
-        }
-
         // clean array first
         $c = count($tags);
         for ($i = 0; $i <= $c; $i++) {
@@ -283,11 +268,11 @@ class helper_plugin_tag extends DokuWiki_Plugin {
         foreach ($tags as $tag) {
             if (!$tag) continue;                     // skip empty tags
             if (in_array($tag, $metatags)) continue; // tag is still there
-            $this->tag_idx[$tag] = array_diff($this->tag_idx[$tag], array($pid));
+            $this->topic_idx[$tag] = array_diff($this->topic_idx[$tag], array($id));
             $changed = true;
         }
 
-        if ($changed) return $this->_saveIndex('tag');
+        if ($changed) return $this->_saveIndex();
         else return true;
     }
 
@@ -299,15 +284,6 @@ class helper_plugin_tag extends DokuWiki_Plugin {
 
         if (!is_array($tags) || empty($tags)) return false;
         $changed = false;
-
-        // get page id (this is the linenumber in page.idx)
-        $pid = array_search("$id\n", $this->page_idx);
-        if (!is_int($pid)) {
-            $this->page_idx[] = "$id\n";
-            $pid = count($this->page_idx) - 1;
-            // page was new - write back
-            $this->_saveIndex('page');
-        }
 
         // clean array first
         $c = count($tags);
@@ -323,7 +299,9 @@ class helper_plugin_tag extends DokuWiki_Plugin {
                 if (!$oldtag) continue;                 // skip empty tags
                 $oldtag = utf8_strtolower($oldtag);
                 if (in_array($oldtag, $tags)) continue; // tag is still there
-                $this->tag_idx[$oldtag] = array_diff($this->tag_idx[$oldtag], array($pid));
+                if (!is_array($this->topic_idx[$oldtag]))
+                    $this->topic_idx[$oldtag] = array();
+                $this->topic_idx[$oldtag] = array_diff($this->topic_idx[$oldtag], array($id));
                 $changed = true;
             }
         }
@@ -331,37 +309,23 @@ class helper_plugin_tag extends DokuWiki_Plugin {
         // fill tag in
         foreach ($tags as $tag) {
             if (!$tag) continue; // skip empty tags
-            if (!is_array($this->tag_idx[$tag])) $this->tag_idx[$tag] = array();
-            if (!in_array($pid, $this->tag_idx[$tag])) {
-                $this->tag_idx[$tag][] = $pid;
+            if (!is_array($this->topic_idx[$tag])) $this->topic_idx[$tag] = array();
+            if (!in_array($id, $this->topic_idx[$tag])) {
+                $this->topic_idx[$tag][] = $id;
                 $changed = true;
             }
         }
 
         // save tag index
-        if ($changed) return $this->_saveIndex('tag');
+        if ($changed) return $this->_saveIndex();
         else return true;
     }
 
     /**
      * Save tag or page index
      */
-    function _saveIndex($idx = 'tag') {
-        $fh = fopen($this->idx_dir.'/'.$idx.'.idx', 'w');
-        if (!$fh) return false;
-        if ($idx == 'page') {
-            fwrite($fh, join('', $this->page_idx));
-        } else {
-            $tag_index = array();
-            foreach ($this->tag_idx as $key => $value) {
-                $value = array_filter($value, array($this, '_notEmpty'));
-                if (!empty($value))
-                    $tag_index[] = $key.' '.join(':', $value)."\n";
-            }
-            fwrite($fh, join('', $tag_index));
-        }
-        fclose($fh);
-        return true;
+    function _saveIndex() {
+        return io_saveFile($this->idx_dir.'/topic.idx', serialize($this->topic_idx));
     }
 
     /**
@@ -370,15 +334,22 @@ class helper_plugin_tag extends DokuWiki_Plugin {
     function _importTagIndex() {
         global $conf;
 
-        $old = $conf['cachedir'].'/tag.idx';
-        $new = $conf['indexdir'].'/tag.idx';
-
+        $old = $conf['indexdir'].'/tag.idx';
+        $new = $conf['indexdir'].'/topic.idx';
+        
         if (!@file_exists($old)) return $this->_generateTagIndex();
-
-        if (@copy($old, $new)) {
-            @unlink($old);
-            return true;
+        
+        $tag_index = @file($this->idx_dir.'/tag.idx');
+        $topic_index = array();
+        
+        if (is_array($tag_index)) {
+            foreach ($tag_index as $idx_line) {
+                list($key, $value) = explode(' ', $idx_line, 2);
+                $topic_index[$key] = $this->_numToID(explode(':', trim($value)));
+            }
+            return io_saveFile($new, serialize($topic_index));
         }
+        
         return false;
     }
 
@@ -419,33 +390,34 @@ class helper_plugin_tag extends DokuWiki_Plugin {
                 $t = substr($tag, 1);
             else
                 $t = $tag;
-            if (!is_array($this->tag_idx[$t])) $this->tag_idx[$t] = array();
+            if (!is_array($this->topic_idx[$t])) $this->topic_idx[$t] = array();
 
             if ($tag{0} == '+') {       // AND: add only if in both arrays
-                $result = array_intersect($result, $this->tag_idx[$t]);
+                $result = array_intersect($result, $this->topic_idx[$t]);
             } elseif ($tag{0} == '-') { // NOT: remove array from docs
-                $result = array_diff($result, $this->tag_idx[$t]);
+                $result = array_diff($result, $this->topic_idx[$t]);
             } else {                   // OR: add array to docs
-                $result = array_unique(array_merge($result, $this->tag_idx[$t]));
+                $result = array_unique(array_merge($result, $this->topic_idx[$t]));
             }
         }
 
         // now convert to page IDs and return
-        return $this->_numToID($result);
+        return $result;
     }
 
     /**
      * Converts an array of page numbers to IDs
      */
     function _numToID($nums) {
+        $page_index = idx_getIndex('page', '');
         if (is_array($nums)) {
             $docs = array();
             foreach ($nums as $num) {
-                $docs[] = trim($this->page_idx[$num]);
+                $docs[] = trim($page_index[$num]);
             }
             return $docs;
         } else {
-            return trim($this->page_idx[$nums]);
+            return trim($page_index[$nums]);
         }
     }
 

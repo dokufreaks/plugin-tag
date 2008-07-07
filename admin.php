@@ -24,7 +24,7 @@ class admin_plugin_tag extends DokuWiki_Admin_Plugin {
         return array(
             'author' => 'Gina Häußge, Michael Klier',
             'email'  => 'dokuwiki@chimeric.de',
-            'date'   => '2008-04-14',
+            'date'   => @file_get_contents(DOKU_PLUGIN.'tag/VERSION'),
             'name'   => 'Tagindex Manager',
             'desc'   => 'Allows to rebuild the tag index',
             'url'    => 'http://wiki.splitbrain.org/plugin:tag',

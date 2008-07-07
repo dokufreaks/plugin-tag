@@ -19,7 +19,7 @@ class syntax_plugin_tag_topic extends DokuWiki_Syntax_Plugin {
         return array(
                 'author' => 'Gina Häußge, Michael Klier, Esther Brunner',
                 'email'  => 'dokuwiki@chimeric.de',
-                'date'   => '2007-08-03',
+                'date'   => @file_get_contents(DOKU_PLUGIN.'tag/VERSION'),
                 'name'   => 'Tag Plugin (topic component)',
                 'desc'   => 'Displays a list of wiki pages with a given category tag',
                 'url'    => 'http://wiki.splitbrain.org/plugin:tag',

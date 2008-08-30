@@ -20,6 +20,8 @@ require_once(DOKU_PLUGIN.'syntax.php');
 
 class syntax_plugin_tag_tag extends DokuWiki_Syntax_Plugin {
 
+    var $tags = array();
+
     function getInfo() {
         return array(
                 'author' => 'Gina Häußge, Michael Klier, Esther Brunner',
@@ -46,7 +48,8 @@ class syntax_plugin_tag_tag extends DokuWiki_Syntax_Plugin {
         if (!$tags) return false;
         if (!$my =& plugin_load('helper', 'tag')) return false;
         $tags = $my->_parseTagList($tags); // split tags
-        $my->_updateTagIndex($ID, $tags);
+        $this->tags = array_merge($this->tags, $tags);
+        $my->_updateTagIndex($ID, $this->tags);
         return $tags;
     }      
 
@@ -63,7 +66,7 @@ class syntax_plugin_tag_tag extends DokuWiki_Syntax_Plugin {
                 '</span></div>'.DOKU_LF;
             return true;
 
-            // for metadata renderer
+        // for metadata renderer
         } elseif ($mode == 'metadata') {
             if ($renderer->capture) $renderer->doc .= DOKU_LF.strip_tags($tags).DOKU_LF;
             foreach ($my->references as $ref => $exists) {

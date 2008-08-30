@@ -54,7 +54,7 @@ class helper_plugin_tag extends DokuWiki_Plugin {
                 'date'   => @file_get_contents(DOKU_PLUGIN.'tag/VERSION'),
                 'name'   => 'Tag Plugin (helper class)',
                 'desc'   => 'Functions to return tag links and topic lists',
-                'url'    => 'http://wiki.splitbrain.org/plugin:tag',
+                'url'    => 'http://www.dokuwiki.org/plugin:tag',
                 );
     }
 

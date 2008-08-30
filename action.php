@@ -22,7 +22,7 @@ class action_plugin_tag extends DokuWiki_Action_Plugin {
                 'date'   => @file_get_contents(DOKU_PLUGIN.'tag/VERSION'),
                 'name'   => 'Tag Plugin (ping component)',
                 'desc'   => 'Ping technorati when a new page is created',
-                'url'    => 'http://wiki.splitbrain.org/plugin:tag',
+                'url'    => 'http://www.dokuwiki.org/plugin:tag',
                 );
     }
 

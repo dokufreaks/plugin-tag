@@ -27,7 +27,7 @@ class admin_plugin_tag extends DokuWiki_Admin_Plugin {
             'date'   => @file_get_contents(DOKU_PLUGIN.'tag/VERSION'),
             'name'   => 'Tagindex Manager',
             'desc'   => 'Allows to rebuild the tag index',
-            'url'    => 'http://wiki.splitbrain.org/plugin:tag',
+            'url'    => 'http://www.dokuwiki.org/plugin:tag',
         );
     }
  

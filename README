@@ -2,11 +2,11 @@
 
 All documentation for the Tag Plugin is available online at:
 
-  * http://wiki.splitbrain.org/plugin:tag
+  * http://www.dokuwiki.org/plugin:tag
 
-This plugin requires DokuWiki 2007-06-26b or later and these helper plugins:
+This plugin requires DokuWiki 2008-05-05 or later and these helper plugins:
 
-  * [[http://wiki.splitbrain.org/plugin:pagelist|Pagelist Plugin]], version 1.2 recommended
+  * [[http://www.dokuwiki.org/plugin:pagelist|Pagelist Plugin]]
 
 There's a bug and feature request tracker available at:
 http://bugs.chimeric.de/index.php?project=12

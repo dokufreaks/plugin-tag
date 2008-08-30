@@ -29,7 +29,7 @@ class syntax_plugin_tag_tag extends DokuWiki_Syntax_Plugin {
                 'date'   => @file_get_contents(DOKU_PLUGIN.'tag/VERSION'),
                 'name'   => 'Tag Plugin (tag component)',
                 'desc'   => 'Displays links to categories the page belongs to',
-                'url'    => 'http://wiki.splitbrain.org/plugin:tag',
+                'url'    => 'http://www.dokuwiki.org/plugin:tag',
                 );
     }
 

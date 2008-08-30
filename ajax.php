@@ -30,9 +30,8 @@ session_write_close();
 
 header('Content-Type: text/plain; charset=utf-8');
 
-//we only work for admins!
-if (auth_quickaclcheck($conf['start']) < AUTH_ADMIN) {
-    die('access denied');
+if (!auth_isadmin()) {
+    die('for admins only');
 }
 
 //clear all index files

@@ -268,7 +268,11 @@ class helper_plugin_tag extends DokuWiki_Plugin {
         foreach ($tags as $tag) {
             if (!$tag) continue;                     // skip empty tags
             if (in_array($tag, $metatags)) continue; // tag is still there
-            $this->topic_idx[$tag] = array_diff($this->topic_idx[$tag], array($id));
+            if (is_array($this->topic_idx[$tag])) {
+                $this->topic_idx[$tag] = array_diff($this->topic_idx[$tag], array($id));
+            } else {
+                $this->topic_idx[$tag] = array($id);
+            }
             $changed = true;
         }
 

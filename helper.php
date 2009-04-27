@@ -134,7 +134,7 @@ class helper_plugin_tag extends DokuWiki_Plugin {
                 }
             } else {
                 $class = 'wikilink1';
-                $url   = wl($tag, array('do'=>'showtag', 'tag'=>noNS($tag)));
+                $url   = wl($tag, array('do'=>'showtag', 'tag'=>$tag));
             }
             $links[] = '<a href="'.$url.'" class="'.$class.'" title="'.hsc($tag).
                 '" rel="tag">'.hsc($title).'</a>';

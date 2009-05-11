@@ -449,8 +449,11 @@ class helper_plugin_tag extends DokuWiki_Plugin {
         global $INFO, $auth;
 
         $user     = $_SERVER['REMOTE_USER'];
-        $userdata = $auth->getUserData($user);
-        $group    = $userdata['grps'][0];
+        // .htaccess auth doesn't provide the auth object
+        if($auth) {
+            $userdata = $auth->getUserData($user);
+            $group    = $userdata['grps'][0];
+        }
 
         $replace = array( 
                 '@USER@'  => cleanID($user), 

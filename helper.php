@@ -122,6 +122,7 @@ class helper_plugin_tag extends DokuWiki_Plugin {
         if (empty($tags) || ($tags[0] == '')) return '';
 
         foreach ($tags as $tag) {
+            $svtag = $tag;
             $title = str_replace('_', ' ', noNS($tag));
             resolve_pageid($this->namespace, $tag, $exists); // resolve shortcuts
             if ($exists) {
@@ -134,7 +135,7 @@ class helper_plugin_tag extends DokuWiki_Plugin {
                 }
             } else {
                 $class = 'wikilink1';
-                $url   = wl($tag, array('do'=>'showtag', 'tag'=>$tag));
+                $url   = wl($tag, array('do'=>'showtag', 'tag'=>$svtag));
             }
             $links[] = '<a href="'.$url.'" class="'.$class.'" title="'.hsc($tag).
                 '" rel="tag">'.hsc($title).'</a>';

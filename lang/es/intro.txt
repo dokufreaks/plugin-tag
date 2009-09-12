@@ -1,0 +1,14 @@
+====== Gestor del índice de etiquetas (TagIndex Manager) ======
+
+Esta página te permite reconstruir el índice usado por el [[http://wiki.splitbrain.org/plugin:tag|Tag Plugin]].
+Generalmente esto no es necesario, ya que el índice se construye y actualiza automáticamente mientras
+ etiquetas  tus páginas. Sin embargo, si acabas de actualizar, añadir o eliminar muchos archivos,
+puede ser una buena idea limpiar el índice.
+
+Este Gestor necesita un navegador reciente ya que usa JavaScript modernos
+para llevar a cabo múltiples tareas en segundo plano (usando [[wp>AJAX]]).
+
+Reconstruir el índice lleva mucho tiempo. Debes dejar la página abierta
+hasta que haya finalizado el indexado.
+
+:!: Se recomienda hacer una copia de seguridad de ''data/index/tag.idx'' por si algo fuera mal durante el proceso de reconstrucción. :!:

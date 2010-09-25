@@ -15,10 +15,10 @@ function plugin_tagindex_class(){
     this.done = 1;
     this.count = 0;
 }
-var pl_si = new plugin_tagindex_class();
-pl_si.sack = new sack(DOKU_BASE + 'lib/plugins/tag/ajax.php');
-pl_si.sack.AjaxFailedAlert = '';
-pl_si.sack.encodeURIString = false;
+var plugin_tag = new plugin_tagindex_class();
+plugin_tag.sack = new sack(DOKU_BASE + 'lib/plugins/tag/ajax.php');
+plugin_tag.sack.AjaxFailedAlert = '';
+plugin_tag.sack.encodeURIString = false;
 
 /**
  * Display the loading gif
@@ -60,11 +60,11 @@ function plugin_tagindex_cb_clear(){
  */
 function plugin_tagindex_cb_pages(){
     data = this.response;
-    pl_si.pages = data.split("\n");
-    pl_si.count = pl_si.pages.length;
-    plugin_tagindex_status(pl_si.pages.length+" pages found");
+    plugin_tag.pages = data.split("\n");
+    plugin_tag.count = plugin_tag.pages.length;
+    plugin_tagindex_status(plugin_tag.pages.length+" pages found");
 
-    pl_si.page = pl_si.pages.shift();
+    plugin_tag.page = plugin_tag.pages.shift();
     window.setTimeout("plugin_tagindex_clear()",1000);
 }
 
@@ -76,8 +76,8 @@ function plugin_tagindex_cb_pages(){
 function plugin_tagindex_cb_index(){
     ok = this.response;
     if(ok == 1){
-        pl_si.page = pl_si.pages.shift();
-        pl_si.done++;
+        plugin_tag.page = plugin_tag.pages.shift();
+        plugin_tag.done++;
         // get next one
         window.setTimeout("plugin_tagindex_index()",1000);
     }else{
@@ -91,11 +91,11 @@ function plugin_tagindex_cb_index(){
  * Starts the indexing of a page.
  */
 function plugin_tagindex_index(){
-    if(pl_si.page){
-        plugin_tagindex_status('indexing<br />'+pl_si.page+'<br />('+pl_si.done+'/'+pl_si.count+')<br />');
-        pl_si.sack.onCompletion = plugin_tagindex_cb_index;
-        pl_si.sack.URLString = '';
-        pl_si.sack.runAJAX('call=indexpage&page='+encodeURI(pl_si.page));
+    if(plugin_tag.page){
+        plugin_tagindex_status('indexing<br />'+plugin_tag.page+'<br />('+plugin_tag.done+'/'+plugin_tag.count+')<br />');
+        plugin_tag.sack.onCompletion = plugin_tagindex_cb_index;
+        plugin_tag.sack.URLString = '';
+        plugin_tag.sack.runAJAX('call=indexpage&page='+encodeURI(plugin_tag.page));
     }else{
         plugin_tagindex_status('finished');
         plugin_tagindex_throbber(false);
@@ -107,9 +107,9 @@ function plugin_tagindex_index(){
  */
 function plugin_tagindex_clear(){
     plugin_tagindex_status('clearing index...');
-    pl_si.sack.onCompletion = plugin_tagindex_cb_clear;
-    pl_si.sack.URLString = '';
-    pl_si.sack.runAJAX('call=clearindex');
+    plugin_tag.sack.onCompletion = plugin_tagindex_cb_clear;
+    plugin_tag.sack.URLString = '';
+    plugin_tag.sack.runAJAX('call=clearindex');
 }
 
 /**
@@ -120,9 +120,9 @@ function plugin_tagindex_go(){
     plugin_tagindex_throbber(true);
 
     plugin_tagindex_status('Finding all pages');
-    pl_si.sack.onCompletion = plugin_tagindex_cb_pages;
-    pl_si.sack.URLString = '';
-    pl_si.sack.runAJAX('call=pagelist');
+    plugin_tag.sack.onCompletion = plugin_tagindex_cb_pages;
+    plugin_tag.sack.URLString = '';
+    plugin_tag.sack.runAJAX('call=pagelist');
 }
 
 //Setup VIM: ex: et ts=4 enc=utf-8 :

@@ -1,0 +1,7 @@
+base   tag
+author Gina Häussge, Christopher Smith, Michael Klier, Esther Brunner
+email  dokuwiki@chimeric.de
+date   2010-11-12
+name   tag plugin
+desc   tag wiki pages
+url    http://dokuwiki.org/plugin:tag

@@ -53,7 +53,7 @@ class admin_plugin_tag extends DokuWiki_Admin_Plugin {
         print '<fieldset class="pl_si_out">';
         
         print '<button class="button" id="pl_si_gobtn" onclick="plugin_tagindex_go()">';
-        print 'Rebuild Tagindex'; #FIXME localize
+        print $this->getLang('rebuildindex');
         print '</button>';
         print '<div id="pl_si_out"></div>';
         print '<img src="'.DOKU_BASE.'lib/images/loading.gif" id="pl_si_throbber" style="visibility: hidden" />';

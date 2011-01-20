@@ -9,6 +9,7 @@
 // custom language strings for the plugin
 $lang['tags']  = 'Tags';
 $lang['topic'] = 'Topic';
+$lang['rebuildindex'] = 'Rebuild Tagindex';
 
 $lang['missing_pagelistplugin'] = 'The Pagelist Plugin must be installed for topic lists.';
 

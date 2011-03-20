@@ -13,5 +13,6 @@ $meta['sortkey']        = array('multichoice',
 $meta['sortorder']      = array('multichoice',
                           '_choices' => array('ascending', 'descending'));
 $meta['pagelist_flags'] = array('string');
+$meta['toolbar_icon']   = array('onoff');
 
-//Setup VIM: ex: et ts=2 enc=utf-8 :
+//Setup VIM: ex: et ts=2 :

@@ -9,6 +9,7 @@
 // for the configuration manager
 $lang['namespace']      = 'Standard-Namensraum für Tags';
 $lang['pingtechnorati'] = 'Technorati anpingen';
+$lang['toolbar_icon']   = 'Toolbar-Symbol anzeigen (data/cache/* und den Browser-Cache löschen, wenn das Symbol nicht angezeigt wird)';
 
 $lang['sortkey']                = 'Themenlisten sortieren nach:';
 $lang['sortkey_o_cdate']        = 'Erstellungsdatum';

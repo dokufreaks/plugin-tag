@@ -19,7 +19,7 @@ class action_plugin_tag extends DokuWiki_Action_Plugin {
         return array(
                 'author' => 'Gina Häußge, Michael Klier, Esther Brunner',
                 'email'  => 'dokuwiki@chimeric.de',
-                'date'   => '2010-11-12',
+                'date'   => '2011-03-20',
                 'name'   => 'Tag Plugin (ping component)',
                 'desc'   => 'Ping technorati when a new page is created',
                 'url'    => 'http://www.dokuwiki.org/plugin:tag',
@@ -33,6 +33,7 @@ class action_plugin_tag extends DokuWiki_Action_Plugin {
         $contr->register_hook('IO_WIKIPAGE_WRITE', 'BEFORE', $this, 'ping', array());
         $contr->register_hook('ACTION_ACT_PREPROCESS', 'BEFORE', $this, '_handle_act', array());
         $contr->register_hook('TPL_ACT_UNKNOWN', 'BEFORE', $this, '_handle_tpl_act', array());
+        if($this->getConf('toolbar_icon'))	$contr->register_hook('TOOLBAR_DEFINE', 'AFTER', $this, 'insert_toolbar_button', array ());
     }
 
     /**
@@ -114,5 +115,19 @@ class action_plugin_tag extends DokuWiki_Action_Plugin {
             print '<div class="level1"><p>' . $lang['nothingfound'] . '</p></div>';
         }
     }
+    
+	/**
+	 * Inserts the tag toolbar button
+	 */
+	function insert_toolbar_button(&$event, $param) {
+	    $event->data[] = array (
+	        'type' => 'format',
+	        'title' => $this->getLang('toolbar_icon'),
+	        'icon' => '../../plugins/tag/images/tag-toolbar.png',
+	        'open' => '{{tag>',
+	    	'close' => '}}'
+	    );
+	}
 }
-// vim:ts=4:sw=4:et:enc=utf-8:
+
+// vim:ts=4:sw=4:et:

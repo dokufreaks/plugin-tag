@@ -10,7 +10,8 @@
 $lang['tags']  = 'Tags';
 $lang['topic'] = 'Thema';
 $lang['rebuildindex'] = 'Tagindex neu aufbauen';
+$lang['toolbar_icon'] = 'Tag-Syntax einfügen';
 
 $lang['missing_pagelistplugin'] = 'Ohne Pagelist Plugin können Themenlisten nicht angezeigt werden.';
 
-//Setup VIM: ex: et ts=2 enc=utf-8 :
+//Setup VIM: ex: et ts=2 :

@@ -71,9 +71,12 @@ class syntax_plugin_tag_topic extends DokuWiki_Syntax_Plugin {
                 msg($this->getLang('missing_pagelistplugin'), -1);
                 return false;
             }
-            
-            $configflags = explode(',', trim($this->getConf('pagelist_flags')));
-            if($configflags[0] != "")	$flags = $configflags;	
+
+            $configflags = explode(',', str_replace(" ", "", $this->getConf('pagelist_flags')));
+           	$flags = array_merge($flags, $configflags);	
+           	foreach($flags as $key => $flag) {
+           		if($flag == "")	unset($flags[$key]);
+           	}     
             
             $pagelist->setFlags($flags);
             $pagelist->startList();

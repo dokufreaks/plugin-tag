@@ -85,7 +85,7 @@ class action_plugin_tag extends DokuWiki_Action_Plugin {
         $event->preventDefault();
 
         $tagns = $this->getConf('namespace');
-        $flags = explode(',', trim($this->getConf('pagelist_flags')));
+        $flags = explode(',', str_replace(" ", "", $this->getConf('pagelist_flags')));
 
         $tag   = trim(str_replace($this->getConf('namespace').':', '', $_REQUEST['tag']));
         $ns    = trim($_REQUEST['ns']);

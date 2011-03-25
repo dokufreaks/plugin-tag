@@ -73,11 +73,11 @@ class syntax_plugin_tag_topic extends DokuWiki_Syntax_Plugin {
             }
 
             $configflags = explode(',', str_replace(" ", "", $this->getConf('pagelist_flags')));
-           	$flags = array_merge($flags, $configflags);	
+           	$flags = array_merge($configflags, $flags);	
            	foreach($flags as $key => $flag) {
            		if($flag == "")	unset($flags[$key]);
            	}     
-            
+
             $pagelist->setFlags($flags);
             $pagelist->startList();
             foreach ($pages as $page) {

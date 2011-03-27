@@ -241,6 +241,23 @@ class helper_plugin_tag extends DokuWiki_Plugin {
             }
         }
         return $pages;
+   }
+   
+   /**
+    * Get count of occurences for a list of tags
+    * @params tags array of tags 
+    */
+   function tagOccurences($tags) {
+        $otags = array();
+        
+        if($tags[0] == '+') $tags = array_keys($this->topic_idx);    // all tags should be displayed
+        
+        foreach($tags as $key => $tag) {
+            $count = count($this->topic_idx[$tag]);
+            $otags[$tag] = $count; 
+        }
+        
+        return $otags;
     }
 
     /**
@@ -497,4 +514,4 @@ class helper_plugin_tag extends DokuWiki_Plugin {
     }
 
 }
-// vim:ts=4:sw=4:et:enc=utf-8:  
+// vim:ts=4:sw=4:et:  

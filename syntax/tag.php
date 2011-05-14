@@ -46,6 +46,8 @@ class syntax_plugin_tag_tag extends DokuWiki_Syntax_Plugin {
         global $REV;
 
         $tags = trim(substr($match, 6, -2));     // strip markup & whitespace
+        $tags = preg_replace(array('/[[:blank:]]+/', '/\s+/'), " ", $tags);    // replace linebreaks and multiple spaces with one space character
+
         if (!$tags) return false;
         if (!$my =& plugin_load('helper', 'tag')) return false;
         $tags = $my->_parseTagList($tags); // split tags

@@ -73,6 +73,7 @@ class syntax_plugin_tag_count extends DokuWiki_Syntax_Plugin {
             $renderer->doc .= DOKU_LF.DOKU_TAB.'</tr>'.DOKU_LF;
             
             foreach($data as $key => $tag) {
+                if($tag <= 0) continue;
                 $renderer->doc .= DOKU_TAB.'<tr>'.DOKU_LF.DOKU_TAB.DOKU_TAB;
                 $renderer->doc .= DOKU_TAB.DOKU_TAB.'<td class="'.$class.'">'.$tl[$key].'</td>'.DOKU_LF;
                 $renderer->doc .= DOKU_TAB.DOKU_TAB.'<td class="'.$class.'">'.$tag.'</td>'.DOKU_LF;

@@ -43,13 +43,46 @@ class syntax_plugin_tag_count extends DokuWiki_Syntax_Plugin {
 
     function handle($match, $state, $pos, &$handler) {
         
-        $tags = trim(substr($match, 8, -2));     // get given tags
+        $dump = trim(substr($match, 8, -2));     // get given tags
+        $dump = explode('&', $dump);             // split to tags and allowed namespaces 
+        $tags = $dump[0];
+        $allowedNamespaces = explode(' ', $dump[1]); // split given namespaces into an array
+        
         if (!$tags) return false;
         
         if(!($my = plugin_load('helper', 'tag'))) return false;
         $tags = $my->_parseTagList($tags);
         
+        // get tags and their related occurences 
         $occurences = $my->tagOccurences($tags);
+
+        // no tags given, list all tags for allowed namespaces
+        if($tags[0] == '+') {
+            $pages = array();
+            $listedTag = implode(' ', array_keys($occurences)); // getTopic() needs tags seperated by spaces
+
+            foreach($allowedNamespaces as $ns) {
+                $tmppages = $my->getTopic($ns, '', $listedTag);
+                array_push($pages, $tmppages);                // holds the pages in allowed namespaces
+            }
+            
+            $tags = array();    // remove old tags
+            
+            // discover tags of the stored pages
+            foreach($pages as $entry) { 
+                foreach($entry as $page => $details) {
+                    $tmptags = p_get_metadata($details['id'], 'subject', METADATA_DONT_RENDER);
+                    foreach($tmptags as $singletag) {    // store tags on first level inside the array
+                        array_push($tags, $singletag);
+                    }
+                }
+            }
+            $tags = array_unique($tags);    // remove tag duplicates
+            
+            $occurences = $my->tagOccurences($tags, $allowedNamespaces);
+        } else {
+            $occurences = $my->tagOccurences($tags, $allowedNamespaces);
+        }
         
         return $occurences;
     }      

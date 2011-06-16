@@ -302,10 +302,10 @@ class helper_plugin_tag extends DokuWiki_Plugin {
                     if($pages != null) {
                         foreach($pages as $key => $page) {
                                 // check if the namespace of the current page is in a given namespace
-                                if(getNS($page) != false && !in_array(getNS($page), $ns)) { msg("namespace check " . $page); $deleteID = true; }
+                                if(getNS($page) != false && !in_array(getNS($page), $ns)) $deleteID = true;
                                 
                                 // condition for root namespace
-                                if(getNS($page) == false && in_array('.', $ns)) { msg("root namespace check: " . $page); $deleteID = false; }
+                                if(getNS($page) == false && in_array('.', $ns)) $deleteID = false;
                                 
                                 // remove the page in the array
                                 if($deleteID) unset($pages[$key]);

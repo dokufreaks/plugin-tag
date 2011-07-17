@@ -33,6 +33,7 @@ class action_plugin_tag extends DokuWiki_Action_Plugin {
         $contr->register_hook('IO_WIKIPAGE_WRITE', 'BEFORE', $this, 'ping', array());
         $contr->register_hook('ACTION_ACT_PREPROCESS', 'BEFORE', $this, '_handle_act', array());
         $contr->register_hook('TPL_ACT_UNKNOWN', 'BEFORE', $this, '_handle_tpl_act', array());
+        $contr->register_hook('TPL_METAHEADER_OUTPUT', 'BEFORE', $this, '_handle_keywords', array());
         if($this->getConf('toolbar_icon'))	$contr->register_hook('TOOLBAR_DEFINE', 'AFTER', $this, 'insert_toolbar_button', array ());
     }
 
@@ -127,6 +128,24 @@ class action_plugin_tag extends DokuWiki_Action_Plugin {
 	        'open' => '{{tag>',
 	    	'close' => '}}'
 	    );
+	}
+	
+	/**
+	 * Prevent displaying underscores instead of blanks inside the page keywords
+	 */
+	function _handle_keywords(&$data) {
+	    global $ID;
+
+	    // Fetch tags for the page; stop proceeding when no tags specified
+	    $tags = p_get_metadata($ID, 'subject', METADATA_DONT_RENDER);
+	    if(is_null($tags)) true;
+
+	    // Replace underscores with blanks
+	    foreach($data->data['meta'] as &$meta) {
+	        if($meta['name'] == 'keywords') {
+	            $meta['content'] = str_replace('_', ' ', $meta['content']);
+	        }
+	    }	    
 	}
 }
 

@@ -48,6 +48,11 @@ class syntax_plugin_tag_count extends DokuWiki_Syntax_Plugin {
         $tags = $dump[0];
         $allowedNamespaces = explode(' ', $dump[1]); // split given namespaces into an array
         
+        if($allowedNamespaces && $allowedNamespaces[0] == '') {
+            unset($allowedNamespaces[0]);    // When exists, remove leading space after the delimiter
+            $allowedNamespaces = array_values(($allowedNamespaces));                
+        }
+        
         if (!$tags) return false;
         
         if(!($my = plugin_load('helper', 'tag'))) return false;
@@ -105,12 +110,23 @@ class syntax_plugin_tag_count extends DokuWiki_Syntax_Plugin {
             $renderer->doc .= '<th class="'.$col.'">#</th>';
             $renderer->doc .= DOKU_LF.DOKU_TAB.'</tr>'.DOKU_LF;
             
-            foreach($data as $key => $tag) {
-                if($tag <= 0) continue;
+            // skip output, if the individual occurences of the tags is zero
+            // if the amount of tags with count == 0 is equal to the overall count of tags then skip output
+            $countTags = array_keys($data, 0);
+            
+            if(sizeof($countTags) == sizeof($data)) {
+                // Skip output
                 $renderer->doc .= DOKU_TAB.'<tr>'.DOKU_LF.DOKU_TAB.DOKU_TAB;
-                $renderer->doc .= DOKU_TAB.DOKU_TAB.'<td class="'.$class.'">'.$tl[$key].'</td>'.DOKU_LF;
-                $renderer->doc .= DOKU_TAB.DOKU_TAB.'<td class="'.$class.'">'.$tag.'</td>'.DOKU_LF;
+                $renderer->doc .= DOKU_TAB.DOKU_TAB.'<td class="'.$class.'" colspan="2">'.$this->getLang('empty_output').'</td>'.DOKU_LF;
                 $renderer->doc .= DOKU_LF.DOKU_TAB.'</tr>'.DOKU_LF;
+            } else {
+                foreach($data as $key => $tag) {
+                    if($tag <= 0) continue; // don't display tags with zero occurences
+                    $renderer->doc .= DOKU_TAB.'<tr>'.DOKU_LF.DOKU_TAB.DOKU_TAB;
+                    $renderer->doc .= DOKU_TAB.DOKU_TAB.'<td class="'.$class.'">'.$tl[$key].'</td>'.DOKU_LF;
+                    $renderer->doc .= DOKU_TAB.DOKU_TAB.'<td class="'.$class.'">'.$tag.'</td>'.DOKU_LF;
+                    $renderer->doc .= DOKU_LF.DOKU_TAB.'</tr>'.DOKU_LF;
+                }
             }
             $renderer->doc .= '</table>'.DOKU_LF;
         }

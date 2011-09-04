@@ -24,4 +24,6 @@ $lang['sortorder_o_descending'] = 'absteigend';
 
 $lang['pagelist_flags'] = 'Formatieroptionen für die Tagliste (kommasepariert, für eine Liste der verfügbaren Optionen siehe die Dokumentation des Pagelist Plugins)';
 
+$lang['list_tags_of_subns'] = 'Tags anzeigen, die in Subnamespaces von angegebeben Namespaces liegen (count syntax)';
+
 //Setup VIM: ex: et ts=2 enc=utf-8 :

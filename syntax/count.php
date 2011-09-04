@@ -50,15 +50,16 @@ class syntax_plugin_tag_count extends DokuWiki_Syntax_Plugin {
         
         if($allowedNamespaces && $allowedNamespaces[0] == '') {
             unset($allowedNamespaces[0]);    // When exists, remove leading space after the delimiter
-            $allowedNamespaces = array_values(($allowedNamespaces));                
+            $allowedNamespaces = array_values($allowedNamespaces);                
         }
         
         if (!$tags) return false;
-        
+
         if(!($my = plugin_load('helper', 'tag'))) return false;
         $tags = $my->_parseTagList($tags);
         
-        // get tags and their related occurences 
+        // get tags and their related occurences
+        // we need all tags to discover the related pages and namespaces
         $occurences = $my->tagOccurences($tags);
 
         // no tags given, list all tags for allowed namespaces
@@ -68,7 +69,7 @@ class syntax_plugin_tag_count extends DokuWiki_Syntax_Plugin {
 
             foreach($allowedNamespaces as $ns) {
                 $tmppages = $my->getTopic($ns, '', $listedTag);
-                array_push($pages, $tmppages);                // holds the pages in allowed namespaces
+                array_push($pages, $tmppages);                // holds all pages in allowed namespaces
             }
             
             $tags = array();    // remove old tags
@@ -83,8 +84,8 @@ class syntax_plugin_tag_count extends DokuWiki_Syntax_Plugin {
                 }
             }
             $tags = array_unique($tags);    // remove tag duplicates
-            
-            $occurences = $my->tagOccurences($tags, $allowedNamespaces);
+
+            $occurences = $my->tagOccurences($tags, $allowedNamespaces, true);
         } else {
             $occurences = $my->tagOccurences($tags, $allowedNamespaces);
         }
@@ -97,7 +98,8 @@ class syntax_plugin_tag_count extends DokuWiki_Syntax_Plugin {
         $taglinks = $my->tagLinks(array_keys($data));
         $taglinks = explode(',', $taglinks);
         
-        $tl = array_combine(array_keys($data), $taglinks);
+        // Prevent displaying a warning when result is empty
+        $tl = @array_combine(array_keys($data), $taglinks);
         
         // $data -> tag as key; value as count of tag occurence
         $class = "inline"; // valid: inline, ul, pagelist

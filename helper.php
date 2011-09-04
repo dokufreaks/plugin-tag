@@ -253,43 +253,74 @@ class helper_plugin_tag extends DokuWiki_Plugin {
     * Get count of occurences for a list of tags
     * @params tags array of tags 
     * @params ns array of namespaces where to count the tags
+    * @params allTags boolean if all available tags should be counted
     */
-   function tagOccurences($tags, $ns = NULL) {
+   function tagOccurences($tags, $ns = NULL, $allTags = false) {
         $otags = array();
         
-        if($tags[0] == '+') $tags = array_keys($this->topic_idx);    // all tags should be displayed
+        if($allTags) {
+            $tags = array_keys($this->topic_idx);    // all tags should be displayed
+        }
 
         // kick out unwanted pages
         if($ns && $ns[0] != '') {
 
             $tmptags = $this->topic_idx;
-            
-            if($tags[0] == '+') {
+
+            if($allTags) { // count occurences of all tags
                 foreach($tmptags as $tagname => $pages) {
-                    $inNS = false;
-                    $deleteID = false;
-                    
+
                     foreach ($pages as $key => $page) {
-                        // check if the page is in the allowed namespaces
-                        if(in_array(getNS($page), $ns)) $inNS = true;
+                        $inNS = false;
+                        $deleteID = false;
+
+                        // display tags also if the page is inside a subnamespace of a specified namespace
+                        if($this->getConf('list_tags_of_subns')) {
+                            foreach($ns as $value) {
+                                if((getNS($page) != false) && strpos(getNS($page), $value) !== false ) {
+                                    $inNS = true;
+                                }
+                            }    
+                        } else {
+                            // discard tags inside subnamespaces of valid namespaces
+                            // check if the page is in the allowed namespaces
+                            if(in_array(getNS($page), $ns)) { 
+                                $inNS = true;
+                            }
+                        }
                         
                         // root namespace is specified with a dot
-                        if(getNS($page) == false && in_array('.', $ns)) $inNS = true;
+                        if(getNS($page) == false && in_array('.', $ns)) {
+                            $inNS = true;   
+                        }
+
+                        if($conf['debug']) {
+                            var_dump("Tagname: ". $tagname);
+                            var_dump("Pagename: " . $page);
+                            var_dump("Within valid namespace: " . $inNS);
+                        }
+                                              
+                        // delete the pages inside the output array which aren't in the specified namespaces
+                        if($this->getConf('list_tags_of_subns')) {
+                            foreach($ns as $value) {
+                                $deleteID = true;
+                                if((getNS($page) != false) && strpos(getNS($page), $value) !== false ) {
+                                    $deleteID = false;
+                                }
+                            }    
+                        } else {
+                            if(!in_array(getNS($page), $ns)) $deleteID = true;
+                        }
                         
-                        // if set to false, the page is outside allowed namespaces; delete the page
-                        if(!$inNS) unset($tmptags[$tagname]);
-                        
-                        // delete the pages in topic_idx which aren't in the specified namespaces
-                        if(!in_array(getNS($page), $ns)) $deleteID = true;
                         // condition for root namespace
                         if(getNS($page) == false && in_array('.', $ns)) $deleteID = false;
                         
                         if($deleteID) unset($tmptags[$tagname][$key]);
                     }
                 }
-                $tags = array_keys($tmptags);
+                $tagsnew = $tmptags;
                 
-            } else { // if($tags[0] == '+')
+            } else { // if($allTags == true)
                 // show only specified tags
                 
                 // when only a few tags are given
@@ -320,9 +351,12 @@ class helper_plugin_tag extends DokuWiki_Plugin {
 
             $otags = array();         
             // count the filtered tags
-            foreach($tagsnew as $tagname => $pages) {
-                $count = count($tagsnew[$tagname]);
-                $otags[$tagname] = $count; 
+            // $tagsnew: tags are stored as keys
+            if(!empty($tagsnew)) {
+                foreach($tagsnew as $tagname => $pages) {
+                    $count = count($tagsnew[$tagname]);
+                    $otags[$tagname] = $count; 
+                }
             }
         } else { // if($ns && $ns[0] != '')
             // no namespaces are specified

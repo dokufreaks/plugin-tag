@@ -296,16 +296,17 @@ class helper_plugin_tag extends DokuWiki_Plugin {
                 foreach($tags as $index => $tagname) {
                     // get pages for $tagname
                     $pages = $this->topic_idx[$tagname];
-                    $deleteID = false;
                     
                     // $pages is null when non-existing tags are specified 
                     if($pages != null) {
                         foreach($pages as $key => $page) {
+                                $deleteID = false;
+                                
                                 // check if the namespace of the current page is in a given namespace
                                 if(getNS($page) != false && !in_array(getNS($page), $ns)) $deleteID = true;
                                 
-                                // condition for root namespace
-                                if(getNS($page) == false && in_array('.', $ns)) $deleteID = false;
+                                // condition for root namespace 
+                                if(getNS($page) == false && !in_array('.', $ns)) $deleteID = true;
                                 
                                 // remove the page in the array
                                 if($deleteID) unset($pages[$key]);

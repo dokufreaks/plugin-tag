@@ -87,12 +87,12 @@ class syntax_plugin_tag_topic extends DokuWiki_Syntax_Plugin {
             return true;
 
         // for metadata renderer
-        } elseif ($mode == 'metadata') {
+/*        } elseif ($mode == 'metadata') {
             foreach ($pages as $page) {
                 $renderer->meta['relation']['references'][$page['id']] = true;
             }
 
-            return true;
+            return true;*/ // causes issues with backlinks
         }
         return false;
     }

@@ -122,27 +122,35 @@ class helper_plugin_tag extends DokuWiki_Plugin {
         if (empty($tags) || ($tags[0] == '')) return '';
 
         foreach ($tags as $tag) {
-            $svtag = $tag;
-            $title = str_replace('_', ' ', noNS($tag));
-            resolve_pageid($this->namespace, $tag, $exists); // resolve shortcuts
-            if ($exists) {
-                $class = 'wikilink1';
-                $url   = wl($tag);
-                if ($conf['useheading']) {
-                    // important: set sendond param to false to prevent recursion!
-                    $heading = p_get_first_heading($tag, false);
-                    if ($heading) $title = $heading;
-                }
-            } else {
-                $class = 'wikilink1';
-                $url   = wl($tag, array('do'=>'showtag', 'tag'=>$svtag));
-            }
-            $links[] = '<a href="'.$url.'" class="'.$class.'" title="'.hsc($tag).
-                '" rel="tag">'.hsc($title).'</a>';
-            $this->references[$tag] = $exists;
+            $links[] = $this->tagLink($tag);
         }
 
         return implode(','.DOKU_LF.DOKU_TAB, $links);
+    }
+
+    /**
+     * Returns the link for one given tag
+     */
+    function tagLink($tag) {
+        $svtag = $tag;
+        $title = str_replace('_', ' ', noNS($tag));
+        resolve_pageid($this->namespace, $tag, $exists); // resolve shortcuts
+        if ($exists) {
+            $class = 'wikilink1';
+            $url   = wl($tag);
+            if ($conf['useheading']) {
+                // important: set sendond param to false to prevent recursion!
+                $heading = p_get_first_heading($tag, false);
+                if ($heading) $title = $heading;
+            }
+        } else {
+            $class = 'wikilink1';
+            $url   = wl($tag, array('do'=>'showtag', 'tag'=>$svtag));
+        }
+        $link = '<a href="'.$url.'" class="'.$class.'" title="'.hsc($tag).
+            '" rel="tag">'.hsc($title).'</a>';
+        $this->references[$tag] = $exists;
+        return $link;
     }
 
     /**
@@ -413,7 +421,10 @@ class helper_plugin_tag extends DokuWiki_Plugin {
     function _updateTagIndex($id, $tags) {
         global $ID, $INFO;
 
+        // if nothing to do
         if (!is_array($tags) || empty($tags)) return false;
+        
+        // track changes
         $changed = false;
 
         // clean array first
@@ -422,31 +433,42 @@ class helper_plugin_tag extends DokuWiki_Plugin {
             $tags[$i] = utf8_strtolower($tags[$i]);
         }
 
-        // clear no longer used tags
-        if ($ID == $id) {
-            $oldtags = $INFO['meta']['subject'];
-            if (!is_array($oldtags)) $oldtags = explode(' ', $oldtags);
-            foreach ($oldtags as $oldtag) {
-                if (!$oldtag) continue;                 // skip empty tags
-                $oldtag = utf8_strtolower($oldtag);
-                if (in_array($oldtag, $tags)) continue; // tag is still there
-                if (!is_array($this->topic_idx[$oldtag]))
-                    $this->topic_idx[$oldtag] = array();
-                $this->topic_idx[$oldtag] = array_diff($this->topic_idx[$oldtag], array($id));
+        $knowntags = array(); // track known tags
+        // clear all no more used tags
+        foreach($this->topic_idx as $tag => $pages) {
+            if (!is_array($pages)) {
+                // clear unvalid type topic
+                unset($this->topic_idx[$tag]);
                 $changed = true;
-            }
-        }
-
-        // fill tag in
-        foreach ($tags as $tag) {
-            if (!$tag) continue; // skip empty tags
-            if (!is_array($this->topic_idx[$tag])) $this->topic_idx[$tag] = array();
-            if (!in_array($id, $this->topic_idx[$tag])) {
+            } elseif (in_array($id, $pages)) {
+                if(in_array($tag, $tags)) $knowntags[] = $tag; // nothing to do
+                else {
+                    // tag deleted from the page
+                    $this->topic_idx[$tag] = array_diff($this->topic_idx[$tag], array($id));
+                    $changed = true;
+                }
+            } elseif (in_array($tag, $tags)) {
+                // tag added to the page
                 $this->topic_idx[$tag][] = $id;
+                $knowntags[] = $tag;
+                $changed = true;
+            }
+            // clean empty topic
+            if (count($this->topic_idx[$tag]) == 0 || (!$tag)) {
+                unset($this->topic_idx[$tag]);
                 $changed = true;
             }
         }
 
+        // only new topics to add now
+        $newtopics = array_diff($tags, $knowntags);
+        if (count($newtopics) != 0 ) {
+            foreach($newtopics as $tag) {
+                if (!tag) continue; //skip empty tags
+                $this->topic_idx[$tag] = array($id);
+                $changed = true;
+            }
+        }
         // save tag index
         if ($changed) return $this->_saveIndex();
         else return true;
@@ -485,19 +507,24 @@ class helper_plugin_tag extends DokuWiki_Plugin {
     }
 
     /**
-     * Generates the tag index
+     * Generates the tag index if file missing
      */
     function _generateTagIndex() {
         global $conf;
 
         require_once (DOKU_INC.'inc/search.php');
-
+        $topic_index = array();
         $pages = array();
         search($pages, $conf['datadir'], 'search_allpages', array());
         foreach ($pages as $page) {
-            $this->_generateTagData($page);
+            $tags = p_get_metadata($page['id'], 'subject');
+            if (!is_array($tags)) $tags = explode(' ', $tags);
+            foreach($tags as $tag) {
+                if (!$tag) continue; // drop empty tags
+                $topic_index[utf8_strtolower($tag)][] = $page['id'];
+            }
         }
-        return true;
+        return io_saveFile($this->idx_dir.'/topic.idx', serialize($topic_index));
     }
 
     /**

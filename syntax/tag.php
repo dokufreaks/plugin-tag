@@ -42,29 +42,29 @@ class syntax_plugin_tag_tag extends DokuWiki_Syntax_Plugin {
     }
 
     function handle($match, $state, $pos, &$handler) {
-        global $ID;
-        global $REV;
-
         $tags = trim(substr($match, 6, -2));     // strip markup & whitespace
         $tags = preg_replace(array('/[[:blank:]]+/', '/\s+/'), " ", $tags);    // replace linebreaks and multiple spaces with one space character
 
         if (!$tags) return false;
+        
+        // load the helper_plugin_tag
         if (!$my =& plugin_load('helper', 'tag')) return false;
-        $tags = $my->_parseTagList($tags); // split tags
-        $this->tags = array_merge($this->tags, $tags);
-        // disable update of tags when viewing old page revisions
-        if($ACT != 'preview' && !$REV) $my->_updateTagIndex($ID, $this->tags);
-        return $tags;
+        
+        // split tags and returns for renderer
+        return $my->_parseTagList($tags);
     }      
 
     function render($mode, &$renderer, $data) {
+        global $ID;
+        global $REV;
+
         if ($data === false) return false;
         if (!$my =& plugin_load('helper', 'tag')) return false;
-        $tags = $my->tagLinks($data);
-        if (!$tags) return true;
 
         // XHTML output
         if ($mode == 'xhtml') {
+            $tags = $my->tagLinks($data);
+            if (!$tags) return true;
             $renderer->doc .= '<div class="tags"><span>'.DOKU_LF.
                 DOKU_TAB.$tags.DOKU_LF.
                 '</span></div>'.DOKU_LF;
@@ -72,12 +72,25 @@ class syntax_plugin_tag_tag extends DokuWiki_Syntax_Plugin {
 
         // for metadata renderer
         } elseif ($mode == 'metadata' && $ACT != 'preview' && !$REV) {
+            // merge with previous tags
+            $this->tags = array_merge($this->tags, $data);
+            // update tags in topic.idx
+            $my->_updateTagIndex($ID, $this->tags);
+
             if ($renderer->capture) $renderer->doc .= DOKU_LF.strip_tags($tags).DOKU_LF;
-            foreach ($my->references as $ref => $exists) {
-                $renderer->meta['relation']['references'][$ref] = $exists;
+
+            // add references if tag page exists
+            foreach ($data as $tag) {
+                resolve_pageid($my->namespace, $tag, $exists); // resolve shortcuts
+                if ($exists) $renderer->meta['relation']['references'][$tag] = $exists;
             }
+
+            // erase tags on persistent metadata no more used
+            if (isset($renderer->persistent['subject'])) unset($renderer->persistent['subject']);
+
+            // update the metadata
             if (!is_array($renderer->meta['subject'])) $renderer->meta['subject'] = array();
-            $renderer->meta['subject'] = array_merge($renderer->meta['subject'], $data);
+            $renderer->meta['subject'] = $this->tags;
             return true;
         }
         return false;

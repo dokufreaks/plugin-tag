@@ -100,7 +100,7 @@ class helper_plugin_tag extends DokuWiki_Plugin {
      * Returns the cell data for the Pagelist Plugin
      */
     function td($id) {
-        $subject = _getSubjectMetadata($id);
+        $subject = $this->_getSubjectMetadata($id);
         return $this->tagLinks($subject);
     }
 
@@ -473,8 +473,33 @@ class helper_plugin_tag extends DokuWiki_Plugin {
      */
     function _getSubjectMetadata($id){
         $tags = p_get_metadata($id, 'subject');
-        if (!is_array($tags)) $tags = explode(' ', $tags);
+        // if there is no more tags on metadata, remove them from topic.idx
+        if (empty($tags)) $this->_removeTagIndex($id);
+        elseif (!is_array($tags)) $tags = explode(' ', $tags);
         return $tags;
+    }
+
+    /**
+     * Remove the page from the topic.idx
+     *
+     * @param id the page id
+     */
+    function _removeTagIndex($id) {
+        $changed = false;
+        foreach($this->topic_idx as $tag => $pages) {
+            if (!is_array($pages)) {
+                $pages = array();
+                $this->topic_idx[$tag] = array();
+                $changed = true;
+            }
+            if (in_array($id, $pages)) { // tag deleted from the page
+                $this->topic_idx[$tag] = array_diff($this->topic_idx[$tag], array($id));
+                $changed = true;
+            }
+        }
+        // save tag index if needed
+        if ($changed) return $this->_saveIndex();
+        else return true;
     }
 
     /**

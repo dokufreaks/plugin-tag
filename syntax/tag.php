@@ -73,11 +73,12 @@ class syntax_plugin_tag_tag extends DokuWiki_Syntax_Plugin {
         // for metadata renderer
         } elseif ($mode == 'metadata' && $ACT != 'preview' && !$REV) {
             // merge with previous tags
-            $this->tags = array_merge($this->tags, $data);
+            if (!isset($this->tags[$ID])) $this->tags[$ID] = array();
+            $this->tags[$ID] = array_merge($this->tags[$ID], $data);
             // update tags in topic.idx
-            $my->_updateTagIndex($ID, $this->tags);
+            $my->_updateTagIndex($ID, $this->tags[$ID]);
 
-            if ($renderer->capture) $renderer->doc .= DOKU_LF.strip_tags($tags).DOKU_LF;
+            if ($renderer->capture) $renderer->doc .= DOKU_LF.strip_tags($data).DOKU_LF;
 
             // add references if tag page exists
             foreach ($data as $tag) {
@@ -90,7 +91,7 @@ class syntax_plugin_tag_tag extends DokuWiki_Syntax_Plugin {
 
             // update the metadata
             if (!is_array($renderer->meta['subject'])) $renderer->meta['subject'] = array();
-            $renderer->meta['subject'] = $this->tags;
+            $renderer->meta['subject'] = $this->tags[$ID];
             return true;
         }
         return false;

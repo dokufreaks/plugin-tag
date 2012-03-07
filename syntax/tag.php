@@ -72,26 +72,26 @@ class syntax_plugin_tag_tag extends DokuWiki_Syntax_Plugin {
 
         // for metadata renderer
         } elseif ($mode == 'metadata' && $ACT != 'preview' && !$REV) {
-            // merge with previous tags
-            if (!isset($this->tags[$ID])) $this->tags[$ID] = array();
-            $this->tags[$ID] = array_merge($this->tags[$ID], $data);
-            // update tags in topic.idx
-            $my->_updateTagIndex($ID, $this->tags[$ID]);
+            // erase tags on persistent metadata no more used
+            if (isset($renderer->persistent['subject'])) {
+                unset($renderer->persistent['subject']);
+                $renderer->meta['subject'] = array();
+            }
 
-            if ($renderer->capture) $renderer->doc .= DOKU_LF.strip_tags($data).DOKU_LF;
+            if (!isset($renderer->meta['subject'])) $renderer->meta['subject'] = array();
+            if (!is_array($renderer->meta['subject'])) $renderer->meta['subject'] = array();
+
+            // merge with previous tags
+            $renderer->meta['subject'] = array_merge($renderer->meta['subject'], $data);
+
+            if ($renderer->capture) $renderer->doc .= DOKU_LF.implode(' ', $data).DOKU_LF;
 
             // add references if tag page exists
             foreach ($data as $tag) {
                 resolve_pageid($my->namespace, $tag, $exists); // resolve shortcuts
-                if ($exists) $renderer->meta['relation']['references'][$tag] = $exists;
+                $renderer->meta['relation']['references'][$tag] = $exists;
             }
 
-            // erase tags on persistent metadata no more used
-            if (isset($renderer->persistent['subject'])) unset($renderer->persistent['subject']);
-
-            // update the metadata
-            if (!is_array($renderer->meta['subject'])) $renderer->meta['subject'] = array();
-            $renderer->meta['subject'] = $this->tags[$ID];
             return true;
         }
         return false;

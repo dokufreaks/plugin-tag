@@ -12,7 +12,4 @@ $lang['topic'] = '主題';
 
 $lang['missing_pagelistplugin'] = '必須安裝 Pagelist 插件才能列出主題。';
 
-$lang['menu'] = '標籤索引管理器';
-$lang['rebuildindex'] = '重建索引';
-
 //Setup VIM: ex: et ts=2 enc=utf-8 :

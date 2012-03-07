@@ -11,6 +11,4 @@ $lang['topic'] = 'Tema';
  
 $lang['missing_pagelistplugin'] = 'Para listas de temas debe estar instalado el Plugin Pagelist Plugin.';
  
-$lang['menu'] = 'Gestor de Índice de Etiquetas';
- 
 //Setup VIM: ex: et ts=2 enc=utf-8 :

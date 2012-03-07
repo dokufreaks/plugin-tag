@@ -17,11 +17,7 @@ class helper_plugin_tag extends DokuWiki_Plugin {
 
     var $namespace  = '';      // namespace tag links point to
 
-    var $doc        = '';      // the final output XHTML string
-    var $references = array(); // $meta['relation']['references'] data for metadata renderer
-
     var $sort       = '';      // sort key
-    var $idx_dir    = '';      // directory for index files
     var $topic_idx  = array();
 
     /**
@@ -33,10 +29,6 @@ class helper_plugin_tag extends DokuWiki_Plugin {
         $this->namespace = $this->getConf('namespace');
         if (!$this->namespace) $this->namespace = getNS($ID);
         $this->sort = $this->getConf('sortkey');
-
-        $this->idx_dir = $conf['indexdir'];
-        
-        $this->_loadTagIndex(); // load the topic.idx file in the $topic_idx
     }
 
     function getInfo() {
@@ -142,7 +134,6 @@ class helper_plugin_tag extends DokuWiki_Plugin {
         }
         $link = '<a href="'.$url.'" class="'.$class.'" title="'.hsc($tag).
             '" rel="tag">'.hsc($title).'</a>';
-        $this->references[$tag] = $exists;
         return $link;
     }
 
@@ -311,176 +302,6 @@ class helper_plugin_tag extends DokuWiki_Plugin {
     }
 
     /**
-     * Refresh tag index (!! not used in the plugin)
-     * Deletes all tags of page id which are not defined in the page's metadata
-     * as well.
-     * 
-     * @param id the page id
-     * @param tags tags as defined in the index to double-check
-     */
-    function _refreshTagIndex($id, $tags) {
-        if (!is_array($tags) || empty($tags)) return false;
-        $changed = false;
-
-        // clean array first
-        $c = count($tags);
-        for ($i = 0; $i <= $c; $i++) {
-            $tags[$i] = utf8_strtolower($tags[$i]);
-        }
-
-        // get actual tags as saved in metadata
-        $meta = p_get_metadata($id);
-        $metatags = $meta['subject'];
-        if (!is_array($metatags)) $metatags = array();
-
-        foreach ($tags as $tag) {
-            if (!$tag) continue;                     // skip empty tags
-            if (in_array($tag, $metatags)) continue; // tag is still there
-            if (is_array($this->topic_idx[$tag])) {
-                $this->topic_idx[$tag] = array_diff($this->topic_idx[$tag], array($id));
-            } else {
-                $this->topic_idx[$tag] = array($id);
-            }
-            $changed = true;
-        }
-
-        if ($changed) return $this->_saveIndex();
-        else return true;
-    }
-
-    /**
-     * Update tag index
-     * Update the tags in the meta file and in the topic.idx if needed
-     *
-     * @param id the page id
-     * @param tags tags as defined in the index to double-check
-     */
-    function _updateTagIndex($id, $tags) {
-        global $ID, $INFO;
-
-        // if nothing to do
-        if (!is_array($tags) || empty($tags)) return false;
-        
-        // clean tags array first
-        $c = count($tags);
-        for ($i = 0; $i <= $c; $i++) {
-            $tags[$i] = utf8_strtolower($tags[$i]);
-        }
-        $tags = array_unique($tags);
-
-        $knowntags = array(); // track known tags
-        $changed = false ; // track changes on topic_idx
-        // check existing tags in topic.idx, clear or add ID
-        foreach($this->topic_idx as $tag => $pages) {
-            if (!is_array($pages)) {
-                $pages = array();
-                $this->topic_idx[$tag] = array();
-                $changed = true;
-            }
-            
-            if (in_array($tag, $tags)) {     // this tag is on the page
-                if (in_array($id, $pages)) { // nothing to do
-                    $knowntags[] = $tag;
-                } else {                     // tag added to the page
-                    $this->topic_idx[$tag][] = $id;
-                    $knowntags[] = $tag;
-                    $changed = true;
-                }
-            } else {
-                if (in_array($id, $pages)) { // tag deleted from the page
-                    $this->topic_idx[$tag] = array_diff($this->topic_idx[$tag], array($id));
-                    $changed = true;
-                }
-            }
-        }
-
-        // only new topics to add now
-        $newtopics = array_diff($tags, $knowntags);
-        if (count($newtopics) != 0 ) {
-            foreach($newtopics as $tag) {
-                if (!tag) continue; //skip empty tags
-                $this->topic_idx[$tag] = array($id);
-                $changed = true;
-            }
-        }
-
-        // save tag index if needed
-        if ($changed )return $this->_saveIndex();
-        else return true;
-    }
-
-    /**
-     * Load the file topic.idx in $topic_idx
-     * Generate this file first if missing
-     */
-    function _loadTagIndex() {
-        if(!@file_exists($this->idx_dir.'/topic.idx')) {
-            $this->_generateTagIndex();
-        } else {
-            $this->topic_idx = unserialize(io_readFile($this->idx_dir.'/topic.idx', false));
-        }
-        return true;
-    }
-
-
-    /**
-     * Save tag or page index
-     */
-    function _saveIndex() {
-        // clean the topic_idx first
-        foreach ($this->topic_idx as $tag=>$pages) {
-            if(!$tag || $tag == "" || !is_array($pages) || count($pages) == 0 ) unset($this->topic_idx[$tag]);
-            else $this->topic_idx[$tag] = array_unique($pages);
-        }
-        return io_saveFile($this->idx_dir.'/topic.idx', serialize($this->topic_idx));
-    }
-
-    /**
-     * Import old creation date index (!! not used in the plugin)
-     */
-    function _importTagIndex() {
-        global $conf;
-
-        $old = $conf['indexdir'].'/tag.idx';
-        $new = $conf['indexdir'].'/topic.idx';
-        
-        if (!@file_exists($old)) return $this->_generateTagIndex();
-        
-        $tag_index = @file($this->idx_dir.'/tag.idx');
-        $topic_index = array();
-        
-        if (is_array($tag_index)) {
-            foreach ($tag_index as $idx_line) {
-                list($key, $value) = explode(' ', $idx_line, 2);
-                $topic_index[$key] = $this->_numToID(explode(':', trim($value)));
-            }
-            return io_saveFile($new, serialize($topic_index));
-        }
-        
-        return false;
-    }
-
-    /**
-     * Generates the tag index if file missing
-     */
-    function _generateTagIndex() {
-        global $conf;
-
-        require_once (DOKU_INC.'inc/search.php');
-        $this->topic_idx = array();
-        $pages = array();
-        search($pages, $conf['datadir'], 'search_allpages', array());
-        foreach ($pages as $page) {
-            $tags = $this->_getSubjectMetadata($page['id']);
-            foreach($tags as $tag) {
-                if (!$tag) continue; // drop empty tags
-                $this->topic_idx[utf8_strtolower($tag)][] = $page['id'];
-            }
-        }
-        return $this->_saveIndex();
-    }
-
-    /**
      * Get the subject metadata cleaning the result
      *
      * @param id the page id
@@ -489,14 +310,6 @@ class helper_plugin_tag extends DokuWiki_Plugin {
         $tags = p_get_metadata($id, 'subject');
         if (!is_array($tags)) $tags = explode(' ', $tags);
         return $tags;
-    }
-
-    /**
-     * Generates the tag data for a single page.
-     */
-    function _generateTagData($page) {
-        $tags = $this->_getSubjectMetadata($page['id']);
-        $this->_updateTagIndex($page['id'], $tags);
     }
 
     /**
@@ -518,7 +331,7 @@ class helper_plugin_tag extends DokuWiki_Plugin {
 
         foreach ($tags as $i => $tag) {
             $t = $clean_tags[$i];
-            if (!is_array($this->topic_idx[$t])) $this->topic_idx[$t] = array();
+            if (!is_array($pages[$t])) $pages[$t] = array();
 
             if ($tag{0} == '+') {       // AND: add only if in both arrays
                 $result = array_intersect($result, $pages[$t]);
@@ -532,21 +345,6 @@ class helper_plugin_tag extends DokuWiki_Plugin {
         return $result;
     }
 
-    /**
-     * Converts an array of page numbers to IDs (!! not used in the plugin)
-     */
-    function _numToID($nums) {
-        $page_index = idx_getIndex('page', '');
-        if (is_array($nums)) {
-            $docs = array();
-            foreach ($nums as $num) {
-                $docs[] = trim($page_index[$num]);
-            }
-            return $docs;
-        } else {
-            return trim($page_index[$nums]);
-        }
-    }
 
     /**
      * Splits a string into an array of tags

@@ -35,6 +35,23 @@ class action_plugin_tag extends DokuWiki_Action_Plugin {
         $contr->register_hook('TPL_ACT_UNKNOWN', 'BEFORE', $this, '_handle_tpl_act', array());
         $contr->register_hook('TPL_METAHEADER_OUTPUT', 'BEFORE', $this, '_handle_keywords', array());
         if($this->getConf('toolbar_icon'))	$contr->register_hook('TOOLBAR_DEFINE', 'AFTER', $this, 'insert_toolbar_button', array ());
+        $contr->register_hook('INDEXER_VERSION_GET', 'BEFORE', $this, '_indexer_version', array());
+        $contr->register_hook('INDEXER_PAGE_ADD', 'BEFORE', $this, '_indexer_index_tags', array());
+    }
+
+    /**
+     * Add a version string to the index so it is rebuilt
+     * whenever the stored data format changes.
+     */
+    function _indexer_version($event, $param) {
+        $event->data['plugin_tag'] = '0.1';
+    }
+
+    /**
+     * Add all data of the subject metadata to the metadata index.
+     */
+    function _indexer_index_tags($event, $param) {
+        $event->data['metadata']['subject'] = p_get_metadata($event->data['page'], 'subject');
     }
 
     /**

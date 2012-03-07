@@ -210,10 +210,21 @@ class helper_plugin_tag extends DokuWiki_Plugin {
     function tagRefine($pages, $refine) {
         if (!is_array($pages)) return $pages; // wrong data type
         $tags = $this->_parseTagList($refine, true);
+        $clean_tags = array();
+        foreach ($tags as $i => $tag) {
+            if (($tag{0} == '+') || ($tag{0} == '-'))
+                $clean_tags[$i] = substr($tag, 1);
+            else
+                $clean_tags[$i] = $tag;
+        }
+
+        $indexer = idx_get_indexer();
+        $index_pages = $indexer->lookupKey('subject', $clean_tags, array($this, '_tagCompare'));
+
         foreach ($tags as $tag) {
             if (!(($tag{0} == '+') || ($tag{0} == '-'))) continue;
             $cleaned_tag = substr($tag, 1);
-            $tagpages = $this->topic_idx[$cleaned_tag];
+            $tagpages = $index_pages[$cleaned_tag];
             $and = ($tag{0} == '+');
             foreach ($pages as $key => $page) {
                 $cond = in_array($page['id'], $tagpages);
@@ -232,15 +243,18 @@ class helper_plugin_tag extends DokuWiki_Plugin {
     * @params allTags boolean if all available tags should be counted
     */
    function tagOccurences($tags, $ns = NULL, $allTags = false) {
-        if($allTags) $tags = array_keys($this->topic_idx);
+        if($allTags) $tags = array_map('trim', idx_getIndex('subject', '_w'));
         $otags = array(); //occurences
         if(!$ns || $ns[0] == '' || !is_array($ns)) $ns = NULL; // $ns not specified
-        
+
+        $indexer = idx_get_indexer();
+        $indexer_pages = $indexer->lookupKey('subject', $tags, array($this, '_tagCompare'));
+
         if ( $ns == NULL || (in_array('.', $ns) && $this->getConf('list_tags_of_subns'))) {
             // all pages counted
             foreach ($tags as $tag) {
-                if (isset($this->topic_idx[$tag])) {
-                    $pages = $this->topic_idx[$tag];
+                if (isset($indexer_pages[$tag])) {
+                    $pages = $indexer_pages[$tag];
                     $pages = array_unique($pages); // don't trust indexed arrays
                     $otags[$tag] = count($pages);
                 } else {
@@ -251,7 +265,7 @@ class helper_plugin_tag extends DokuWiki_Plugin {
         } elseif ( in_array('.', $ns)) {
             // count all pages in ns namespaces and [root] namespace
             foreach ($tags as $tag) {
-                $pages = $this->topic_idx[$tag];
+                $pages = $indexer_pages[$tag];
                 if ($pages == null or count($pages) == 0) continue;
                 $pages = array_unique($pages); // don't trust indexed arrays
                 $otags[$tag] = 0 ;
@@ -265,7 +279,7 @@ class helper_plugin_tag extends DokuWiki_Plugin {
         } elseif ($this->getConf('list_tags_of_subns')) {
             // [root] not in $ns + subnamespace 
             foreach ($tags as $tag) {
-                $pages = $this->topic_idx[$tag];
+                $pages = $indexer_pages[$tag];
                 if ($pages == null or count($pages) == 0) continue;
                 $pages = array_unique($pages); // don't trust indexed arrays
                 $otags[$tag] = 0 ;
@@ -281,7 +295,7 @@ class helper_plugin_tag extends DokuWiki_Plugin {
         } else {
             // [root] not in $ns and exact namespaces (default)
             foreach ($tags as $tag) {
-                $pages = $this->topic_idx[$tag];
+                $pages = $indexer_pages[$tag];
                 if ($pages == null or count($pages) == 0) continue;
                 $pages = array_unique($pages); // don't trust indexed arrays
                 $otags[$tag] = 0 ;
@@ -489,26 +503,32 @@ class helper_plugin_tag extends DokuWiki_Plugin {
      * Tag index lookup
      */
     function _tagIndexLookup($tags) {
-        $result = array(); // array of line numbers in the page index
+        $result = array(); // array of page ids
 
-        // get the line numbers in page index
-        foreach ($tags as $tag) {
-            if (($tag{0} == '+') || ($tag{0} == '-')) 
-                $t = substr($tag, 1);
+        $clean_tags = array();
+        foreach ($tags as $i => $tag) {
+            if (($tag{0} == '+') || ($tag{0} == '-'))
+                $clean_tags[$i] = substr($tag, 1);
             else
-                $t = $tag;
+                $clean_tags[$i] = $tag;
+        }
+
+        $indexer = idx_get_indexer();
+        $pages = $indexer->lookupKey('subject', $clean_tags, array($this, '_tagCompare'));
+
+        foreach ($tags as $i => $tag) {
+            $t = $clean_tags[$i];
             if (!is_array($this->topic_idx[$t])) $this->topic_idx[$t] = array();
 
             if ($tag{0} == '+') {       // AND: add only if in both arrays
-                $result = array_intersect($result, $this->topic_idx[$t]);
+                $result = array_intersect($result, $pages[$t]);
             } elseif ($tag{0} == '-') { // NOT: remove array from docs
-                $result = array_diff($result, $this->topic_idx[$t]);
+                $result = array_diff($result, $pages[$t]);
             } else {                   // OR: add array to docs
-                $result = array_unique(array_merge($result, $this->topic_idx[$t]));
+                $result = array_unique(array_merge($result, $pages[$t]));
             }
         }
 
-        // now convert to page IDs and return
         return $result;
     }
 
@@ -617,6 +637,13 @@ class helper_plugin_tag extends DokuWiki_Plugin {
             if ($ns && (strpos(':'.getNS($id), ':'.$ns) !== 0)) return true;
         }
         return false;        
+    }
+
+    /**
+     * Helper function for the indexer in order to avoid interpreting wildcards
+     */
+    function _tagCompare($tag1, $tag2) {
+        return $tag1 == $tag2;
     }
 
 }

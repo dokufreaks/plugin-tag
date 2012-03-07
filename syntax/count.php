@@ -74,12 +74,12 @@ class syntax_plugin_tag_count extends DokuWiki_Syntax_Plugin {
         if($mode == "xhtml") {
             if(!($my = plugin_load('helper', 'tag'))) return false;
 
-            // get tags and their occurences
+            // get tags and their occurrences
             if($tags[0] == '+') {
                 // no tags given, list all tags for allowed namespaces
-                $occurences = $my->tagOccurences($tags, $allowedNamespaces, true);
+                $occurrences = $my->tagOccurrences($tags, $allowedNamespaces, true);
             } else {
-                $occurences = $my->tagOccurences($tags, $allowedNamespaces);
+                $occurrences = $my->tagOccurrences($tags, $allowedNamespaces);
             }
 
             $class = "inline"; // valid: inline, ul, pagelist
@@ -91,14 +91,14 @@ class syntax_plugin_tag_count extends DokuWiki_Syntax_Plugin {
             $renderer->doc .= '<th class="'.$col.'">#</th>';
             $renderer->doc .= DOKU_LF.DOKU_TAB.'</tr>'.DOKU_LF;
 
-            if(empty($occurences)) {
+            if(empty($occurrences)) {
                 // Skip output
                 $renderer->doc .= DOKU_TAB.'<tr>'.DOKU_LF.DOKU_TAB.DOKU_TAB;
                 $renderer->doc .= DOKU_TAB.DOKU_TAB.'<td class="'.$class.'" colspan="2">'.$this->getLang('empty_output').'</td>'.DOKU_LF;
                 $renderer->doc .= DOKU_LF.DOKU_TAB.'</tr>'.DOKU_LF;
             } else {
-                foreach($occurences as $tagname => $count) {
-                    if($count <= 0) continue; // don't display tags with zero occurences
+                foreach($occurrences as $tagname => $count) {
+                    if($count <= 0) continue; // don't display tags with zero occurrences
                     $renderer->doc .= DOKU_TAB.'<tr>'.DOKU_LF.DOKU_TAB.DOKU_TAB;
                     $renderer->doc .= DOKU_TAB.DOKU_TAB.'<td class="'.$class.'">'.$my->tagLink($tagname).'</td>'.DOKU_LF;
                     $renderer->doc .= DOKU_TAB.DOKU_TAB.'<td class="'.$class.'">'.$count.'</td>'.DOKU_LF;

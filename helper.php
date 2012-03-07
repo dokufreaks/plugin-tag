@@ -78,6 +78,16 @@ class helper_plugin_tag extends DokuWiki_Plugin {
                     'refinement tags' => 'string'),
                 'return' => array('pages' => 'array'),
                 );
+        $result[] = array(
+                'name'   => 'tagOccurrences',
+                'desc'   => 'returns a list of tags with their number of occurrences',
+                'params' => array(
+                    'list of tags to get the occurrences for' => 'array',
+                    'namespaces to which the search shall be restricted' => 'array',
+                    'if all tags shall be returned (then the first parameter is ignored)' => 'boolean',
+                    'if the namespaces shall be searched recursively' => 'boolean'),
+                'return' => array('tags' => 'array'),
+                );
         return $result;
     }
 
@@ -227,16 +237,17 @@ class helper_plugin_tag extends DokuWiki_Plugin {
    }
    
    /**
-    * Get count of occurences for a list of tags
+    * Get count of occurrences for a list of tags
     *
-    * @params tags array of tags 
-    * @params namespaces array of namespaces where to count the tags
-    * @params allTags boolean if all available tags should be counted
+    * @param tags array of tags 
+    * @param namespaces array of namespaces where to count the tags
+    * @param allTags boolean if all available tags should be counted
+    * @param recursive boolean if pages in subnamespaces are allowed
     */
-   function tagOccurences($tags, $namespaces = NULL, $allTags = false, $recursive = NULL) {
+   function tagOccurrences($tags, $namespaces = NULL, $allTags = false, $recursive = NULL) {
         // map with trim here in order to remove newlines from tags
         if($allTags) $tags = array_map('trim', idx_getIndex('subject', '_w'));
-        $otags = array(); //occurences
+        $otags = array(); //occurrences
         if(!$namespaces || $namespaces[0] == '' || !is_array($namespaces)) $namespaces = NULL; // $namespaces not specified
 
         $indexer = idx_get_indexer();

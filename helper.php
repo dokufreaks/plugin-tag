@@ -230,73 +230,56 @@ class helper_plugin_tag extends DokuWiki_Plugin {
     * Get count of occurences for a list of tags
     *
     * @params tags array of tags 
-    * @params ns array of namespaces where to count the tags
+    * @params namespaces array of namespaces where to count the tags
     * @params allTags boolean if all available tags should be counted
     */
-   function tagOccurences($tags, $ns = NULL, $allTags = false) {
+   function tagOccurences($tags, $namespaces = NULL, $allTags = false) {
+        // map with trim here in order to remove newlines from tags
         if($allTags) $tags = array_map('trim', idx_getIndex('subject', '_w'));
         $otags = array(); //occurences
-        if(!$ns || $ns[0] == '' || !is_array($ns)) $ns = NULL; // $ns not specified
+        if(!$namespaces || $namespaces[0] == '' || !is_array($namespaces)) $namespaces = NULL; // $namespaces not specified
 
         $indexer = idx_get_indexer();
         $indexer_pages = $indexer->lookupKey('subject', $tags, array($this, '_tagCompare'));
 
-        if ( $ns == NULL || (in_array('.', $ns) && $this->getConf('list_tags_of_subns'))) {
-            // all pages counted
-            foreach ($tags as $tag) {
-                if (isset($indexer_pages[$tag]) && !empty($indexer_pages[$tag])) {
-                    $pages = $indexer_pages[$tag];
-                    $pages = array_unique($pages); // don't trust indexed arrays
-                    $otags[$tag] = count($pages);
-                } else {
-                    unset($otags[$tag]);
-                }
-            }
-            return $otags; // nothing else to count
-        } elseif ( in_array('.', $ns)) {
-            // count all pages in ns namespaces and [root] namespace
-            foreach ($tags as $tag) {
-                $pages = $indexer_pages[$tag];
-                if ($pages == null or count($pages) == 0) continue;
-                $pages = array_unique($pages); // don't trust indexed arrays
-                $otags[$tag] = 0 ;
+        $root_allowed = ($namespaces == NULL ? false : in_array('.', $namespaces));
+        $recursive = $this->getConf('list_tags_of_subns');
+
+        foreach ($tags as $tag) {
+            if (!isset($indexer_pages[$tag])) continue;
+
+            // just to be sure remove duplicate pages from the list of pages
+            $pages = array_unique($indexer_pages[$tag]);
+
+            // don't count hidden pages or pages the user can't access
+            // for performance reasons this doesn't take drafts into account
+            $pages = array_filter($pages, array($this, '_isVisible'));
+
+            if (empty($pages)) continue;
+
+            if ($namespaces == NULL || ($root_allowed && $recursive)) {
+                // count all pages
+                $otags[$tag] = count($pages);
+            } else if (!$recursive) {
+                // filter by exact namespace
+                $otags[$tag] = 0;
                 foreach ($pages as $page) {
-                    if(getNS($page) == false || in_array(getNS($page), $ns)) $otags[$tag]++ ;
+                    $ns = getNS($page);
+                    if (($ns == false && $root_allowed) || in_array($ns, $namespaces)) $otags[$tag]++;
                 }
-                // don't return tags with no occurences
-                if ($otags[$tag] == 0) unset($otags[$tag]);
-            }
-            return $otags; // nothing else to count
-        } elseif ($this->getConf('list_tags_of_subns')) {
-            // [root] not in $ns + subnamespace 
-            foreach ($tags as $tag) {
-                $pages = $indexer_pages[$tag];
-                if ($pages == null or count($pages) == 0) continue;
-                $pages = array_unique($pages); // don't trust indexed arrays
-                $otags[$tag] = 0 ;
+            } else { // recursive, no root
+                $otags[$tag] = 0;
                 foreach ($pages as $page) {
-                    foreach ($ns as $value) {
-                        if( strpos(getNS($page), $value) !== false ) $otags[$tag]++ ;
+                    foreach ($namespaces as $ns) {
+                        if(strpos($page, $ns.':') === 0 ) {
+                            $otags[$tag]++ ;
+                            break;
+                        }
                     }
                 }
-                // don't return tags with no occurences
-                if ($otags[$tag] == 0) unset($otags[$tag]);
             }
-            return $otags; // nothing else to count
-        } else {
-            // [root] not in $ns and exact namespaces (default)
-            foreach ($tags as $tag) {
-                $pages = $indexer_pages[$tag];
-                if ($pages == null or count($pages) == 0) continue;
-                $pages = array_unique($pages); // don't trust indexed arrays
-                $otags[$tag] = 0 ;
-                foreach ($pages as $page) {
-                    if(in_array(getNS($page), $ns)) $otags[$tag]++ ;
-                }
-                // don't return tags with no occurences
-                if ($otags[$tag] == 0) unset($otags[$tag]);
-            }
-            return $otags; // nothing else to count
+            // don't return tags without pages
+            if ($otags[$tag] == 0) unset($otags[$tag]);
         }
         return $otags;
     }
@@ -416,6 +399,12 @@ class helper_plugin_tag extends DokuWiki_Plugin {
         return !empty($val);
     }
 
+    /**
+     * Opposite of _notVisible
+     */
+    function _isVisible($id, $ns='') {
+        return !$this->_notVisible($id, $ns);
+    }
     /**
      * Check visibility of the page
      * 

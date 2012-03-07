@@ -78,12 +78,12 @@ class syntax_plugin_tag_tag extends DokuWiki_Syntax_Plugin {
             // update tags in topic.idx
             $my->_updateTagIndex($ID, $this->tags[$ID]);
 
-            if ($renderer->capture) $renderer->doc .= DOKU_LF.strip_tags($data).DOKU_LF;
+            if ($renderer->capture) $renderer->doc .= DOKU_LF.strip_tags($tags).DOKU_LF;
 
-            // add references if tag page exists
-            foreach ($data as $tag) {
+            // add references for the tags
+            foreach ($this->tags[$ID] as $tag) {
                 resolve_pageid($my->namespace, $tag, $exists); // resolve shortcuts
-                if ($exists) $renderer->meta['relation']['references'][$tag] = $exists;
+                $renderer->meta['relation']['references'][$tag] = $exists;
             }
 
             // erase tags on persistent metadata no more used

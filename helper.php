@@ -100,7 +100,7 @@ class helper_plugin_tag extends DokuWiki_Plugin {
      * Returns the cell data for the Pagelist Plugin
      */
     function td($id) {
-        $subject = _getSubjectMetadata($id);
+        $subject = $this->_getSubjectMetadata($id);
         return $this->tagLinks($subject);
     }
 

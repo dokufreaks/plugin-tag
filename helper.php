@@ -244,7 +244,7 @@ class helper_plugin_tag extends DokuWiki_Plugin {
         if ( $ns == NULL || (in_array('.', $ns) && $this->getConf('list_tags_of_subns'))) {
             // all pages counted
             foreach ($tags as $tag) {
-                if (isset($indexer_pages[$tag])) {
+                if (isset($indexer_pages[$tag]) && !empty($indexer_pages[$tag])) {
                     $pages = $indexer_pages[$tag];
                     $pages = array_unique($pages); // don't trust indexed arrays
                     $otags[$tag] = count($pages);

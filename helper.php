@@ -233,7 +233,7 @@ class helper_plugin_tag extends DokuWiki_Plugin {
     * @params namespaces array of namespaces where to count the tags
     * @params allTags boolean if all available tags should be counted
     */
-   function tagOccurences($tags, $namespaces = NULL, $allTags = false) {
+   function tagOccurences($tags, $namespaces = NULL, $allTags = false, $recursive = NULL) {
         // map with trim here in order to remove newlines from tags
         if($allTags) $tags = array_map('trim', idx_getIndex('subject', '_w'));
         $otags = array(); //occurences
@@ -243,7 +243,8 @@ class helper_plugin_tag extends DokuWiki_Plugin {
         $indexer_pages = $indexer->lookupKey('subject', $tags, array($this, '_tagCompare'));
 
         $root_allowed = ($namespaces == NULL ? false : in_array('.', $namespaces));
-        $recursive = $this->getConf('list_tags_of_subns');
+        if ($recursive === NULL)
+            $recursive = $this->getConf('list_tags_of_subns');
 
         foreach ($tags as $tag) {
             if (!isset($indexer_pages[$tag])) continue;

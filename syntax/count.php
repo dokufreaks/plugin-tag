@@ -64,23 +64,27 @@ class syntax_plugin_tag_count extends DokuWiki_Syntax_Plugin {
 
     function render($mode, &$renderer, $data) {
         if ($data == false) return false;
-        if(!($my = plugin_load('helper', 'tag'))) return false;
 
         list($tags, $allowedNamespaces) = $data;
 
-        // get tags and their occurences
-        if($tags[0] == '+') {
-            // no tags given, list all tags for allowed namespaces
-            $occurences = $my->tagOccurences($tags, $allowedNamespaces, true);
-        } else {
-            $occurences = $my->tagOccurences($tags, $allowedNamespaces);
-        }
-
-        // $data -> tag as key; value as count of tag occurence
-        $class = "inline"; // valid: inline, ul, pagelist
-        $col = "page";
+        // deactivate (renderer) cache as long as there is no proper cache handling
+        // implemented for the count syntax
+        $renderer->info['cache'] = false;
 
         if($mode == "xhtml") {
+            if(!($my = plugin_load('helper', 'tag'))) return false;
+
+            // get tags and their occurences
+            if($tags[0] == '+') {
+                // no tags given, list all tags for allowed namespaces
+                $occurences = $my->tagOccurences($tags, $allowedNamespaces, true);
+            } else {
+                $occurences = $my->tagOccurences($tags, $allowedNamespaces);
+            }
+
+            $class = "inline"; // valid: inline, ul, pagelist
+            $col = "page";
+
             $renderer->doc .= '<table class="'.$class.'">'.DOKU_LF;
             $renderer->doc .= DOKU_TAB.'<tr>'.DOKU_LF.DOKU_TAB.DOKU_TAB;
             $renderer->doc .= '<th class="'.$col.'">tag</th>';

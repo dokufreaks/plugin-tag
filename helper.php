@@ -166,6 +166,11 @@ class helper_plugin_tag extends DokuWiki_Plugin {
             if($this->_notVisible($page, $ns)) continue;
             // get metadata
             $meta = array();
+            $tags  = $this->_getSubjectMetadata($page);
+            // don't trust index
+            if (empty($tags)) continue;
+            if (!$this->_checkPageTags($tags, $tag)) continue;
+
             $meta = p_get_metadata($page);
 
             // skip drafts unless for users with create privilege
@@ -174,7 +179,6 @@ class helper_plugin_tag extends DokuWiki_Plugin {
 
             $title = $meta['title'];
             $date  = ($this->sort == 'mdate' ? $meta['date']['modified'] : $meta['date']['created'] );
-            $tags  = $this->_getSubjectMetadata($page);
             $taglinks = $this->tagLinks($tags);
 
             // determine the sort key
@@ -443,6 +447,22 @@ class helper_plugin_tag extends DokuWiki_Plugin {
      */
     function _tagCompare($tag1, $tag2) {
         return $tag1 == $tag2;
+    }
+
+    /**
+     * Check if the page is a real candidate for the result of the getTopic
+     *
+     * @param pagetags the tags on the metadata of the page
+     * @param tags the tags we are looking
+     */
+    function _checkPageTags($pagetags, $tags) {
+        $result = false;
+        foreach($tags as $tag) {
+            if ($tag{0} == "+" and !in_array(substr($tag, 1), $pagetags)) return false;
+            if ($tag{0} == "-" and in_array(substr($tag, 1), $pagetags)) return false;
+            if (in_array($tag, $pagetags)) $result = true;
+        }
+        return $result;
     }
 
 }

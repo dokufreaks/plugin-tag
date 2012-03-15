@@ -447,7 +447,7 @@ class helper_plugin_tag extends DokuWiki_Plugin {
             // ("!==0" namespace found at position 0)
             if ($ns && (strpos(':'.getNS($id), ':'.$ns) !== 0)) return true;
         }
-        return false;        
+        return !page_exists($id, '', false);
     }
 
     /**

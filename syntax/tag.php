@@ -78,7 +78,7 @@ class syntax_plugin_tag_tag extends DokuWiki_Syntax_Plugin {
             // update tags in topic.idx
             $my->_updateTagIndex($ID, $this->tags[$ID]);
 
-            if ($renderer->capture) $renderer->doc .= DOKU_LF.strip_tags($tags).DOKU_LF;
+            if ($renderer->capture) $renderer->doc .= DOKU_LF.implode(' ', $data).DOKU_LF;
 
             // add references for the tags
             foreach ($this->tags[$ID] as $tag) {

@@ -195,6 +195,7 @@ class helper_plugin_tag extends DokuWiki_Plugin {
             $tags  = $meta['subject'];
             $date  = ($this->sort == 'mdate' ? $meta['date']['modified'] : $meta['date']['created'] );
             if (!is_array($tags)) $tags = explode(' ', $tags);
+            $tags = array_unique($tags);
             $taglinks = $this->tagLinks($tags);
 
             // determine the sort key

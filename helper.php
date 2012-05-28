@@ -359,7 +359,15 @@ class helper_plugin_tag extends DokuWiki_Plugin {
         }
 
         if ($clean) $tags = utf8_strtolower($this->_applyMacro($tags));
-        return explode(' ', $tags);
+        $result = array();
+        foreach( explode(' ', $tags) as $tag) {
+            $prefixe = $tag{0};
+            if (($prefixe == '+') || ($prefixe == '-'))
+                $result[] = $prefixe . cleanID(substr($tag, 1));
+            else
+                $result[] = cleanID($tag);
+        }
+        return $result;
     }
 
     /**

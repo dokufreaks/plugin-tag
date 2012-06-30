@@ -78,8 +78,10 @@ class syntax_plugin_tag_tag extends DokuWiki_Syntax_Plugin {
 
             if (!isset($renderer->meta['subject'])) $renderer->meta['subject'] = array();
 
-            // merge with previous tags
-            $renderer->meta['subject'] = array_merge($renderer->meta['subject'], $data);
+            // each registered tags in metadata and index should be valid IDs
+            $data = array_map(cleanID, $data);
+            // merge with previous tags and make the values unique
+            $renderer->meta['subject'] = array_unique(array_merge($renderer->meta['subject'], $data));
 
             if ($renderer->capture) $renderer->doc .= DOKU_LF.implode(' ', $data).DOKU_LF;
 

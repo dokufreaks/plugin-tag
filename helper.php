@@ -251,6 +251,7 @@ class helper_plugin_tag extends DokuWiki_Plugin {
    function tagOccurrences($tags, $namespaces = NULL, $allTags = false, $recursive = NULL) {
         // map with trim here in order to remove newlines from tags
         if($allTags) $tags = array_map('trim', idx_getIndex('subject', '_w'));
+        $tags = $this->_cleanTagList($tags);
         $otags = array(); //occurrences
         if(!$namespaces || $namespaces[0] == '' || !is_array($namespaces)) $namespaces = NULL; // $namespaces not specified
 
@@ -358,16 +359,33 @@ class helper_plugin_tag extends DokuWiki_Plugin {
             }
         }
 
-        if ($clean) $tags = utf8_strtolower($this->_applyMacro($tags));
-        $result = array();
-        foreach( explode(' ', $tags) as $tag) {
-            $prefixe = $tag{0};
-            if (($prefixe == '+') || ($prefixe == '-'))
-                $result[] = $prefixe . cleanID(substr($tag, 1));
-            else
-                $result[] = cleanID($tag);
+        $tags = explode(' ', $tags);
+
+        if ($clean) {
+            return $this->_cleanTagList($tags);
+        } else {
+            return $tags;
         }
-        return $result;
+    }
+
+    /**
+     * Clean a list (array) of tags using _cleanTag
+     */
+    function _cleanTagList($tags) {
+        return array_unique(array_map(array($this, '_cleanTag'), $tags));
+    }
+
+    /**
+     * Cleans a tag using cleanID while preserving a possible prefix of + or -
+     */
+    function _cleanTag($tag) {
+        $prefix = substr($tag, 0, 1);
+        $tag = $this->_applyMacro($tag);
+        if ($prefix === '-' || $prefix === '+') {
+            return $prefix + cleanID($tag);
+        } else {
+            return cleanID($tag);
+        }
     }
 
     /**

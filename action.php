@@ -44,14 +44,22 @@ class action_plugin_tag extends DokuWiki_Action_Plugin {
      * whenever the stored data format changes.
      */
     function _indexer_version($event, $param) {
-        $event->data['plugin_tag'] = '0.1';
+        $event->data['plugin_tag'] = '0.2';
     }
 
     /**
      * Add all data of the subject metadata to the metadata index.
      */
     function _indexer_index_tags($event, $param) {
-        $event->data['metadata']['subject'] = p_get_metadata($event->data['page'], 'subject');
+        if ($helper =& plugin_load('helper', 'tag')) {
+            // make sure the tags are cleaned and no duplicate tags are added to the index
+            $tags = p_get_metadata($event->data['page'], 'subject');
+            if (!is_array($tags)) {
+                $event->data['metadata']['subject'] = array();
+            } else {
+                $helper->_cleanTagList($tags);
+            }
+        }
     }
 
     /**

@@ -11,16 +11,42 @@ if (!defined('DOKU_INC')) die();
 
 if (!defined('DOKU_PLUGIN')) define('DOKU_PLUGIN',DOKU_INC.'lib/plugins/');
 
+/**
+ * Topic syntax, displays links to all wiki pages with a certain tag
+ */
 class syntax_plugin_tag_topic extends DokuWiki_Syntax_Plugin {
 
+    /**
+     * @return string Syntax type
+     */
     function getType() { return 'substition'; }
+
+    /**
+     * @return string Paragraph type
+     */
     function getPType() { return 'block'; }
+
+    /**
+     * @return int Sort order
+     */
     function getSort() { return 306; }
 
+    /**
+     * @param string $mode Parser mode
+     */
     function connectTo($mode) {
         $this->Lexer->addSpecialPattern('\{\{topic>.+?\}\}',$mode,'plugin_tag_topic');
     }
 
+    /**
+     * Handle matches of the topic syntax
+     *
+     * @param string $match The match of the syntax
+     * @param int    $state The state of the handler
+     * @param int    $pos The position in the document
+     * @param Doku_Handler    $handler The handler
+     * @return array Data for the renderer
+     */
     function handle($match, $state, $pos, &$handler) {
         global $ID;
 
@@ -41,17 +67,28 @@ class syntax_plugin_tag_topic extends DokuWiki_Syntax_Plugin {
         return array($ns, trim($tag), $flags);
     }
 
+    /**
+     * Render xhtml output or metadata
+     *
+     * @param string         $mode      Renderer mode (supported modes: xhtml and metadata)
+     * @param Doku_Renderer  $renderer  The renderer
+     * @param array          $data      The data from the handler function
+     * @return bool If rendering was successful.
+     */
     function render($mode, &$renderer, $data) {
         list($ns, $tag, $flags) = $data;
 
+        /* @var helper_plugin_tag $my */
         if ($my =& plugin_load('helper', 'tag')) $pages = $my->getTopic($ns, '', $tag);
-        if (!$pages) return true; // nothing to display
+        if (!isset($pages) || !$pages) return true; // nothing to display
 
         if ($mode == 'xhtml') {
+            /* @var Doku_Renderer_xhtml $renderer */
 
             // prevent caching to ensure content is always fresh
             $renderer->info['cache'] = false;
 
+            /* @var helper_plugin_pagelist $pagelist */
             // let Pagelist Plugin do the work for us
             if (plugin_isdisabled('pagelist')
                     || (!$pagelist = plugin_load('helper', 'pagelist'))) {

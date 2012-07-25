@@ -19,7 +19,6 @@ if (!defined('DOKU_PLUGIN')) define('DOKU_PLUGIN',DOKU_INC.'lib/plugins/');
 
 class syntax_plugin_tag_count extends DokuWiki_Syntax_Plugin {
 
-    var $tags = array();
     function getType() { return 'substition'; }
     function getSort() { return 305; }
     function getPType() { return 'block';}

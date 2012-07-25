@@ -97,13 +97,13 @@ class helper_plugin_tag extends DokuWiki_Plugin {
     /**
      * Returns the links for given tags
      *
-     * @param tags an array of tags
+     * @param array $tags an array of tags
+     * @return string HTML link tags
      */
     function tagLinks($tags) {
-        global $conf;
-
         if (empty($tags) || ($tags[0] == '')) return '';
 
+        $links = array();
         foreach ($tags as $tag) {
             $links[] = $this->tagLink($tag);
         }
@@ -234,10 +234,11 @@ class helper_plugin_tag extends DokuWiki_Plugin {
    /**
     * Get count of occurrences for a list of tags
     *
-    * @param tags array of tags 
-    * @param namespaces array of namespaces where to count the tags
-    * @param allTags boolean if all available tags should be counted
-    * @param recursive boolean if pages in subnamespaces are allowed
+    * @param array $tags array of tags
+    * @param array $namespaces array of namespaces where to count the tags
+    * @param boolean $allTags boolean if all available tags should be counted
+    * @param boolean recursive boolean if pages in subnamespaces are allowed
+    * @return array
     */
    function tagOccurrences($tags, $namespaces = NULL, $allTags = false, $recursive = NULL) {
         // map with trim here in order to remove newlines from tags
@@ -295,7 +296,8 @@ class helper_plugin_tag extends DokuWiki_Plugin {
     /**
      * Get the subject metadata cleaning the result
      *
-     * @param id the page id
+     * @param string $id the page id
+     * @return array
      */
     function _getSubjectMetadata($id){
         $tags = p_get_metadata($id, 'subject');
@@ -305,6 +307,9 @@ class helper_plugin_tag extends DokuWiki_Plugin {
 
     /**
      * Tag index lookup
+     *
+     * @param array $tags the tags to filter
+     * @return array the matching page ids
      */
     function _tagIndexLookup($tags) {
         $result = array(); // array of page ids
@@ -441,8 +446,9 @@ class helper_plugin_tag extends DokuWiki_Plugin {
     /**
      * Check visibility of the page
      * 
-     * @param id the page id
-     * @param ns the namespace authorized
+     * @param string $id the page id
+     * @param string $ns the namespace authorized
+     * @return bool if the page is hidden
      */
     function _notVisible($id, $ns="") {
         if (isHiddenPage($id)) return true; // discard hidden pages
@@ -469,8 +475,9 @@ class helper_plugin_tag extends DokuWiki_Plugin {
     /**
      * Check if the page is a real candidate for the result of the getTopic
      *
-     * @param pagetags the tags on the metadata of the page
-     * @param tags the tags we are looking
+     * @param array $pagetags tags on the metadata of the page
+     * @param array $tags tags we are looking
+     * @return bool
      */
     function _checkPageTags($pagetags, $tags) {
         foreach($tags as $tag) {

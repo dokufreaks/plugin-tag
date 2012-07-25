@@ -115,6 +115,7 @@ class helper_plugin_tag extends DokuWiki_Plugin {
      * Returns the link for one given tag
      */
     function tagLink($tag) {
+        global $conf;
         $svtag = $tag;
         $title = str_replace('_', ' ', noNS($tag));
         resolve_pageid($this->namespace, $tag, $exists); // resolve shortcuts

@@ -162,6 +162,8 @@ class helper_plugin_tag extends DokuWiki_Plugin {
 
             $meta = p_get_metadata($page);
 
+            $perm = auth_quickaclcheck($page);
+
             // skip drafts unless for users with create privilege
             $draft = ($meta['type'] == 'draft');
             if ($draft && ($perm < AUTH_CREATE)) continue;

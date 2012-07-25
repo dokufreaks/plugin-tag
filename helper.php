@@ -31,16 +31,6 @@ class helper_plugin_tag extends DokuWiki_Plugin {
         $this->sort = $this->getConf('sortkey');
     }
 
-    function getInfo() {
-        return array(
-                'author' => 'Gina Häußge, Michael Klier, Esther Brunner',
-                'email'  => 'dokuwiki@chimeric.de',
-                'date'   => @file_get_contents(DOKU_PLUGIN.'tag/VERSION'),
-                'name'   => 'Tag Plugin (helper class)',
-                'desc'   => 'Functions to return tag links and topic lists',
-                'url'    => 'http://www.dokuwiki.org/plugin:tag',
-                );
-    }
 
     function getMethods() {
         $result = array();

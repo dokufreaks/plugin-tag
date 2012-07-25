@@ -21,18 +21,6 @@ require_once(DOKU_PLUGIN.'syntax.php');
 class syntax_plugin_tag_count extends DokuWiki_Syntax_Plugin {
 
     var $tags = array();
-
-    function getInfo() {
-        return array(
-                'author' => 'Matthias Schulte',
-                'email'  => 'mailinglist@lupo49.de',
-                'date'   => @file_get_contents(DOKU_PLUGIN.'tag/VERSION'),
-                'name'   => 'Tag Plugin (count component)',
-                'desc'   => 'Displays the occurence of specific tags',
-                'url'    => 'http://www.dokuwiki.org/plugin:tag',
-                );
-    }
-
     function getType() { return 'substition'; }
     function getSort() { return 305; }
     function getPType() { return 'block';}

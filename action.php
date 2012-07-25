@@ -13,20 +13,6 @@ require_once(DOKU_PLUGIN.'action.php');
 class action_plugin_tag extends DokuWiki_Action_Plugin {
 
     /**
-     * return some info
-     */
-    function getInfo() {
-        return array(
-                'author' => 'Gina Häußge, Michael Klier, Esther Brunner',
-                'email'  => 'dokuwiki@chimeric.de',
-                'date'   => '2011-03-20',
-                'name'   => 'Tag Plugin (ping component)',
-                'desc'   => 'Ping technorati when a new page is created',
-                'url'    => 'http://www.dokuwiki.org/plugin:tag',
-                );
-    }
-
-    /**
      * register the eventhandlers
      */
     function register(&$contr) {

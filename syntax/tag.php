@@ -20,17 +20,6 @@ require_once(DOKU_PLUGIN.'syntax.php');
 
 class syntax_plugin_tag_tag extends DokuWiki_Syntax_Plugin {
 
-    function getInfo() {
-        return array(
-                'author' => 'Gina Häußge, Michael Klier, Esther Brunner',
-                'email'  => 'dokuwiki@chimeric.de',
-                'date'   => @file_get_contents(DOKU_PLUGIN.'tag/VERSION'),
-                'name'   => 'Tag Plugin (tag component)',
-                'desc'   => 'Displays links to categories the page belongs to',
-                'url'    => 'http://www.dokuwiki.org/plugin:tag',
-                );
-    }
-
     function getType() { return 'substition'; }
     function getSort() { return 305; }
     function getPType() { return 'block';}

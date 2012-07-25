@@ -480,12 +480,13 @@ class helper_plugin_tag extends DokuWiki_Plugin {
      * @return bool
      */
     function _checkPageTags($pagetags, $tags) {
+        $result = false;
         foreach($tags as $tag) {
             if ($tag{0} == "+" and !in_array(substr($tag, 1), $pagetags)) return false;
-            elseif ($tag{0} == "-" and in_array(substr($tag, 1), $pagetags)) return false;
-            elseif (!in_array($tag, $pagetags)) return false;
+            if ($tag{0} == "-" and in_array(substr($tag, 1), $pagetags)) return false;
+            if (in_array($tag, $pagetags)) $result = true;
         }
-        return true;
+        return $result;
     }
 
 }

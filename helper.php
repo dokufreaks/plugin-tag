@@ -473,13 +473,12 @@ class helper_plugin_tag extends DokuWiki_Plugin {
      * @param tags the tags we are looking
      */
     function _checkPageTags($pagetags, $tags) {
-        $result = false;
         foreach($tags as $tag) {
             if ($tag{0} == "+" and !in_array(substr($tag, 1), $pagetags)) return false;
-            if ($tag{0} == "-" and in_array(substr($tag, 1), $pagetags)) return false;
-            if (in_array($tag, $pagetags)) $result = true;
+            elseif ($tag{0} == "-" and in_array(substr($tag, 1), $pagetags)) return false;
+            elseif (!in_array($tag, $pagetags)) return false;
         }
-        return $result;
+        return true;
     }
 
 }

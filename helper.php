@@ -237,7 +237,7 @@ class helper_plugin_tag extends DokuWiki_Plugin {
     * @param array $tags array of tags
     * @param array $namespaces array of namespaces where to count the tags
     * @param boolean $allTags boolean if all available tags should be counted
-    * @param boolean recursive boolean if pages in subnamespaces are allowed
+    * @param boolean $recursive boolean if pages in subnamespaces are allowed
     * @return array
     */
    function tagOccurrences($tags, $namespaces = NULL, $allTags = false, $recursive = NULL) {

@@ -378,7 +378,7 @@ class helper_plugin_tag extends DokuWiki_Plugin {
         $prefix = substr($tag, 0, 1);
         $tag = $this->_applyMacro($tag);
         if ($prefix === '-' || $prefix === '+') {
-            return $prefix + cleanID($tag);
+            return $prefix.cleanID($tag);
         } else {
             return cleanID($tag);
         }

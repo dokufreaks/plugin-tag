@@ -34,7 +34,8 @@ class action_plugin_tag extends DokuWiki_Action_Plugin {
      * whenever the stored data format changes.
      */
     function _indexer_version($event, $param) {
-        $event->data['plugin_tag'] = '0.2';
+        global $conf;
+        $event->data['plugin_tag'] = '0.2.deaccent='.$conf['deaccent'];
     }
 
     /**

@@ -11,17 +11,11 @@ if (!defined('DOKU_INC')) die();
 if (!defined('DOKU_LF')) define('DOKU_LF', "\n");
 if (!defined('DOKU_TAB')) define('DOKU_TAB', "\t");
 
-require_once(DOKU_INC.'inc/indexer.php');
-
 class helper_plugin_tag extends DokuWiki_Plugin {
 
     var $namespace  = '';      // namespace tag links point to
 
-    var $doc        = '';      // the final output XHTML string
-    var $references = array(); // $meta['relation']['references'] data for metadata renderer
-
     var $sort       = '';      // sort key
-    var $idx_dir    = '';      // directory for index files
     var $topic_idx  = array();
 
     /**
@@ -33,30 +27,8 @@ class helper_plugin_tag extends DokuWiki_Plugin {
         $this->namespace = $this->getConf('namespace');
         if (!$this->namespace) $this->namespace = getNS($ID);
         $this->sort = $this->getConf('sortkey');
-
-        // determine where index files are saved
-        if (@file_exists($conf['indexdir'].'/page.idx')) { // new word length based index
-            $this->idx_dir = $conf['indexdir'];
-            if (!@file_exists($this->idx_dir.'/topic.idx')) $this->_importTagIndex();
-        } else {                                          // old index
-            $this->idx_dir = $conf['cachedir'];
-            if (!@file_exists($this->idx_dir.'/topic.idx')) $this->_generateTagIndex();
-        }
-
-        // load page and tag index
-        $this->topic_idx = unserialize(io_readFile($this->idx_dir.'/topic.idx', false));
     }
 
-    function getInfo() {
-        return array(
-                'author' => 'Gina Häußge, Michael Klier, Esther Brunner',
-                'email'  => 'dokuwiki@chimeric.de',
-                'date'   => @file_get_contents(DOKU_PLUGIN.'tag/VERSION'),
-                'name'   => 'Tag Plugin (helper class)',
-                'desc'   => 'Functions to return tag links and topic lists',
-                'url'    => 'http://www.dokuwiki.org/plugin:tag',
-                );
-    }
 
     function getMethods() {
         $result = array();
@@ -94,6 +66,16 @@ class helper_plugin_tag extends DokuWiki_Plugin {
                     'refinement tags' => 'string'),
                 'return' => array('pages' => 'array'),
                 );
+        $result[] = array(
+                'name'   => 'tagOccurrences',
+                'desc'   => 'returns a list of tags with their number of occurrences',
+                'params' => array(
+                    'list of tags to get the occurrences for' => 'array',
+                    'namespaces to which the search shall be restricted' => 'array',
+                    'if all tags shall be returned (then the first parameter is ignored)' => 'boolean',
+                    'if the namespaces shall be searched recursively' => 'boolean'),
+                'return' => array('tags' => 'array'),
+                );
         return $result;
     }
 
@@ -108,19 +90,20 @@ class helper_plugin_tag extends DokuWiki_Plugin {
      * Returns the cell data for the Pagelist Plugin
      */
     function td($id) {
-        $subject = p_get_metadata($id, 'subject');
+        $subject = $this->_getSubjectMetadata($id);
         return $this->tagLinks($subject);
     }
 
     /**
      * Returns the links for given tags
+     *
+     * @param array $tags an array of tags
+     * @return string HTML link tags
      */
     function tagLinks($tags) {
-        global $conf;
-
-        if (!is_array($tags)) $tags = explode(' ', $tags);
         if (empty($tags) || ($tags[0] == '')) return '';
 
+        $links = array();
         foreach ($tags as $tag) {
             $links[] = $this->tagLink($tag);
         }
@@ -132,6 +115,7 @@ class helper_plugin_tag extends DokuWiki_Plugin {
      * Returns the link for one given tag
      */
     function tagLink($tag) {
+        global $conf;
         $svtag = $tag;
         $title = str_replace('_', ' ', noNS($tag));
         resolve_pageid($this->namespace, $tag, $exists); // resolve shortcuts
@@ -149,7 +133,6 @@ class helper_plugin_tag extends DokuWiki_Plugin {
         }
         $link = '<a href="'.$url.'" class="'.$class.'" title="'.hsc($tag).
             '" rel="tag">'.hsc($title).'</a>';
-        $this->references[$tag] = $exists;
         return $link;
     }
 
@@ -163,73 +146,53 @@ class helper_plugin_tag extends DokuWiki_Plugin {
         $tag = $this->_parseTagList($tag, true);
         $result = array();
 
-        $docs = $this->_tagIndexLookup($tag);
-        $docs = array_filter($docs, 'isVisiblePage'); // discard hidden pages
-        if (!count($docs)) return $result;
-
-        // check metadata for matching subject
-        foreach ($docs as $match) {
-            
-            // filter by namespace, root namespace is identified with a dot
-            if($ns == '.') {
-                // root namespace is specified, discard all pages who lay outside the root namespace
-                if(getNS($match) != false) continue;
-            } else {
-                // ("!==0" namespace found at position 0)
-                if ($ns && (strpos(':'.getNS($match), ':'.$ns) !== 0)) continue;
-            }
-
-            // check ACL permission; if okay, then add the page
-            $perm = auth_quickaclcheck($match);
-            if ($perm < AUTH_READ) continue;
-
+        // find the pages using topic.idx
+        $pages = $this->_tagIndexLookup($tag);
+        if (!count($pages)) return $result;
+        
+        foreach ($pages as $page) {
+            // exclude pages depending on ACL and namespace
+            if($this->_notVisible($page, $ns)) continue;
             // get metadata
             $meta = array();
-            $meta = p_get_metadata($match);
+            $tags  = $this->_getSubjectMetadata($page);
+            // don't trust index
+            if (empty($tags)) continue;
+            if (!$this->_checkPageTags($tags, $tag)) continue;
 
-            // skip drafts unless for users with create priviledge
+            $meta = p_get_metadata($page);
+
+            $perm = auth_quickaclcheck($page);
+
+            // skip drafts unless for users with create privilege
             $draft = ($meta['type'] == 'draft');
             if ($draft && ($perm < AUTH_CREATE)) continue;
 
             $title = $meta['title'];
-            $tags  = $meta['subject'];
             $date  = ($this->sort == 'mdate' ? $meta['date']['modified'] : $meta['date']['created'] );
-            if (!is_array($tags)) $tags = explode(' ', $tags);
             $tags = array_unique($tags);
             $taglinks = $this->tagLinks($tags);
 
             // determine the sort key
-            if ($this->sort == 'id') $key = $match;
-            elseif ($this->sort == 'pagename') $key = noNS($match);
+            if ($this->sort == 'id') $key = $page;
+            elseif ($this->sort == 'pagename') $key = noNS($page);
             elseif ($this->sort == 'title') $key = $title;
             else $key = $date;
-
             // make sure that the key is unique
             $key = $this->_uniqueKey($key, $result);
 
-            // is the page really tagged with one of our tags?
-            foreach ($tags as $word) {
-                if (in_array(utf8_strtolower($word), $tag)) {
-                    $result[$key] = array(
-                            'id'     => $match,
-                            'title'  => $title,
-                            'date'   => $date,
-                            'user'   => $meta['creator'],
-                            'desc'   => $meta['description']['abstract'],
-                            'cat'    => $tags[0],
-                            'tags'   => $taglinks,
-                            'perm'   => $perm,
-                            'exists' => true,
-                            'draft'  => $draft,
-                            );
-                    break;
-                }
-            }
-
-            // if not, the tag index was out of date: refresh it!
-            if (!is_array($result[$key]))
-                $this->_refreshTagIndex($match, $tag);
-        }        
+            $result[$key] = array(
+                    'id'     => $page,
+                    'title'  => $title,
+                    'date'   => $date,
+                    'user'   => $meta['creator'],
+                    'desc'   => $meta['description']['abstract'],
+                    'cat'    => $tags[0],
+                    'tags'   => $taglinks,
+                    'perm'   => $perm,
+                    'exists' => true,
+                    'draft'  => $draft, );
+        }
 
         // finally sort by sort key
         if ($this->getConf('sortorder') == 'ascending') ksort($result);
@@ -244,10 +207,21 @@ class helper_plugin_tag extends DokuWiki_Plugin {
     function tagRefine($pages, $refine) {
         if (!is_array($pages)) return $pages; // wrong data type
         $tags = $this->_parseTagList($refine, true);
+        $clean_tags = array();
+        foreach ($tags as $i => $tag) {
+            if (($tag{0} == '+') || ($tag{0} == '-'))
+                $clean_tags[$i] = substr($tag, 1);
+            else
+                $clean_tags[$i] = $tag;
+        }
+
+        $indexer = idx_get_indexer();
+        $index_pages = $indexer->lookupKey('subject', $clean_tags, array($this, '_tagCompare'));
+
         foreach ($tags as $tag) {
             if (!(($tag{0} == '+') || ($tag{0} == '-'))) continue;
             $cleaned_tag = substr($tag, 1);
-            $tagpages = $this->topic_idx[$cleaned_tag];
+            $tagpages = $index_pages[$cleaned_tag];
             $and = ($tag{0} == '+');
             foreach ($pages as $key => $page) {
                 $cond = in_array($page['id'], $tagpages);
@@ -259,326 +233,115 @@ class helper_plugin_tag extends DokuWiki_Plugin {
    }
    
    /**
-    * Get count of occurences for a list of tags
-    * @params tags array of tags 
-    * @params ns array of namespaces where to count the tags
-    * @params allTags boolean if all available tags should be counted
+    * Get count of occurrences for a list of tags
+    *
+    * @param array $tags array of tags
+    * @param array $namespaces array of namespaces where to count the tags
+    * @param boolean $allTags boolean if all available tags should be counted
+    * @param boolean $recursive boolean if pages in subnamespaces are allowed
+    * @return array
     */
-   function tagOccurences($tags, $ns = NULL, $allTags = false) {
-        $otags = array();
-        
-        if($allTags) {
-            $tags = array_keys($this->topic_idx);    // all tags should be displayed
-        }
+   function tagOccurrences($tags, $namespaces = NULL, $allTags = false, $recursive = NULL) {
+        // map with trim here in order to remove newlines from tags
+        if($allTags) $tags = array_map('trim', idx_getIndex('subject', '_w'));
+        $tags = $this->_cleanTagList($tags);
+        $otags = array(); //occurrences
+        if(!$namespaces || $namespaces[0] == '' || !is_array($namespaces)) $namespaces = NULL; // $namespaces not specified
 
-        // kick out unwanted pages
-        if($ns && $ns[0] != '') {
+        $indexer = idx_get_indexer();
+        $indexer_pages = $indexer->lookupKey('subject', $tags, array($this, '_tagCompare'));
 
-            $tmptags = $this->topic_idx;
+        $root_allowed = ($namespaces == NULL ? false : in_array('.', $namespaces));
+        if ($recursive === NULL)
+            $recursive = $this->getConf('list_tags_of_subns');
 
-            if($allTags) { // count occurences of all tags
-                foreach($tmptags as $tagname => $pages) {
+        foreach ($tags as $tag) {
+            if (!isset($indexer_pages[$tag])) continue;
 
-                    foreach ($pages as $key => $page) {
-                        $inNS = false;
-                        $deleteID = false;
+            // just to be sure remove duplicate pages from the list of pages
+            $pages = array_unique($indexer_pages[$tag]);
 
-                        // display tags also if the page is inside a subnamespace of a specified namespace
-                        if($this->getConf('list_tags_of_subns')) {
-                            foreach($ns as $value) {
-                                if((getNS($page) != false) && strpos(getNS($page), $value) !== false ) {
-                                    $inNS = true;
-                                }
-                            }    
-                        } else {
-                            // discard tags inside subnamespaces of valid namespaces
-                            // check if the page is in the allowed namespaces
-                            if(in_array(getNS($page), $ns)) { 
-                                $inNS = true;
-                            }
+            // don't count hidden pages or pages the user can't access
+            // for performance reasons this doesn't take drafts into account
+            $pages = array_filter($pages, array($this, '_isVisible'));
+
+            if (empty($pages)) continue;
+
+            if ($namespaces == NULL || ($root_allowed && $recursive)) {
+                // count all pages
+                $otags[$tag] = count($pages);
+            } else if (!$recursive) {
+                // filter by exact namespace
+                $otags[$tag] = 0;
+                foreach ($pages as $page) {
+                    $ns = getNS($page);
+                    if (($ns == false && $root_allowed) || in_array($ns, $namespaces)) $otags[$tag]++;
+                }
+            } else { // recursive, no root
+                $otags[$tag] = 0;
+                foreach ($pages as $page) {
+                    foreach ($namespaces as $ns) {
+                        if(strpos($page, $ns.':') === 0 ) {
+                            $otags[$tag]++ ;
+                            break;
                         }
-                        
-                        // root namespace is specified with a dot
-                        if(getNS($page) == false && in_array('.', $ns)) {
-                            $inNS = true;   
-                        }
-
-                        if($conf['debug']) {
-                            var_dump("Tagname: ". $tagname);
-                            var_dump("Pagename: " . $page);
-                            var_dump("Within valid namespace: " . $inNS);
-                        }
-                                              
-                        // delete the pages inside the output array which aren't in the specified namespaces
-                        if($this->getConf('list_tags_of_subns')) {
-                            foreach($ns as $value) {
-                                $deleteID = true;
-                                if((getNS($page) != false) && strpos(getNS($page), $value) !== false ) {
-                                    $deleteID = false;
-                                }
-                            }    
-                        } else {
-                            if(!in_array(getNS($page), $ns)) $deleteID = true;
-                        }
-                        
-                        // condition for root namespace
-                        if(getNS($page) == false && in_array('.', $ns)) $deleteID = false;
-                        
-                        if($deleteID) unset($tmptags[$tagname][$key]);
                     }
                 }
-                $tagsnew = $tmptags;
-                
-            } else { // if($allTags == true)
-                // show only specified tags
-                
-                // when only a few tags are given
-                foreach($tags as $index => $tagname) {
-                    // get pages for $tagname
-                    $pages = $this->topic_idx[$tagname];
-                    
-                    // $pages is null when non-existing tags are specified 
-                    if($pages != null) {
-                        foreach($pages as $key => $page) {
-                                $deleteID = false;
-                                
-                                // check if the namespace of the current page is in a given namespace
-                                if(getNS($page) != false && !in_array(getNS($page), $ns)) $deleteID = true;
-                                
-                                // condition for root namespace 
-                                if(getNS($page) == false && !in_array('.', $ns)) $deleteID = true;
-                                
-                                // remove the page in the array
-                                if($deleteID) unset($pages[$key]);
-
-                                // add valid pages to array
-                                $tagsnew[$tagname] = $pages;
-                        }
-                    }
-                }                
             }
-
-            $otags = array();         
-            // count the filtered tags
-            // $tagsnew: tags are stored as keys
-            if(!empty($tagsnew)) {
-                foreach($tagsnew as $tagname => $pages) {
-                    $count = count($tagsnew[$tagname]);
-                    $otags[$tagname] = $count; 
-                }
-            }
-        } else { // if($ns && $ns[0] != '')
-            // no namespaces are specified
-            foreach($tags as $key => $tag) {
-                $count = count($this->topic_idx[$tag]);
-                $otags[$tag] = $count; 
-            }
+            // don't return tags without pages
+            if ($otags[$tag] == 0) unset($otags[$tag]);
         }
-        
         return $otags;
     }
 
     /**
-     * Refresh tag index
-     * Deletes all tags of page id which are not defined in the page's metadata
-     * as well.
-     * 
-     * @param id the page id
-     * @param tags tags as defined in the index to double-check
+     * Get the subject metadata cleaning the result
+     *
+     * @param string $id the page id
+     * @return array
      */
-    function _refreshTagIndex($id, $tags) {
-        if (!is_array($tags) || empty($tags)) return false;
-        $changed = false;
-
-        // clean array first
-        $c = count($tags);
-        for ($i = 0; $i <= $c; $i++) {
-            $tags[$i] = utf8_strtolower($tags[$i]);
-        }
-
-        // get actual tags as saved in metadata
-        $meta = p_get_metadata($id);
-        $metatags = $meta['subject'];
-        if (!is_array($metatags)) $metatags = array();
-
-        foreach ($tags as $tag) {
-            if (!$tag) continue;                     // skip empty tags
-            if (in_array($tag, $metatags)) continue; // tag is still there
-            if (is_array($this->topic_idx[$tag])) {
-                $this->topic_idx[$tag] = array_diff($this->topic_idx[$tag], array($id));
-            } else {
-                $this->topic_idx[$tag] = array($id);
-            }
-            $changed = true;
-        }
-
-        if ($changed) return $this->_saveIndex();
-        else return true;
-    }
-
-    /**
-     * Update tag index
-     */
-    function _updateTagIndex($id, $tags) {
-        global $ID, $INFO;
-
-        // if nothing to do
-        if (!is_array($tags) || empty($tags)) return false;
-        
-        // track changes
-        $changed = false;
-
-        // clean array first
-        $c = count($tags);
-        for ($i = 0; $i <= $c; $i++) {
-            $tags[$i] = utf8_strtolower($tags[$i]);
-        }
-
-        $knowntags = array(); // track known tags
-        // clear all no more used tags
-        foreach($this->topic_idx as $tag => $pages) {
-            if (!is_array($pages)) {
-                // clear unvalid type topic
-                unset($this->topic_idx[$tag]);
-                $changed = true;
-            } elseif (in_array($id, $pages)) {
-                if(in_array($tag, $tags)) $knowntags[] = $tag; // nothing to do
-                else {
-                    // tag deleted from the page
-                    $this->topic_idx[$tag] = array_diff($this->topic_idx[$tag], array($id));
-                    $changed = true;
-                }
-            } elseif (in_array($tag, $tags)) {
-                // tag added to the page
-                $this->topic_idx[$tag][] = $id;
-                $knowntags[] = $tag;
-                $changed = true;
-            }
-            // clean empty topic
-            if (count($this->topic_idx[$tag]) == 0 || (!$tag)) {
-                unset($this->topic_idx[$tag]);
-                $changed = true;
-            }
-        }
-
-        // only new topics to add now
-        $newtopics = array_diff($tags, $knowntags);
-        if (count($newtopics) != 0 ) {
-            foreach($newtopics as $tag) {
-                if (!tag) continue; //skip empty tags
-                $this->topic_idx[$tag] = array($id);
-                $changed = true;
-            }
-        }
-        // save tag index
-        if ($changed) return $this->_saveIndex();
-        else return true;
-    }
-
-    /**
-     * Save tag or page index
-     */
-    function _saveIndex() {
-        return io_saveFile($this->idx_dir.'/topic.idx', serialize($this->topic_idx));
-    }
-
-    /**
-     * Import old creation date index
-     */
-    function _importTagIndex() {
-        global $conf;
-
-        $old = $conf['indexdir'].'/tag.idx';
-        $new = $conf['indexdir'].'/topic.idx';
-        
-        if (!@file_exists($old)) return $this->_generateTagIndex();
-        
-        $tag_index = @file($this->idx_dir.'/tag.idx');
-        $topic_index = array();
-        
-        if (is_array($tag_index)) {
-            foreach ($tag_index as $idx_line) {
-                list($key, $value) = explode(' ', $idx_line, 2);
-                $topic_index[$key] = $this->_numToID(explode(':', trim($value)));
-            }
-            return io_saveFile($new, serialize($topic_index));
-        }
-        
-        return false;
-    }
-
-    /**
-     * Generates the tag index if file missing
-     */
-    function _generateTagIndex() {
-        global $conf;
-
-        require_once (DOKU_INC.'inc/search.php');
-        $topic_index = array();
-        $pages = array();
-        search($pages, $conf['datadir'], 'search_allpages', array());
-        foreach ($pages as $page) {
-            $tags = p_get_metadata($page['id'], 'subject');
-            if (!is_array($tags)) $tags = explode(' ', $tags);
-            foreach($tags as $tag) {
-                if (!$tag) continue; // drop empty tags
-                $topic_index[utf8_strtolower($tag)][] = $page['id'];
-            }
-        }
-        return io_saveFile($this->idx_dir.'/topic.idx', serialize($topic_index));
-    }
-
-    /**
-     * Generates the tag data for a single page.
-     */
-    function _generateTagData($page) {
-        $tags = p_get_metadata($page['id'], 'subject');
+    function _getSubjectMetadata($id){
+        $tags = p_get_metadata($id, 'subject');
         if (!is_array($tags)) $tags = explode(' ', $tags);
-        $this->_updateTagIndex($page['id'], $tags);
+        return $tags;
     }
 
     /**
      * Tag index lookup
+     *
+     * @param array $tags the tags to filter
+     * @return array the matching page ids
      */
     function _tagIndexLookup($tags) {
-        $result = array(); // array of line numbers in the page index
+        $result = array(); // array of page ids
 
-        // get the line numbers in page index
-        foreach ($tags as $tag) {
-            if (($tag{0} == '+') || ($tag{0} == '-')) 
-                $t = substr($tag, 1);
+        $clean_tags = array();
+        foreach ($tags as $i => $tag) {
+            if (($tag{0} == '+') || ($tag{0} == '-'))
+                $clean_tags[$i] = substr($tag, 1);
             else
-                $t = $tag;
-            if (!is_array($this->topic_idx[$t])) $this->topic_idx[$t] = array();
+                $clean_tags[$i] = $tag;
+        }
+
+        $indexer = idx_get_indexer();
+        $pages = $indexer->lookupKey('subject', $clean_tags, array($this, '_tagCompare'));
+
+        foreach ($tags as $i => $tag) {
+            $t = $clean_tags[$i];
+            if (!is_array($pages[$t])) $pages[$t] = array();
 
             if ($tag{0} == '+') {       // AND: add only if in both arrays
-                $result = array_intersect($result, $this->topic_idx[$t]);
+                $result = array_intersect($result, $pages[$t]);
             } elseif ($tag{0} == '-') { // NOT: remove array from docs
-                $result = array_diff($result, $this->topic_idx[$t]);
+                $result = array_diff($result, $pages[$t]);
             } else {                   // OR: add array to docs
-                $result = array_unique(array_merge($result, $this->topic_idx[$t]));
+                $result = array_unique(array_merge($result, $pages[$t]));
             }
         }
 
-        // now convert to page IDs and return
         return $result;
     }
 
-    /**
-     * Converts an array of page numbers to IDs
-     */
-    function _numToID($nums) {
-        $page_index = idx_getIndex('page', '');
-        if (is_array($nums)) {
-            $docs = array();
-            foreach ($nums as $num) {
-                $docs[] = trim($page_index[$num]);
-            }
-            return $docs;
-        } else {
-            return trim($page_index[$nums]);
-        }
-    }
 
     /**
      * Splits a string into an array of tags
@@ -593,8 +356,33 @@ class helper_plugin_tag extends DokuWiki_Plugin {
             }
         }
 
-        if ($clean) $tags = utf8_strtolower($this->_applyMacro($tags));
-        return explode(' ', $tags);
+        $tags = explode(' ', $tags);
+
+        if ($clean) {
+            return $this->_cleanTagList($tags);
+        } else {
+            return $tags;
+        }
+    }
+
+    /**
+     * Clean a list (array) of tags using _cleanTag
+     */
+    function _cleanTagList($tags) {
+        return array_unique(array_map(array($this, '_cleanTag'), $tags));
+    }
+
+    /**
+     * Cleans a tag using cleanID while preserving a possible prefix of + or -
+     */
+    function _cleanTag($tag) {
+        $prefix = substr($tag, 0, 1);
+        $tag = $this->_applyMacro($tag);
+        if ($prefix === '-' || $prefix === '+') {
+            return $prefix.cleanID($tag);
+        } else {
+            return cleanID($tag);
+        }
     }
 
     /**
@@ -646,8 +434,60 @@ class helper_plugin_tag extends DokuWiki_Plugin {
         }
     }
 
-    function _notEmpty($val) {
+    function _notEmpty($val) { // (!! not used in the plugin)
         return !empty($val);
+    }
+
+    /**
+     * Opposite of _notVisible
+     */
+    function _isVisible($id, $ns='') {
+        return !$this->_notVisible($id, $ns);
+    }
+    /**
+     * Check visibility of the page
+     * 
+     * @param string $id the page id
+     * @param string $ns the namespace authorized
+     * @return bool if the page is hidden
+     */
+    function _notVisible($id, $ns="") {
+        if (isHiddenPage($id)) return true; // discard hidden pages
+        // discard if user can't read
+        if (auth_quickaclcheck($id) < AUTH_READ) return true;
+        // filter by namespace, root namespace is identified with a dot
+        if($ns == '.') {
+            // root namespace is specified, discard all pages who lay outside the root namespace
+            if(getNS($id) != false) return true;
+        } else {
+            // ("!==0" namespace found at position 0)
+            if ($ns && (strpos(':'.getNS($id), ':'.$ns) !== 0)) return true;
+        }
+        return !page_exists($id, '', false);
+    }
+
+    /**
+     * Helper function for the indexer in order to avoid interpreting wildcards
+     */
+    function _tagCompare($tag1, $tag2) {
+        return $tag1 == $tag2;
+    }
+
+    /**
+     * Check if the page is a real candidate for the result of the getTopic
+     *
+     * @param array $pagetags tags on the metadata of the page
+     * @param array $tags tags we are looking
+     * @return bool
+     */
+    function _checkPageTags($pagetags, $tags) {
+        $result = false;
+        foreach($tags as $tag) {
+            if ($tag{0} == "+" and !in_array(substr($tag, 1), $pagetags)) return false;
+            if ($tag{0} == "-" and in_array(substr($tag, 1), $pagetags)) return false;
+            if (in_array($tag, $pagetags)) $result = true;
+        }
+        return $result;
     }
 
 }

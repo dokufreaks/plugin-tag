@@ -8,26 +8,16 @@
 if(!defined('DOKU_INC')) die();
 
 if(!defined('DOKU_PLUGIN')) define('DOKU_PLUGIN',DOKU_INC.'lib/plugins/');
-require_once(DOKU_PLUGIN.'action.php');
 
+/**
+ * Action part of the tag plugin, handles tag display, technorati ping and index updates
+ */
 class action_plugin_tag extends DokuWiki_Action_Plugin {
 
     /**
-     * return some info
-     */
-    function getInfo() {
-        return array(
-                'author' => 'Gina Häußge, Michael Klier, Esther Brunner',
-                'email'  => 'dokuwiki@chimeric.de',
-                'date'   => '2011-03-20',
-                'name'   => 'Tag Plugin (ping component)',
-                'desc'   => 'Ping technorati when a new page is created',
-                'url'    => 'http://www.dokuwiki.org/plugin:tag',
-                );
-    }
-
-    /**
      * register the eventhandlers
+     *
+     * @param Doku_Event_Handler $contr
      */
     function register(&$contr) {
         $contr->register_hook('IO_WIKIPAGE_WRITE', 'BEFORE', $this, 'ping', array());
@@ -35,6 +25,33 @@ class action_plugin_tag extends DokuWiki_Action_Plugin {
         $contr->register_hook('TPL_ACT_UNKNOWN', 'BEFORE', $this, '_handle_tpl_act', array());
         $contr->register_hook('TPL_METAHEADER_OUTPUT', 'BEFORE', $this, '_handle_keywords', array());
         if($this->getConf('toolbar_icon'))	$contr->register_hook('TOOLBAR_DEFINE', 'AFTER', $this, 'insert_toolbar_button', array ());
+        $contr->register_hook('INDEXER_VERSION_GET', 'BEFORE', $this, '_indexer_version', array());
+        $contr->register_hook('INDEXER_PAGE_ADD', 'BEFORE', $this, '_indexer_index_tags', array());
+    }
+
+    /**
+     * Add a version string to the index so it is rebuilt
+     * whenever the stored data format changes.
+     */
+    function _indexer_version($event, $param) {
+        global $conf;
+        $event->data['plugin_tag'] = '0.2.deaccent='.$conf['deaccent'];
+    }
+
+    /**
+     * Add all data of the subject metadata to the metadata index.
+     */
+    function _indexer_index_tags($event, $param) {
+        /* @var helper_plugin_tag $helper */
+        if ($helper =& plugin_load('helper', 'tag')) {
+            // make sure the tags are cleaned and no duplicate tags are added to the index
+            $tags = p_get_metadata($event->data['page'], 'subject');
+            if (!is_array($tags)) {
+                $event->data['metadata']['subject'] = array();
+            } else {
+                $event->data['metadata']['subject'] = $helper->_cleanTagList($tags);
+            }
+        }
     }
 
     /**
@@ -74,12 +91,18 @@ class action_plugin_tag extends DokuWiki_Action_Plugin {
      *
      * @author Michael Klier <chi@chimeric.de>
      */
-    function _handle_act(&$event, $param) {
+    function _handle_act(Doku_Event &$event, $param) {
         if($event->data != 'showtag') return;
         $event->preventDefault();
     }
 
-    function _handle_tpl_act(&$event, $param) {
+    /**
+     * Display the tag page
+     *
+     * @param Doku_Event $event The TPL_ACT_UNKNOWN event
+     * @param array      $param optional parameters (unused)
+     */
+    function _handle_tpl_act(Doku_Event &$event, $param) {
         global $lang;
 
         if($event->data != 'showtag') return;
@@ -91,6 +114,7 @@ class action_plugin_tag extends DokuWiki_Action_Plugin {
         $tag   = trim(str_replace($this->getConf('namespace').':', '', $_REQUEST['tag']));
         $ns    = trim($_REQUEST['ns']);
 
+        /* @var helper_plugin_tag $helper */
         if ($helper =& plugin_load('helper', 'tag')) $pages = $helper->getTopic($ns, '', $tag);
 
         if(!empty($pages)) {
@@ -98,9 +122,10 @@ class action_plugin_tag extends DokuWiki_Action_Plugin {
             // let Pagelist Plugin do the work for us
             if (plugin_isdisabled('pagelist') || (!$pagelist = plugin_load('helper', 'pagelist'))) {
                 msg($this->getLang('missing_pagelistplugin'), -1);
-                return false;
+                return;
             }
 
+            /* @var helper_plugin_pagelist $pagelist */
             $pagelist->setFlags($flags);
             $pagelist->startList();
             foreach ($pages as $page) {
@@ -120,7 +145,7 @@ class action_plugin_tag extends DokuWiki_Action_Plugin {
 	/**
 	 * Inserts the tag toolbar button
 	 */
-	function insert_toolbar_button(&$event, $param) {
+	function insert_toolbar_button(Doku_Event &$event, $param) {
 	    $event->data[] = array (
 	        'type' => 'format',
 	        'title' => $this->getLang('toolbar_icon'),
@@ -133,7 +158,7 @@ class action_plugin_tag extends DokuWiki_Action_Plugin {
 	/**
 	 * Prevent displaying underscores instead of blanks inside the page keywords
 	 */
-	function _handle_keywords(&$data) {
+	function _handle_keywords(Doku_Event &$event) {
 	    global $ID;
 
 	    // Fetch tags for the page; stop proceeding when no tags specified
@@ -141,7 +166,7 @@ class action_plugin_tag extends DokuWiki_Action_Plugin {
 	    if(is_null($tags)) true;
 
 	    // Replace underscores with blanks
-	    foreach($data->data['meta'] as &$meta) {
+	    foreach($event->data['meta'] as &$meta) {
 	        if($meta['name'] == 'keywords') {
 	            $meta['content'] = str_replace('_', ' ', $meta['content']);
 	        }

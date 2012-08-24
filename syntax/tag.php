@@ -16,22 +16,8 @@ if (!defined('DOKU_INC')) die();
 if (!defined('DOKU_LF')) define('DOKU_LF', "\n");
 if (!defined('DOKU_TAB')) define('DOKU_TAB', "\t");
 if (!defined('DOKU_PLUGIN')) define('DOKU_PLUGIN',DOKU_INC.'lib/plugins/');
-require_once(DOKU_PLUGIN.'syntax.php');
 
 class syntax_plugin_tag_tag extends DokuWiki_Syntax_Plugin {
-
-    var $tags = array();
-
-    function getInfo() {
-        return array(
-                'author' => 'Gina Häußge, Michael Klier, Esther Brunner',
-                'email'  => 'dokuwiki@chimeric.de',
-                'date'   => @file_get_contents(DOKU_PLUGIN.'tag/VERSION'),
-                'name'   => 'Tag Plugin (tag component)',
-                'desc'   => 'Displays links to categories the page belongs to',
-                'url'    => 'http://www.dokuwiki.org/plugin:tag',
-                );
-    }
 
     function getType() { return 'substition'; }
     function getSort() { return 305; }
@@ -72,25 +58,27 @@ class syntax_plugin_tag_tag extends DokuWiki_Syntax_Plugin {
 
         // for metadata renderer
         } elseif ($mode == 'metadata' && $ACT != 'preview' && !$REV) {
-            // merge with previous tags
-            $this->tags = array_merge($this->tags, $data);
-            // update tags in topic.idx
-            $my->_updateTagIndex($ID, $this->tags);
+            // erase tags on persistent metadata no more used
+            if (isset($renderer->persistent['subject'])) {
+                unset($renderer->persistent['subject']);
+                $renderer->meta['subject'] = array();
+            }
 
-            if ($renderer->capture) $renderer->doc .= DOKU_LF.strip_tags($tags).DOKU_LF;
+            if (!isset($renderer->meta['subject'])) $renderer->meta['subject'] = array();
+
+            // each registered tags in metadata and index should be valid IDs
+            $data = array_map(cleanID, $data);
+            // merge with previous tags and make the values unique
+            $renderer->meta['subject'] = array_unique(array_merge($renderer->meta['subject'], $data));
+
+            if ($renderer->capture) $renderer->doc .= DOKU_LF.implode(' ', $data).DOKU_LF;
 
             // add references if tag page exists
             foreach ($data as $tag) {
                 resolve_pageid($my->namespace, $tag, $exists); // resolve shortcuts
-                if ($exists) $renderer->meta['relation']['references'][$tag] = $exists;
+                $renderer->meta['relation']['references'][$tag] = $exists;
             }
 
-            // erase tags on persistent metadata no more used
-            if (isset($renderer->persistent['subject'])) unset($renderer->persistent['subject']);
-
-            // update the metadata
-            if (!is_array($renderer->meta['subject'])) $renderer->meta['subject'] = array();
-            $renderer->meta['subject'] = $this->tags;
             return true;
         }
         return false;

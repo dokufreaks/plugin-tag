@@ -9,7 +9,6 @@
 // custom language strings for the plugin
 $lang['tags']  = 'Tags';
 $lang['topic'] = 'Thema';
-$lang['rebuildindex'] = 'Tagindex neu aufbauen';
 $lang['toolbar_icon'] = 'Tag-Syntax einfügen';
 $lang['empty_output'] = 'Leere Ausgabe';
 

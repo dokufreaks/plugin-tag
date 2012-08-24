@@ -170,7 +170,6 @@ class helper_plugin_tag extends DokuWiki_Plugin {
 
             $title = $meta['title'];
             $date  = ($this->sort == 'mdate' ? $meta['date']['modified'] : $meta['date']['created'] );
-            $tags = array_unique($tags);
             $taglinks = $this->tagLinks($tags);
 
             // determine the sort key
@@ -303,7 +302,7 @@ class helper_plugin_tag extends DokuWiki_Plugin {
     function _getSubjectMetadata($id){
         $tags = p_get_metadata($id, 'subject');
         if (!is_array($tags)) $tags = explode(' ', $tags);
-        return $tags;
+        return array_unique($tags);
     }
 
     /**

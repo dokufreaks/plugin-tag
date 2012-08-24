@@ -11,6 +11,9 @@ if (!defined('DOKU_INC')) die();
 if (!defined('DOKU_LF')) define('DOKU_LF', "\n");
 if (!defined('DOKU_TAB')) define('DOKU_TAB', "\t");
 
+/**
+ * Helper part of the tag plugin, allows to query and print tags
+ */
 class helper_plugin_tag extends DokuWiki_Plugin {
 
     var $namespace  = '';      // namespace tag links point to
@@ -22,14 +25,18 @@ class helper_plugin_tag extends DokuWiki_Plugin {
      * Constructor gets default preferences and language strings
      */
     function helper_plugin_tag() {
-        global $ID, $conf;
+        global $ID;
 
         $this->namespace = $this->getConf('namespace');
         if (!$this->namespace) $this->namespace = getNS($ID);
         $this->sort = $this->getConf('sortkey');
     }
 
-
+    /**
+     * Returns some documentation of the methods provided by this helper part
+     *
+     * @return array Method description
+     */
     function getMethods() {
         $result = array();
         $result[] = array(
@@ -153,13 +160,12 @@ class helper_plugin_tag extends DokuWiki_Plugin {
         foreach ($pages as $page) {
             // exclude pages depending on ACL and namespace
             if($this->_notVisible($page, $ns)) continue;
-            // get metadata
-            $meta = array();
             $tags  = $this->_getSubjectMetadata($page);
             // don't trust index
             if (empty($tags)) continue;
             if (!$this->_checkPageTags($tags, $tag)) continue;
 
+            // get metadata
             $meta = p_get_metadata($page);
 
             $perm = auth_quickaclcheck($page);
@@ -388,9 +394,11 @@ class helper_plugin_tag extends DokuWiki_Plugin {
      * Makes user or date dependent topic lists possible
      */
     function _applyMacro($id) {
+        /** @var auth_basic $auth */
         global $INFO, $auth;
 
         $user     = $_SERVER['REMOTE_USER'];
+        $group    = '';
         // .htaccess auth doesn't provide the auth object
         if($auth) {
             $userdata = $auth->getUserData($user);
@@ -431,10 +439,6 @@ class helper_plugin_tag extends DokuWiki_Plugin {
             }
             return $testkey;
         }
-    }
-
-    function _notEmpty($val) { // (!! not used in the plugin)
-        return !empty($val);
     }
 
     /**

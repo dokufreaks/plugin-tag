@@ -17,16 +17,38 @@ if (!defined('DOKU_LF')) define('DOKU_LF', "\n");
 if (!defined('DOKU_TAB')) define('DOKU_TAB', "\t");
 if (!defined('DOKU_PLUGIN')) define('DOKU_PLUGIN',DOKU_INC.'lib/plugins/');
 
+/** Count syntax, allows to list tag counts */
 class syntax_plugin_tag_count extends DokuWiki_Syntax_Plugin {
 
+    /**
+     * @return string Syntax type
+     */
     function getType() { return 'substition'; }
+    /**
+     * @return int Sort order
+     */
     function getSort() { return 305; }
+    /**
+     * @return string Paragraph type
+     */
     function getPType() { return 'block';}
 
+    /**
+     * @param string $mode Parser mode
+     */
     function connectTo($mode) {
         $this->Lexer->addSpecialPattern('\{\{count>.*?\}\}', $mode, 'plugin_tag_count');
     }
 
+    /**
+     * Handle matches of the count syntax
+     *
+     * @param string $match The match of the syntax
+     * @param int    $state The state of the handler
+     * @param int    $pos The position in the document
+     * @param Doku_Handler    $handler The handler
+     * @return array Data for the renderer
+     */
     function handle($match, $state, $pos, &$handler) {
 
         $dump = trim(substr($match, 8, -2));     // get given tags
@@ -43,11 +65,20 @@ class syntax_plugin_tag_count extends DokuWiki_Syntax_Plugin {
 
         if (!$tags) $tags = '+';
 
+        /** @var helper_plugin_tag $my */
         if(!($my = plugin_load('helper', 'tag'))) return false;
 
         return array($my->_parseTagList($tags), $allowedNamespaces);
     }
 
+    /**
+     * Render xhtml output or metadata
+     *
+     * @param string         $mode      Renderer mode (supported modes: xhtml and metadata)
+     * @param Doku_Renderer  $renderer  The renderer
+     * @param array          $data      The data from the handler function
+     * @return bool If rendering was successful.
+     */
     function render($mode, &$renderer, $data) {
         if ($data == false) return false;
 
@@ -58,6 +89,7 @@ class syntax_plugin_tag_count extends DokuWiki_Syntax_Plugin {
         $renderer->info['cache'] = false;
 
         if($mode == "xhtml") {
+            /** @var helper_plugin_tag $my */
             if(!($my = plugin_load('helper', 'tag'))) return false;
 
             // get tags and their occurrences
@@ -93,6 +125,7 @@ class syntax_plugin_tag_count extends DokuWiki_Syntax_Plugin {
             }
             $renderer->doc .= '</table>'.DOKU_LF;
         }
+        return true;
     }
 }
 // vim:ts=4:sw=4:et: 

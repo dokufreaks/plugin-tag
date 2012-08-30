@@ -74,8 +74,6 @@ class syntax_plugin_tag_tag extends DokuWiki_Syntax_Plugin {
      * @return bool If rendering was successful.
      */
     function render($mode, &$renderer, $data) {
-        global $REV;
-
         if ($data === false) return false;
         /** @var helper_plugin_tag $my */
         if (!$my =& plugin_load('helper', 'tag')) return false;
@@ -90,7 +88,7 @@ class syntax_plugin_tag_tag extends DokuWiki_Syntax_Plugin {
             return true;
 
         // for metadata renderer
-        } elseif ($mode == 'metadata' && $ACT != 'preview' && !$REV) {
+        } elseif ($mode == 'metadata') {
             /** @var Doku_Renderer_metadata $renderer */
             // erase tags on persistent metadata no more used
             if (isset($renderer->persistent['subject'])) {

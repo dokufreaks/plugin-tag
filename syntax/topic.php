@@ -29,7 +29,7 @@ class syntax_plugin_tag_topic extends DokuWiki_Syntax_Plugin {
     /**
      * @return int Sort order
      */
-    function getSort() { return 306; }
+    function getSort() { return 295; }
 
     /**
      * @param string $mode Parser mode

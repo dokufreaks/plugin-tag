@@ -181,7 +181,7 @@ class helper_plugin_tag extends DokuWiki_Plugin {
             // determine the sort key
             if ($this->sort == 'id') $key = $page;
             elseif ($this->sort == 'pagename') $key = noNS($page);
-            elseif ($this->sort == 'title') $key = $title;
+            elseif ($this->sort == 'title') $key = utf8_strtolower($title);
             else $key = $date;
             // make sure that the key is unique
             $key = $this->_uniqueKey($key, $result);

@@ -193,9 +193,12 @@ class helper_plugin_tag extends DokuWiki_Plugin {
                     'draft'  => $draft, );
         }
 
-        // finally sort by sort key
-        if ($this->getConf('sortorder') == 'ascending') ksort($result);
-        else krsort($result);
+	// create function to be used for reverse sorting
+	$fnc = create_function('$a, $b', 'return strcasecmp($b["title"], $a["title"]);');
+	
+	// finally sort by sort key
+	if ($this->getConf('sortorder') == 'ascending') uksort($result, strcasecmp);
+	else uksort($result, "$fnc");
 
         return $result;
     }

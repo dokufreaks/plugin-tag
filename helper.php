@@ -194,8 +194,8 @@ class helper_plugin_tag extends DokuWiki_Plugin {
         }
 
         // finally sort by sort key
-        if ($this->getConf('sortorder') == 'ascending') ksort($result);
-        else krsort($result);
+        if ($this->getConf('sortorder') == 'ascending') ksort($result, SORT_FLAG_CASE | SORT_STRING);
+        else krsort($result, SORT_FLAG_CASE | SORT_STRING);
 
         return $result;
     }

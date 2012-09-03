@@ -90,6 +90,12 @@ class syntax_plugin_tag_tag extends DokuWiki_Syntax_Plugin {
         // for metadata renderer
         } elseif ($mode == 'metadata') {
             /** @var Doku_Renderer_metadata $renderer */
+            // erase tags on persistent metadata no more used
+            if (isset($renderer->persistent['subject'])) {
+                unset($renderer->persistent['subject']);
+                $renderer->meta['subject'] = array();
+            }
+
             if (!isset($renderer->meta['subject'])) $renderer->meta['subject'] = array();
 
             // each registered tags in metadata and index should be valid IDs

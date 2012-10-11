@@ -10,3 +10,8 @@ div.dokuwiki div.tags span {
   background: transparent url(images/tag.gif) 0px 1px no-repeat;
   padding: 1px 0px 1px 16px;
 }
+
+/* make it easier to select the +/- checkboxes in the tagsearch table by making them block elements */
+div.dokuwiki form.plugin__tag_search label.plus, div.dokuwiki form.plugin__tag_search label.minus {
+  display: block;
+}

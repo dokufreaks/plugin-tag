@@ -14,4 +14,10 @@ $lang['empty_output'] = 'Empty Output';
 
 $lang['missing_pagelistplugin'] = 'The Pagelist Plugin must be installed for topic lists.';
 
+// search form of tagsearch syntax
+$lang['include'] = 'Include';
+$lang['exclude'] = 'Exclude';
+$lang['use_and'] = 'Use AND';
+$lang['no_tags'] = 'No tags found';
+
 //Setup VIM: ex: et ts=2 :

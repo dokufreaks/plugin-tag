@@ -121,7 +121,7 @@ class helper_plugin_tag extends DokuWiki_Plugin {
     /**
      * Returns the link for one given tag
      */
-    function tagLink($tag) {
+    function tagLink($tag, $count=null) {
         global $conf;
         $svtag = $tag;
         $title = str_replace('_', ' ', noNS($tag));
@@ -138,8 +138,11 @@ class helper_plugin_tag extends DokuWiki_Plugin {
             $class = 'wikilink1';
             $url   = wl($tag, array('do'=>'showtag', 'tag'=>$svtag));
         }
+
+    	$count = is_null( $count ) ? "" : " ($count)";
+
         $link = '<a href="'.$url.'" class="'.$class.'" title="'.hsc($tag).
-            '" rel="tag">'.hsc($title).'</a>';
+            '" rel="tag">'.hsc($title).$count'</a>';
         return $link;
     }
 

@@ -142,7 +142,7 @@ class helper_plugin_tag extends DokuWiki_Plugin {
     	$count = is_null( $count ) ? "" : " ($count)";
 
         $link = '<a href="'.$url.'" class="'.$class.'" title="'.hsc($tag).
-            '" rel="tag">'.hsc($title).$count'</a>';
+            '" rel="tag">'.hsc($title).$count.'</a>';
         return $link;
     }
 

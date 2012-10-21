@@ -10,3 +10,17 @@ div.dokuwiki div.tags span {
   background: transparent url(images/tag.gif) 0px 1px no-repeat;
   padding: 1px 0px 1px 16px;
 }
+
+div.tagcloud {
+  border: 1px solid #c0c0c0;
+  padding: 10px;
+  font-size: 16px;
+}
+
+div.tagcloud span.tag a{
+  padding: 4px;
+}
+
+div.tagcloud span.tag a:hover{
+  background: lightblue;
+}

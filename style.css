@@ -3,6 +3,7 @@ div.dokuwiki div.tags {
   font-size: 95%;
   text-align: right;
   clear: both;
+  margin-bottom: 1.4em;
 }
 
 div.dokuwiki div.tags span {

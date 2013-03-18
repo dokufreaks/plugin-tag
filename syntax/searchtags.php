@@ -163,7 +163,7 @@ class syntax_plugin_tag_searchtags extends DokuWiki_Syntax_Plugin {
         // display error message when no tags were found
         if (!isset($tags) || $tags == NULL) {
             $form->addElement(form_makeOpenTag('p'));
-            $form->addElement($this->getLang('notags'));
+            $form->addElement($this->getLang('no_tags'));
             $form->addElement(form_makeCloseTag('p'));
         } else {
             // the tags table

@@ -7,7 +7,7 @@
  * Usage: {{tag>category tags space separated}}
  *
  * @license  GPL 2 (http://www.gnu.org/licenses/gpl.html)
- * @author   Matthias Schulte <mailinglist@lupo49.de>
+ * @author   Matthias Schulte <dokuwiki@lupo49.de>
  */
  
 // must be run within Dokuwiki

@@ -58,13 +58,13 @@ class syntax_plugin_tag_tagpage extends DokuWiki_Syntax_Plugin {
      * @return array Data for the renderer
      */
     function handle($match, $state, $pos, &$handler) {
-        $params          = array();
-        $dump            = trim(substr($match, 10, -2)); // get given tag
-        $dump            = explode('|', $dump); // split to tags, link name and options
-        $params['title'] = $dump[1];
-        $dump            = explode('&', $dump[0]);
-        $params['color'] = $dump[1];
-        $params['tag']   = trim($dump[0]);
+        $params            = array();
+        $dump              = trim(substr($match, 10, -2)); // get given tag
+        $dump              = explode('|', $dump); // split to tags, link name and options
+        $params['title']   = $dump[1];
+        $dump              = explode('&', $dump[0]);
+        $params['dynamic'] = $dump[1];
+        $params['tag']     = trim($dump[0]);
 
         return array($params);
     }
@@ -81,42 +81,53 @@ class syntax_plugin_tag_tagpage extends DokuWiki_Syntax_Plugin {
         if($data == false) return false;
         global $conf;
         $data = $data[0];
+        $url  = '';
 
-        if($data['color'] == 'color') {
+        if($data['dynamic'] == 'dynamic') {
             // deactivate (renderer) cache as long as there is no proper cache handling
             // implemented for the count syntax
             $renderer->info['cache'] = false;
         }
 
         if($mode == "xhtml") {
-            /** @var helper_plugin_tag $my */
-            if(!($my = plugin_load('helper', 'tag'))) return false;
-
-            $pages = $my->_tagIndexLookup(array($data['tag']));
-            $url   = wl($data['tag'], array('do'=> 'showtag', 'tag'=> $data['tag']));
-
-            // Set titel to tagname if no title is specified
-            if(empty($data['title'])) $data['title'] = $data['tag'];
-
-            if(empty($pages) && $data['color'] == 'color') {
-                // No pages with given tag found, link will be red
-                $class = 'wikilink2';
+            if($data['dynamic'] == 'dynamic') {
+                $url = $this->createTagLink($data['tag'], $data['title'], true);
             } else {
-                // At least one page found, show link as green
-                $class = 'wikilink1';
-                // Link to page, if only one page found else show a pagelist
-                if(count($pages) == 1) {
-                    $url = wl($pages[0]);
-                } else {
-                    $url = wl($data['tag'], array('do'=> 'showtag', 'tag'=> $data['tag']));
-                }
+                $url = $this->createTagLink($data['tag'], $data['title'], false);
             }
-
-            $link = '<a href="'.$url.'" class="'.$class.'" title="'.hsc($data['tag']).
-                '" rel="tag">'.hsc($data['title']).'</a>';
-            $renderer->doc .= $link;
         }
+        $renderer->doc .= $url;
         return true;
+    }
+
+    /**
+     * Returns the link to the tag overview page for one given tag
+     *
+     * @param string  $tag name of the tag
+     * @param string  $title pass an individual link title
+     * @param boolean $dynamic differ between existing/non-existing page tags
+     * @return string HTML link to the tag overview page
+     */
+    function createTagLink($tag, $title = null, $dynamic = false) {
+        /** @var helper_plugin_tag $my */
+        if(!($my = plugin_load('helper', 'tag'))) return false;
+        $class = 'wikilink1';
+        // search for pages with the given tag
+        if($dynamic) $pages = $my->_tagIndexLookup(array($tag));
+
+        if(empty($pages) && $dynamic == true) {
+            // No pages with given tag found, link will be red
+            $class = 'wikilink2';
+        }
+
+        // Set titel to tagname if no title is specified
+        if(empty($title)) $title = $tag;
+
+        $url  = wl($tag, array('do'=> 'showtag', 'tag'=> $tag));
+        $link = '<a href="'.$url.'" class="'.$class.'" title="'.hsc($tag).
+            '" rel="tag">'.hsc($title).'</a>';
+
+        return $link;
     }
 }
 // vim:ts=4:sw=4:et: 

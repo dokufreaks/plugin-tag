@@ -58,12 +58,15 @@ class syntax_plugin_tag_tagpage extends DokuWiki_Syntax_Plugin {
      * @return array Data for the renderer
      */
     function handle($match, $state, $pos, &$handler) {
-        $dump     = trim(substr($match, 10, -2)); // get given tag
-        $dump     = explode('|', $dump); // split to tags and link name
-        $tag      = $dump[0];
-        $linkname = $dump[1];
+        $params          = array();
+        $dump            = trim(substr($match, 10, -2)); // get given tag
+        $dump            = explode('|', $dump); // split to tags, link name and options
+        $params['title'] = $dump[1];
+        $dump            = explode('&', $dump[0]);
+        $params['color'] = $dump[1];
+        $params['tag']   = trim($dump[0]);
 
-        return array($tag, $linkname);
+        return array($params);
     }
 
     /**
@@ -77,24 +80,25 @@ class syntax_plugin_tag_tagpage extends DokuWiki_Syntax_Plugin {
     function render($mode, &$renderer, $data) {
         if($data == false) return false;
         global $conf;
+        $data = $data[0];
 
-        list($tag, $title) = $data;
-
-        // deactivate (renderer) cache as long as there is no proper cache handling
-        // implemented for the count syntax
-        $renderer->info['cache'] = false;
+        if($data['color'] == 'color') {
+            // deactivate (renderer) cache as long as there is no proper cache handling
+            // implemented for the count syntax
+            $renderer->info['cache'] = false;
+        }
 
         if($mode == "xhtml") {
             /** @var helper_plugin_tag $my */
             if(!($my = plugin_load('helper', 'tag'))) return false;
 
-            $pages = $my->_tagIndexLookup(array($tag));
-            $url   = wl($tag, array('do'=> 'showtag', 'tag'=> $tag));
+            $pages = $my->_tagIndexLookup(array($data['tag']));
+            $url   = wl($data['tag'], array('do'=> 'showtag', 'tag'=> $data['tag']));
 
-            // Set titel to tagname if no titel is specified
-            if(empty($title)) $title = $tag;
+            // Set titel to tagname if no title is specified
+            if(empty($data['title'])) $data['title'] = $data['tag'];
 
-            if(empty($pages)) {
+            if(empty($pages) && $data['color'] == 'color') {
                 // No pages with given tag found, link will be red
                 $class = 'wikilink2';
             } else {
@@ -104,12 +108,12 @@ class syntax_plugin_tag_tagpage extends DokuWiki_Syntax_Plugin {
                 if(count($pages) == 1) {
                     $url = wl($pages[0]);
                 } else {
-                    $url = wl($tag, array('do'=> 'showtag', 'tag'=> $tag));
+                    $url = wl($data['tag'], array('do'=> 'showtag', 'tag'=> $data['tag']));
                 }
             }
 
-            $link = '<a href="'.$url.'" class="'.$class.'" title="'.hsc($tag).
-                '" rel="tag">'.hsc($title).'</a>';
+            $link = '<a href="'.$url.'" class="'.$class.'" title="'.hsc($data['tag']).
+                '" rel="tag">'.hsc($data['title']).'</a>';
             $renderer->doc .= $link;
         }
         return true;

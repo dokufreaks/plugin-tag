@@ -146,6 +146,11 @@ class helper_plugin_tag extends DokuWiki_Plugin {
     /**
      * Returns a list of pages with a certain tag; very similar to ft_backlinks()
      *
+     * @param string $ns A namespace to which all pages need to belong, "." for only the root namespace
+     * @param int    $num The maximum number of pages that shall be returned
+     * @param string $tag The tag that shall be searched
+     * @return array The list of pages
+     *
      * @author  Esther Brunner <wikidesign@gmail.com>
      */
     function getTopic($ns = '', $num = NULL, $tag = '') {
@@ -197,6 +202,8 @@ class helper_plugin_tag extends DokuWiki_Plugin {
                     'perm'   => $perm,
                     'exists' => true,
                     'draft'  => $draft, );
+
+            if ($num && count($result) >= $num) break;
         }
 
         // finally sort by sort key

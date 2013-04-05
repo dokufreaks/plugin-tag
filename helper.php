@@ -416,7 +416,7 @@ class helper_plugin_tag extends DokuWiki_Plugin {
      * Makes user or date dependent topic lists possible
      */
     function _applyMacro($id) {
-        /** @var auth_basic $auth */
+        /** @var DokuWiki_Auth_Plugin $auth */
         global $INFO, $auth;
 
         $user     = $_SERVER['REMOTE_USER'];

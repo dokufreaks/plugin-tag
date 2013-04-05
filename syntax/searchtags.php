@@ -234,16 +234,22 @@ class syntax_plugin_tag_searchtags extends DokuWiki_Syntax_Plugin {
         if (isset($_POST['plugin__tag_search_tags']) && is_array($_POST['plugin__tag_search_tags'])) {
             $tags = $_POST['plugin__tag_search_tags'];
             // wWhen and is set, prepend "+" to each tag
-            if (isset($_POST['plugin__tag_search_and'])) {
-                $first = true; // is this the first positive tag in the list?
-                foreach ($tags as $i => $tag) {
-                    if (substr((string)$tag, 0, 1) !== '-') {
-                        if ($first) $first = false; // leave the first tag unchanged as there needs to be one tag in the OR query
-                        else $tags[$i] = '+'.(string)$tag;
+            $plus = (isset($_POST['plugin__tag_search_and']) ? '+' : '');
+            $positive_tags = '';
+            $negative_tags = '';
+            foreach ($tags as $tag) {
+                $tag = (string)$tag;
+                if ($tag{0} == '-') {
+                    $negative_tags .= $tag.' ';
+                } else {
+                    if ($positive_tags === '') {
+                        $positive_tags = $tag.' ';
+                    } else {
+                        $positive_tags .= $plus.$tag.' ';
                     }
                 }
             }
-            return implode(' ', $tags);
+            return $positive_tags.$negative_tags;
         } else {
             return NULL; // return NULL when no tags were selected so no results will be displayed
         }

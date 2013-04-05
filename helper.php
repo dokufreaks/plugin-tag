@@ -182,7 +182,6 @@ class helper_plugin_tag extends DokuWiki_Plugin {
             if($this->_notVisible($page, $ns)) continue;
             $tags  = $this->_getSubjectMetadata($page);
             // don't trust index
-            if (empty($tags)) continue;
             if (!$this->_checkPageTags($tags, $tag)) continue;
 
             // get metadata
@@ -506,10 +505,10 @@ class helper_plugin_tag extends DokuWiki_Plugin {
      * @return bool
      */
     function _checkPageTags($pagetags, $tags) {
-        $result = false;
+        $result = true;
         foreach($tags as $tag) {
-            if ($tag{0} == "+" and !in_array(substr($tag, 1), $pagetags)) return false;
-            if ($tag{0} == "-" and in_array(substr($tag, 1), $pagetags)) return false;
+            if ($tag{0} == "+" and !in_array(substr($tag, 1), $pagetags)) $result = false;
+            if ($tag{0} == "-" and in_array(substr($tag, 1), $pagetags)) $result = false;
             if (in_array($tag, $pagetags)) $result = true;
         }
         return $result;

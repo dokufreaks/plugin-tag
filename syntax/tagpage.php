@@ -1,10 +1,8 @@
 <?php
 /**
- * Tag Plugin: displays list of keywords with links to categories this page
- * belongs to. The links are marked as tags for Technorati and other services
- * using tagging.
+ * Tag Plugin: Display a link to the listing of all pages with a certain tag.
  *
- * Usage: {{tag>category tags space separated}}
+ * Usage: {{tagpage>mytag[&dynamic][|title]}}
  *
  * @license  GPL 2 (http://www.gnu.org/licenses/gpl.html)
  * @author   Matthias Schulte <dokuwiki@lupo49.de>
@@ -38,7 +36,7 @@ class syntax_plugin_tag_tagpage extends DokuWiki_Syntax_Plugin {
      * @return string Paragraph type
      */
     function getPType() {
-        return 'block';
+        return 'normal';
     }
 
     /**
@@ -60,74 +58,40 @@ class syntax_plugin_tag_tagpage extends DokuWiki_Syntax_Plugin {
     function handle($match, $state, $pos, &$handler) {
         $params            = array();
         $dump              = trim(substr($match, 10, -2)); // get given tag
-        $dump              = explode('|', $dump); // split to tags, link name and options
+        $dump              = explode('|', $dump, 2); // split to tags, link name and options
         $params['title']   = $dump[1];
         $dump              = explode('&', $dump[0]);
-        $params['dynamic'] = $dump[1];
+        $params['dynamic'] = ($dump[1] == 'dynamic');
         $params['tag']     = trim($dump[0]);
 
-        return array($params);
+        return $params;
     }
 
     /**
-     * Render xhtml output or metadata
+     * Render xhtml output
      *
-     * @param string         $mode      Renderer mode (supported modes: xhtml and metadata)
+     * @param string         $mode      Renderer mode (supported modes: xhtml)
      * @param Doku_Renderer  $renderer  The renderer
      * @param array          $data      The data from the handler function
      * @return bool If rendering was successful.
      */
     function render($mode, &$renderer, $data) {
         if($data == false) return false;
-        global $conf;
-        $data = $data[0];
-        $url  = '';
-
-        if($data['dynamic'] == 'dynamic') {
-            // deactivate (renderer) cache as long as there is no proper cache handling
-            // implemented for the count syntax
-            $renderer->info['cache'] = false;
-        }
 
         if($mode == "xhtml") {
-            if($data['dynamic'] == 'dynamic') {
-                $url = $this->createTagLink($data['tag'], $data['title'], true);
-            } else {
-                $url = $this->createTagLink($data['tag'], $data['title'], false);
+            if($data['dynamic']) {
+                // deactivate (renderer) cache as long as there is no proper cache handling
+                // implemented for the count syntax
+                $renderer->info['cache'] = false;
             }
+
+            /** @var helper_plugin_tag $my */
+            if(!($my = plugin_load('helper', 'tag'))) return false;
+
+            $renderer->doc .= $my->tagLink($data['tag'], $data['title'], $data['dynamic']);
+            return true;
         }
-        $renderer->doc .= $url;
-        return true;
-    }
-
-    /**
-     * Returns the link to the tag overview page for one given tag
-     *
-     * @param string  $tag name of the tag
-     * @param string  $title pass an individual link title
-     * @param boolean $dynamic differ between existing/non-existing page tags
-     * @return string HTML link to the tag overview page
-     */
-    function createTagLink($tag, $title = null, $dynamic = false) {
-        /** @var helper_plugin_tag $my */
-        if(!($my = plugin_load('helper', 'tag'))) return false;
-        $class = 'wikilink1';
-        // search for pages with the given tag
-        if($dynamic) $pages = $my->_tagIndexLookup(array($tag));
-
-        if(empty($pages) && $dynamic == true) {
-            // No pages with given tag found, link will be red
-            $class = 'wikilink2';
-        }
-
-        // Set titel to tagname if no title is specified
-        if(empty($title)) $title = $tag;
-
-        $url  = wl($tag, array('do'=> 'showtag', 'tag'=> $tag));
-        $link = '<a href="'.$url.'" class="'.$class.'" title="'.hsc($tag).
-            '" rel="tag">'.hsc($title).'</a>';
-
-        return $link;
+        return false;
     }
 }
 // vim:ts=4:sw=4:et: 

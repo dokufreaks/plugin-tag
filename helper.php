@@ -229,32 +229,20 @@ class helper_plugin_tag extends DokuWiki_Plugin {
 
     /**
      * Refine found pages with tags (+tag: AND, -tag: (AND) NOT)
+     *
+     * @param array $pages The pages that shall be filtered, each page needs to be an array with a key "id"
+     * @param string $refine The list of tags in the form "tag +tag2 -tag3". The tags will be cleaned.
+     * @return array The filtered list of pages
      */
     function tagRefine($pages, $refine) {
         if (!is_array($pages)) return $pages; // wrong data type
         $tags = $this->_parseTagList($refine, true);
-        $clean_tags = array();
-        foreach ($tags as $i => $tag) {
-            if (($tag{0} == '+') || ($tag{0} == '-'))
-                $clean_tags[$i] = substr($tag, 1);
-            else
-                $clean_tags[$i] = $tag;
+        $all_pages = $this->_tagIndexLookup($tags);
+
+        foreach ($pages as $key => $page) {
+            if (!in_array($page['id'], $all_pages)) unset($pages[$key]);
         }
 
-        $indexer = idx_get_indexer();
-        $index_pages = $indexer->lookupKey('subject', $clean_tags, array($this, '_tagCompare'));
-
-        foreach ($tags as $tag) {
-            if (!(($tag{0} == '+') || ($tag{0} == '-'))) continue;
-            $cleaned_tag = substr($tag, 1);
-            $tagpages = $index_pages[$cleaned_tag];
-            $and = ($tag{0} == '+');
-            foreach ($pages as $key => $page) {
-                $cond = in_array($page['id'], $tagpages);
-                if ($and) $cond = (!$cond);
-                if ($cond) unset($pages[$key]);
-            }
-        }
         return $pages;
    }
    
@@ -351,6 +339,8 @@ class helper_plugin_tag extends DokuWiki_Plugin {
 
         $indexer = idx_get_indexer();
         $pages = $indexer->lookupKey('subject', $clean_tags, array($this, '_tagCompare'));
+        // use all pages as basis if the first tag isn't an "or"-tag or if there are no tags given
+        if (empty($tags) || $clean_tags[0] != $tags[0]) $result = $indexer->getPages();
 
         foreach ($tags as $i => $tag) {
             $t = $clean_tags[$i];

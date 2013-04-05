@@ -383,7 +383,7 @@ class helper_plugin_tag extends DokuWiki_Plugin {
             }
         }
 
-        $tags = explode(' ', $tags);
+        $tags = preg_split('/ /', $tags, -1, PREG_SPLIT_NO_EMPTY);
 
         if ($clean) {
             return $this->_cleanTagList($tags);

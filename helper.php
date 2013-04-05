@@ -120,11 +120,16 @@ class helper_plugin_tag extends DokuWiki_Plugin {
 
     /**
      * Returns the link for one given tag
+     *
+     * @param string $tag the tag the link shall point to
+     * @param string $title the title of the link (optional)
+     * @param bool   $dynamic if the link class shall be changed if no pages with the specified tag exist
+     * @return string The HTML code of the link
      */
-    function tagLink($tag) {
+    function tagLink($tag, $title = '', $dynamic = false) {
         global $conf;
         $svtag = $tag;
-        $title = str_replace('_', ' ', noNS($tag));
+        $tag_title = str_replace('_', ' ', noNS($tag));
         resolve_pageid($this->namespace, $tag, $exists); // resolve shortcuts
         if ($exists) {
             $class = 'wikilink1';
@@ -132,12 +137,22 @@ class helper_plugin_tag extends DokuWiki_Plugin {
             if ($conf['useheading']) {
                 // important: set sendond param to false to prevent recursion!
                 $heading = p_get_first_heading($tag, false);
-                if ($heading) $title = $heading;
+                if ($heading) $tag_title = $heading;
             }
         } else {
-            $class = 'wikilink1';
+            if ($dynamic) {
+                $pages = $this->getTopic('', 1, $svtag);
+                if (empty($pages)) {
+                    $class = 'wikilink2';
+                } else {
+                    $class = 'wikilink1';
+                }
+            } else {
+                $class = 'wikilink1';
+            }
             $url   = wl($tag, array('do'=>'showtag', 'tag'=>$svtag));
         }
+        if (!$title) $title = $tag_title;
         $link = '<a href="'.$url.'" class="'.$class.'" title="'.hsc($tag).
             '" rel="tag">'.hsc($title).'</a>';
         return $link;

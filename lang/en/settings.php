@@ -8,7 +8,6 @@
  
 // for the configuration manager
 $lang['namespace']      = 'Default namespace for tags';
-$lang['pingtechnorati'] = 'Ping Technorati';
 $lang['toolbar_icon']   = 'Show toolbar icon (clear data/cache/* and browser cache if it\'s not displayed)';
 
 $lang['sortkey']                = 'sort topic lists by';

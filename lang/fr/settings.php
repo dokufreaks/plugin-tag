@@ -9,7 +9,6 @@
  
 // for the configuration manager
 $lang['namespace']      = 'Dossier par defaut pour les tags';
-$lang['pingtechnorati'] = 'Ping Technorati';
 $lang['toolbar_icon']   = 'Afficher l\'icone dans la barre d\'outils (purger data/cache/* et le cache du navigateur si il n\'apparait pas)';
 
 $lang['sortkey']            = 'trier par&nbsp;:';

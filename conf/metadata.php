@@ -7,7 +7,6 @@
  */
 
 $meta['namespace']          = array('string');
-$meta['pingtechnorati']     = array('onoff');
 $meta['sortkey']            = array('multichoice',
                                     '_choices' => array('cdate', 'mdate', 'pagename', 'id', 'title'));
 $meta['sortorder']          = array('multichoice',

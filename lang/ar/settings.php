@@ -9,7 +9,6 @@
  
 // for the configuration manager
 $lang['namespace']      = 'فضاء الأسماء الإفتراضي للأقسام';
-$lang['pingtechnorati'] = ' إعلام Technorati بكل جديد ';
 
 $lang['sortkey']               = 'ترتيب التدوينات حسب:';
 $lang['sortkey_o_cdate']       = 'تاريخ الإنشاء';

@@ -10,7 +10,7 @@ if(!defined('DOKU_INC')) die();
 if(!defined('DOKU_PLUGIN')) define('DOKU_PLUGIN',DOKU_INC.'lib/plugins/');
 
 /**
- * Action part of the tag plugin, handles tag display, technorati ping and index updates
+ * Action part of the tag plugin, handles tag display and index updates
  */
 class action_plugin_tag extends DokuWiki_Action_Plugin {
 
@@ -20,7 +20,6 @@ class action_plugin_tag extends DokuWiki_Action_Plugin {
      * @param Doku_Event_Handler $contr
      */
     function register(&$contr) {
-        $contr->register_hook('IO_WIKIPAGE_WRITE', 'BEFORE', $this, 'ping', array());
         $contr->register_hook('ACTION_ACT_PREPROCESS', 'BEFORE', $this, '_handle_act', array());
         $contr->register_hook('TPL_ACT_UNKNOWN', 'BEFORE', $this, '_handle_tpl_act', array());
         $contr->register_hook('TPL_METAHEADER_OUTPUT', 'BEFORE', $this, '_handle_keywords', array());
@@ -52,38 +51,6 @@ class action_plugin_tag extends DokuWiki_Action_Plugin {
                 $event->data['metadata']['subject'] = $helper->_cleanTagList($tags);
             }
         }
-    }
-
-    /**
-     * Ping Technorati
-     *
-     * @author  Rui Carmo       <http://the.taoofmac.com/space/blog/2005-08-07>
-     * @author  Esther Brunner  <wikidesign@gmail.com>
-     */
-    function ping(&$event, $param) {
-        if (!$this->getConf('pingtechnorati')) return false; // config: don't ping
-        if ($event->data[3]) return false;                   // old revision saved
-        if (@file_exists($event->data[0][0])) return false;  // file not new
-        if (!$event->data[0][1]) return false;               // file is empty
-
-        // okay, then let's do it!
-        global $conf;
-
-        $request = '<?xml version="1.0"?><methodCall>'.
-            '<methodName>weblogUpdates.ping</methodName>'.
-            '<params>'.
-            '<param><value>'.$conf['title'].'</value></param>'.
-            '<param><value>'.DOKU_URL.'</value></param>'.
-            '</params>'.
-            '</methodCall>';
-        $url = 'http://rpc.technorati.com:80/rpc/ping';
-        $header[] = 'Host: rpc.technorati.com';
-        $header[] = 'Content-type: text/xml';
-        $header[] = 'Content-length: '.strlen($request);
-
-        $http = new DokuHTTPClient();
-        // $http->headers = $header;
-        return $http->post($url, $request);
     }
 
     /**

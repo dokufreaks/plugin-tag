@@ -8,6 +8,5 @@
  
 // for the configuration manager
 $lang['namespace']      = 'タグのデフォルト名前空間';
-$lang['pingtechnorati'] = 'Technoratiにpingを送信';
 
 //Setup VIM: ex: et ts=2 enc=utf-8 :

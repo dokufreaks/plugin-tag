@@ -8,7 +8,6 @@
  
 // for the configuration manager
 $lang['namespace']      = 'Implicitní jmenný prostor pro tagy';
-$lang['pingtechnorati'] = 'Posílat ping na Technorati';
 
 $lang['sortkey']               = 'razení zápisků podle';
 $lang['sortkey_o_cdate']       = 'data vytvoření';

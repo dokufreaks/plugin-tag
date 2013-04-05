@@ -8,7 +8,6 @@
  
 // for the configuration manager
 $lang['namespace']      = '標籤預設的命名空間';
-$lang['pingtechnorati'] = '自動通知 Technorati';
 $lang['toolbar_icon']   = '顯示工具列圖示 (如未出現請清除 data/cache/* 及瀏覽器快取)';
 
 $lang['sortkey']                = '主題排序方式';

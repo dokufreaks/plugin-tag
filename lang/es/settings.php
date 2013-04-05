@@ -8,8 +8,7 @@
  
 // for the configuration manager
 $lang['namespace']      = 'Espacio de nombres por defecto para las etiquetas';
-$lang['pingtechnorati'] = 'Ping Technorati';
- 
+
 $lang['sortkey']                = 'ordenar las listas de temas por';
 $lang['sortkey_o_cdate']        = 'fecha de creación';
 $lang['sortkey_o_mdate']        = 'fecha de modificación';

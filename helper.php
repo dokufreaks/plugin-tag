@@ -199,7 +199,12 @@ class helper_plugin_tag extends DokuWiki_Plugin {
 
             // determine the sort key
             if ($this->sort == 'id') $key = $page;
-            elseif ($this->sort == 'pagename') $key = noNS($page);
+            elseif ($this->sort == 'ns') {
+                $pos = strrpos($page, ':');
+                if ($pos === false) $key = "\0".$page;
+                else $key = substr_replace($page, "\0\0", $pos, 1);
+                $key = str_replace(':', "\0", $key);
+            } elseif ($this->sort == 'pagename') $key = noNS($page);
             elseif ($this->sort == 'title') $key = utf8_strtolower($title);
             else $key = $date;
             // make sure that the key is unique

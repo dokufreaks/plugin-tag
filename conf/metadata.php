@@ -8,7 +8,7 @@
 
 $meta['namespace']          = array('string');
 $meta['sortkey']            = array('multichoice',
-                                    '_choices' => array('cdate', 'mdate', 'pagename', 'id', 'title'));
+                                    '_choices' => array('cdate', 'mdate', 'pagename', 'id', 'ns', 'title'));
 $meta['sortorder']          = array('multichoice',
                                     '_choices' => array('ascending', 'descending'));
 $meta['pagelist_flags']     = array('string');

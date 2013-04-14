@@ -15,6 +15,7 @@ $lang['sortkey_o_cdate']        = 'creation date';
 $lang['sortkey_o_mdate']        = 'modification date';
 $lang['sortkey_o_pagename']     = 'page name';
 $lang['sortkey_o_id']           = 'page ID';
+$lang['sortkey_o_ns']           = 'namespace';
 $lang['sortkey_o_title']        = 'title';
 
 $lang['sortorder']              = 'sort order';

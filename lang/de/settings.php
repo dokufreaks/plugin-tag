@@ -15,6 +15,7 @@ $lang['sortkey_o_cdate']        = 'Erstellungsdatum';
 $lang['sortkey_o_mdate']        = 'Änderungsdatum';
 $lang['sortkey_o_pagename']     = 'Seitenname';
 $lang['sortkey_o_id']           = 'Seiten-ID';
+$lang['sortkey_o_ns']           = 'Namensraum';
 $lang['sortkey_o_title']        = 'Titel';
 
 $lang['sortorder']              = 'Sortierrichtung';

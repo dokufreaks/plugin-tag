@@ -100,6 +100,48 @@ class syntax_plugin_tag_count extends DokuWiki_Syntax_Plugin {
                 $occurrences = $my->tagOccurrences($tags, $allowedNamespaces);
             }
 
+            $style=$this->getConf('style');
+
+            if ($style == 'inline'){
+                $renderer->doc .= '<span>'.DOKU_LF;
+                if(empty($occurrences)) { // Skip output
+                    $renderer->doc .= $this->getLang('empty_output').DOKU_LF;
+                    return true;
+                }
+                $size = $this->getConf('withsize');
+                $max_font = $this->getConf('max_fontsize');
+                $min_font = $this->getConf('min_fontsize');
+                $font_unit = $this->getConf('fontsize_unit');
+                if($tags[0] == '+') {
+                    $max = 0; $min = 0;
+                    foreach($occurrences as $tagname => $count) {
+                        if($count > $max)
+                            $max = $count;
+                        else if($count < $min)
+                            $min = $count;
+                    }
+                } else {
+                    $size = false;
+                }
+                foreach($occurrences as $tagname => $count) {
+                    if($count <= 0) continue;
+                    $renderer->doc .= '<span ';
+                    if($size){
+                        $font_size =$min_font+($max_font-$min_font)*(floatval(intval($count)/$max));
+                        $renderer->doc .= 'style="';
+                        $renderer->doc .= 'font-size:'.($font_size).$font_unit.';';
+                        $renderer->doc .= 'line-height:'.($font_size+2).$font_unit.';';
+                        $renderer->doc .= '"';
+                    }
+                    $renderer->doc .= '>';
+                    $renderer->doc .= DOKU_TAB.$my->tagLink($tagname);
+                    if($size != true)
+                        $renderer->doc .= "($count)";
+                    $renderer->doc .= DOKU_LF;
+                    $renderer->doc .= '</span>'.DOKU_LF;
+                }
+                $renderer->doc .= '</span>'.DOKU_LF;
+            } else {
             $class = "inline"; // valid: inline, ul, pagelist
             $col = "page";
 
@@ -124,6 +166,7 @@ class syntax_plugin_tag_count extends DokuWiki_Syntax_Plugin {
                 }
             }
             $renderer->doc .= '</table>'.DOKU_LF;
+            }
         }
         return true;
     }

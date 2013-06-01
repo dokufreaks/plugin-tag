@@ -26,4 +26,14 @@ $lang['pagelist_flags'] = 'Formatting flags for the taglist (comma-separated, fo
 
 $lang['list_tags_of_subns'] = 'List also tags in subnamespaces of a specified namespace (count syntax)';
 
+$lang['style'] = 'Tag list style (count syntax)';
+$lang['style_o_table']      = 'Table';
+$lang['style_o_inline']     = 'Inline';
+$lang['withsize']           = 'Use tag font size represents occurrences, will hide the count num. Only availabe when list all tags (count>+), it displayed as tag cloud';
+$lang['max_fontsize']       = 'Max font size';
+$lang['min_fontsize']       = 'Min font size';
+$lang['fontsize_unit']      = 'Unit for font size';
+$lang['fontsize_unit_o_px'] = 'Pixel';
+$lang['fontsize_unit_o_pt'] = 'Point';
+
 //Setup VIM: ex: et ts=2 :

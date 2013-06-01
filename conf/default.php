@@ -9,4 +9,11 @@ $conf['pagelist_flags']     = 'list';      // formatting options for the page li
 $conf['toolbar_icon']       = 0;	       // enables/disables the toolbar icon
 $conf['list_tags_of_subns'] = 0;           // list also tags in subnamespaces of a specified namespace (count syntax)
 
+$conf['style']              = 'table';
+$conf['withsize']           = false;
+$conf['max_fontsize']       = 30;
+$conf['min_fontsize']       = 10;
+$conf['fontsize_unit']      = 'px';
+
+
 //Setup VIM: ex: et ts=2 :

@@ -502,7 +502,7 @@ class helper_plugin_tag extends DokuWiki_Plugin {
      * @return bool
      */
     function _checkPageTags($pagetags, $tags) {
-        $result = true;
+        $result = false;
         foreach($tags as $tag) {
             if ($tag{0} == "+" and !in_array(substr($tag, 1), $pagetags)) $result = false;
             if ($tag{0} == "-" and in_array(substr($tag, 1), $pagetags)) $result = false;

@@ -491,7 +491,7 @@ class helper_plugin_tag extends DokuWiki_Plugin {
      * Helper function for the indexer in order to avoid interpreting wildcards
      */
     function _tagCompare($tag1, $tag2) {
-        return $tag1 == $tag2;
+        return $tag1 === $tag2;
     }
 
     /**

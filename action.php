@@ -42,7 +42,7 @@ class action_plugin_tag extends DokuWiki_Action_Plugin {
      */
     function _indexer_index_tags($event, $param) {
         /* @var helper_plugin_tag $helper */
-        if ($helper =& plugin_load('helper', 'tag')) {
+        if ($helper = $this->loadHelper('tag')) {
             // make sure the tags are cleaned and no duplicate tags are added to the index
             $tags = p_get_metadata($event->data['page'], 'subject');
             if (!is_array($tags)) {
@@ -82,14 +82,13 @@ class action_plugin_tag extends DokuWiki_Action_Plugin {
         $ns    = trim($_REQUEST['ns']);
 
         /* @var helper_plugin_tag $helper */
-        if ($helper =& plugin_load('helper', 'tag')) $pages = $helper->getTopic($ns, '', $tag);
+        if ($helper = $this->loadHelper('tag')) $pages = $helper->getTopic($ns, '', $tag);
 
         if(!empty($pages)) {
 
             // let Pagelist Plugin do the work for us
-            if (plugin_isdisabled('pagelist') || (!$pagelist = plugin_load('helper', 'pagelist'))) {
-                msg($this->getLang('missing_pagelistplugin'), -1);
-                return;
+            if ((!$pagelist = $this->loadHelper('pagelist'))) {
+                return false;
             }
 
             /* @var helper_plugin_pagelist $pagelist */

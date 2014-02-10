@@ -11,7 +11,6 @@ $lang['tags']                  = 'Tags';
 $lang['topic']                 = 'Thema';
 $lang['toolbar_icon']          = 'Tag-Syntax einfügen';
 $lang['empty_output']          = 'Leere Ausgabe';
-$lang['missing_pagelistplugin'] = 'Ohne Pagelist Plugin können Themenlisten nicht angezeigt werden.';
 $lang['include']               = 'Einschließen';
 $lang['exclude']               = 'Ausschließen';
 $lang['use_and']               = 'Benutze "UND"';

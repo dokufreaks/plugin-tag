@@ -9,7 +9,6 @@ $lang['tags']                  = 'Markoj';
 $lang['topic']                 = 'Temo';
 $lang['toolbar_icon']          = 'Enmeti Marko-sintakson';
 $lang['empty_output']          = 'Malplenigi Eligon';
-$lang['missing_pagelistplugin'] = 'Kromprogramon "Pagelist" indas instali por tem-liston.';
 $lang['include']               = 'Inkluzivi';
 $lang['exclude']               = 'Ekskluzivi';
 $lang['use_and']               = 'Uzi AND';

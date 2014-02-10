@@ -7,4 +7,3 @@
  */
 $lang['tags']                  = 'Теги';
 $lang['topic']                 = 'Темы';
-$lang['missing_pagelistplugin'] = 'Для отображения списка тем должен быть установлен плагин Pagelist.';

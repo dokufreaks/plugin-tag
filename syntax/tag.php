@@ -59,7 +59,7 @@ class syntax_plugin_tag_tag extends DokuWiki_Syntax_Plugin {
         
         // load the helper_plugin_tag
         /** @var helper_plugin_tag $my */
-        if (!$my =& plugin_load('helper', 'tag')) return false;
+        if (!$my = $this->loadHelper('tag')) return false;
 
         // split tags and returns for renderer
         return $my->_parseTagList($tags);
@@ -76,7 +76,7 @@ class syntax_plugin_tag_tag extends DokuWiki_Syntax_Plugin {
     function render($mode, &$renderer, $data) {
         if ($data === false) return false;
         /** @var helper_plugin_tag $my */
-        if (!$my =& plugin_load('helper', 'tag')) return false;
+        if (!$my = $this->loadHelper('tag')) return false;
 
         // XHTML output
         if ($mode == 'xhtml') {

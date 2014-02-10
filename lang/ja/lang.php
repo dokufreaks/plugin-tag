@@ -9,4 +9,3 @@
 $lang['tags']                  = 'タグ';
 $lang['topic']                 = 'トピック';
 $lang['toolbar_icon']          = 'タグ構文の挿入';
-$lang['missing_pagelistplugin'] = 'トピックリストのためにページリストプラグインをインストールしてください。';

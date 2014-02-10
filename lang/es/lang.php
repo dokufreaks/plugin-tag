@@ -9,6 +9,5 @@
 $lang['tags']  = 'Etiquetas';
 $lang['topic'] = 'Tema';
  
-$lang['missing_pagelistplugin'] = 'Para listas de temas debe estar instalado el Plugin Pagelist Plugin.';
  
 //Setup VIM: ex: et ts=2 enc=utf-8 :

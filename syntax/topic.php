@@ -79,7 +79,7 @@ class syntax_plugin_tag_topic extends DokuWiki_Syntax_Plugin {
         list($ns, $tag, $flags) = $data;
 
         /* @var helper_plugin_tag $my */
-        if ($my =& plugin_load('helper', 'tag')) $pages = $my->getTopic($ns, '', $tag);
+        if ($my = $this->loadHelper('tag')) $pages = $my->getTopic($ns, '', $tag);
         if (!isset($pages) || !$pages) return true; // nothing to display
 
         if ($mode == 'xhtml') {
@@ -90,9 +90,7 @@ class syntax_plugin_tag_topic extends DokuWiki_Syntax_Plugin {
 
             /* @var helper_plugin_pagelist $pagelist */
             // let Pagelist Plugin do the work for us
-            if (plugin_isdisabled('pagelist')
-                    || (!$pagelist = plugin_load('helper', 'pagelist'))) {
-                msg($this->getLang('missing_pagelistplugin'), -1);
+            if ((!$pagelist = $this->loadHelper('pagelist'))) {
                 return false;
             }
 

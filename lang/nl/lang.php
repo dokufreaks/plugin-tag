@@ -9,7 +9,6 @@ $lang['tags']                  = 'Tags';
 $lang['topic']                 = 'Onderwerp';
 $lang['toolbar_icon']          = 'Tag-syntax invoegen';
 $lang['empty_output']          = 'Lege Uitvoer';
-$lang['missing_pagelistplugin'] = 'De Pagelist Plugin moet worden geïnstalleerd voor een onderwerpenlijst';
 $lang['include']               = 'Inclusief';
 $lang['exclude']               = 'Exclusief';
 $lang['use_and']               = 'Gebruik EN';

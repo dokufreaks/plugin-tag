@@ -10,7 +10,6 @@ $lang['tags']                  = 'العلامات';
 $lang['topic']                 = 'الموضوع';
 $lang['toolbar_icon']          = 'إدراج علامة-بناء الجملة';
 $lang['empty_output']          = 'الإخراج فارغة';
-$lang['missing_pagelistplugin'] = 'يجب تثبيت البرنامج المساعد Pagelist لموضوع القوائم.';
 $lang['include']               = 'تضمين';
 $lang['exclude']               = 'استبعاد';
 $lang['use_and']               = 'استخدام AND';

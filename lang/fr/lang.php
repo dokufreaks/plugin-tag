@@ -9,7 +9,6 @@ $lang['tags']                  = 'Tags';
 $lang['topic']                 = 'Topic';
 $lang['toolbar_icon']          = 'Insérer des Tags';
 $lang['empty_output']          = 'Pas de résultat';
-$lang['missing_pagelistplugin'] = 'Le plugin Pagelist doit être installé pour la syntaxe topic.';
 $lang['include']               = 'Inclure';
 $lang['exclude']               = 'Exclure';
 $lang['use_and']               = 'Utiliser AND';

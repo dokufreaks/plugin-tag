@@ -75,9 +75,7 @@ class syntax_plugin_tag_searchtags extends DokuWiki_Syntax_Plugin {
 
             /* @var helper_plugin_pagelist $pagelist */
             // let Pagelist Plugin do the work for us
-            if (plugin_isdisabled('pagelist')
-                || (!$pagelist = plugin_load('helper', 'pagelist'))) {
-                msg($this->getLang('missing_pagelistplugin'), -1);
+            if ((!$pagelist = $this->loadHelper('pagelist'))) {
                 return false;
             }
 
@@ -96,7 +94,7 @@ class syntax_plugin_tag_searchtags extends DokuWiki_Syntax_Plugin {
 
             if ($tags != NULL) {
                 /* @var helper_plugin_tag $my */
-                if ($my =& plugin_load('helper', 'tag')) $pages = $my->getTopic($this->getNS(), '', $tags);
+                if ($my = $this->loadHelper('tag')) $pages = $my->getTopic($this->getNS(), '', $tags);
 
                 // Display a message when no pages were found
                 if (!isset($pages) || !$pages) {
@@ -156,7 +154,7 @@ class syntax_plugin_tag_searchtags extends DokuWiki_Syntax_Plugin {
 
         // load the tag list - only tags that actually have pages assigned that the current user can access are listed
         /* @var helper_plugin_tag $my */
-        if ($my =& plugin_load('helper', 'tag')) $tags = $my->tagOccurrences(array(), NULL, true);
+        if ($my = $this->loadHelper('tag')) $tags = $my->tagOccurrences(array(), NULL, true);
         // sort tags by name ($tags is in the form $tag => $count)
         ksort($tags);
 

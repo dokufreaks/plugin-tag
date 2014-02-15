@@ -9,7 +9,6 @@ $lang['tags']                  = 'Etiketter';
 $lang['topic']                 = 'Ämne';
 $lang['toolbar_icon']          = 'Skriv etikettsyntax';
 $lang['empty_output']          = 'Tom utdata';
-$lang['missing_pagelistplugin'] = 'Pagelist Plugin måste vara installerad vid ämneslista';
 $lang['include']               = 'Inkludera';
 $lang['exclude']               = 'Uteslut';
 $lang['use_and']               = 'Använd AND';

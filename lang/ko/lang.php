@@ -9,7 +9,6 @@ $lang['tags']                  = '태그';
 $lang['topic']                 = '주제';
 $lang['toolbar_icon']          = '태그 문법 넣기';
 $lang['empty_output']          = '빈 출력';
-$lang['missing_pagelistplugin'] = 'Pagelist 플러그인은 주제 목록을 위해 설치되어야 합니다,';
 $lang['include']               = '포함';
 $lang['exclude']               = '제외';
 $lang['use_and']               = 'AND 사용';

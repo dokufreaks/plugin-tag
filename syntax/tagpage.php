@@ -86,7 +86,7 @@ class syntax_plugin_tag_tagpage extends DokuWiki_Syntax_Plugin {
             }
 
             /** @var helper_plugin_tag $my */
-            if(!($my = plugin_load('helper', 'tag'))) return false;
+            if(!($my = $this->loadHelper('tag'))) return false;
 
             $renderer->doc .= $my->tagLink($data['tag'], $data['title'], $data['dynamic']);
             return true;

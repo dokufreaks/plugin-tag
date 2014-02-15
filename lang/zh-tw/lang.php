@@ -12,7 +12,6 @@ $lang['topic'] = '主題';
 $lang['toolbar_icon'] = '插入標籤語法';
 $lang['empty_output'] = '清空輸出';
 
-$lang['missing_pagelistplugin'] = '必須安裝 Pagelist 插件才能列出主題。';
 
 // search form of tagsearch syntax
 $lang['include'] = '包含';

@@ -4,6 +4,7 @@
  * @license    GPL 2 (http://www.gnu.org/licenses/gpl.html)
  * 
  * @author Aleksandr Selivanov <alexgearbox@gmail.com>
+ * @author Vasilyy Balyasnyy <v.balyasnyy@gmail.com>
  */
 $lang['namespace']             = 'Пространство имён по умолчанию для тегов';
 $lang['toolbar_icon']          = 'Показывать кнопку на панели инструментов (если значок не отображается, очистите data/cache/* и кэш браузера)';
@@ -17,3 +18,4 @@ $lang['sortkey_o_title']       = 'заголовку';
 $lang['sortorder']             = 'Порядок сортировки';
 $lang['sortorder_o_ascending'] = 'по возрастанию';
 $lang['sortorder_o_descending'] = 'по убыванию';
+$lang['pagelist_flags']        = 'Сформируйте флаги для списков тегов (разделяя запятыми, список доступных флагов описан в документации плагина сриска страниц)';

@@ -58,7 +58,7 @@ class action_plugin_tag extends DokuWiki_Action_Plugin {
      *
      * @author Michael Klier <chi@chimeric.de>
      */
-    function _handle_act(Doku_Event &$event, $param) {
+    function _handle_act(Doku_Event $event, $param) {
         if($event->data != 'showtag') return;
         $event->preventDefault();
     }
@@ -67,9 +67,10 @@ class action_plugin_tag extends DokuWiki_Action_Plugin {
      * Display the tag page
      *
      * @param Doku_Event $event The TPL_ACT_UNKNOWN event
-     * @param array      $param optional parameters (unused)
+     * @param array $param optional parameters (unused)
+     * @return bool
      */
-    function _handle_tpl_act(Doku_Event &$event, $param) {
+    function _handle_tpl_act(Doku_Event $event, $param) {
         global $lang;
 
         if($event->data != 'showtag') return;
@@ -111,7 +112,7 @@ class action_plugin_tag extends DokuWiki_Action_Plugin {
 	/**
 	 * Inserts the tag toolbar button
 	 */
-	function insert_toolbar_button(Doku_Event &$event, $param) {
+	function insert_toolbar_button(Doku_Event $event, $param) {
 	    $event->data[] = array (
 	        'type' => 'format',
 	        'title' => $this->getLang('toolbar_icon'),
@@ -124,7 +125,7 @@ class action_plugin_tag extends DokuWiki_Action_Plugin {
 	/**
 	 * Prevent displaying underscores instead of blanks inside the page keywords
 	 */
-	function _handle_keywords(Doku_Event &$event) {
+	function _handle_keywords(Doku_Event $event) {
 	    global $ID;
 
 	    // Fetch tags for the page; stop proceeding when no tags specified

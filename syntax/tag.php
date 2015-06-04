@@ -82,7 +82,7 @@ class syntax_plugin_tag_tag extends DokuWiki_Syntax_Plugin {
         if ($mode == 'xhtml') {
             $tags = $my->tagLinks($data);
             if (!$tags) return true;
-            $renderer->doc .= '<div class="tags"><span>'.DOKU_LF.
+            $renderer->doc .= '<div class="'.$this->getConf('tags_list_css').'"><span>'.DOKU_LF.
                 DOKU_TAB.$tags.DOKU_LF.
                 '</span></div>'.DOKU_LF;
             return true;

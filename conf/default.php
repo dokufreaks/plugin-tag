@@ -9,5 +9,6 @@ $conf['pagelist_flags']     = 'list';      // formatting options for the page li
 $conf['toolbar_icon']       = 0;	       // enables/disables the toolbar icon
 $conf['list_tags_of_subns'] = 0;           // list also tags in subnamespaces of a specified namespace (count syntax)
 $conf['tags_list_css']      = 'tags';     // wich CSS style to use for tag list?
+$conf['notify']             = '';          //comma separated list of tags for wich a notification should be thrown
 
 //Setup VIM: ex: et ts=2 :

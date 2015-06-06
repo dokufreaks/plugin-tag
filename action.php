@@ -123,21 +123,35 @@ class action_plugin_tag extends DokuWiki_Action_Plugin {
 	
 	/**
 	 * Prevent displaying underscores instead of blanks inside the page keywords
+	 * Trigger notification if a tag matches plugin option 'notify'
 	 */
+
 	function _handle_keywords(Doku_Event &$event) {
-	    global $ID;
+        global $ID;
+ 
+        // Fetch tags for the page; stop proceeding when no tags specified
+        $tags = p_get_metadata($ID, 'subject', METADATA_DONT_RENDER);
+        if(is_null($tags)) true;
+ 
+        foreach($event->data['meta'] as &$meta) {
+            if($meta['name'] == 'keywords') {
+                // Replace underscores with blanks
+                $meta['content'] = str_replace('_', ' ', $meta['content']);
+                // Get an array of page's tags
+                $pagetags = explode(',', $meta['content']);
+                // Get an array of notification triggers from 'notify' option (make sure the list is well formated: no blanks between triggers and no '_' in triggers)
+                $triggers = explode(',',str_replace('_', ' ', str_replace(', ', ',', $this->getConf('notify'))));
+                // Get matches between page tags and triggers (don't preserve keys)
+                $notify = array_values((array_intersect($pagetags, $triggers)));
+                // If there's at least one match, throw a notification message (only first match is considered)
+                if (isset($notify[0])) {
+                    msg($this->getLang('notify').$notify[0].".",2);
+                }
+            }
+        }       
+}
 
-	    // Fetch tags for the page; stop proceeding when no tags specified
-	    $tags = p_get_metadata($ID, 'subject', METADATA_DONT_RENDER);
-	    if(is_null($tags)) true;
 
-	    // Replace underscores with blanks
-	    foreach($event->data['meta'] as &$meta) {
-	        if($meta['name'] == 'keywords') {
-	            $meta['content'] = str_replace('_', ' ', $meta['content']);
-	        }
-	    }	    
-	}
 }
 
 // vim:ts=4:sw=4:et:

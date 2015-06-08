@@ -25,3 +25,5 @@ $lang['list_tags_of_subns']    = 'Lister les tags présent aussi dans les sous-d
 $lang['tags_list_css']           = 'Style appliqué à la liste de tags des pages';
 $lang['tags_list_css_o_tags']    = 'style par défaut';
 $lang['tags_list_css_o_tagstop'] = 'optimisé pour les listes de tags en haut de page';
+
+$lang['notify']                  = 'Liste de tags séparés par une virgule qui déclencheront une notification système (le plus important en premier).';

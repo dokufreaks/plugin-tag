@@ -11,6 +11,7 @@ $lang['tags']  = 'Tags';
 $lang['topic'] = 'Topic';
 $lang['toolbar_icon'] = 'Insert Tag-Syntax';
 $lang['empty_output'] = 'Empty Output';
+$lang['notify'] = 'This page has been marked as ';
 
 
 // search form of tagsearch syntax

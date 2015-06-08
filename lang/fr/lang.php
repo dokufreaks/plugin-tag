@@ -13,3 +13,4 @@ $lang['include']               = 'Inclure';
 $lang['exclude']               = 'Exclure';
 $lang['use_and']               = 'Utiliser AND';
 $lang['no_tags']               = 'Aucun tag trouvé';
+$lang['notify']                = 'Cette page a été marquée comme ';

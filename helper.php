@@ -111,10 +111,13 @@ class helper_plugin_tag extends DokuWiki_Plugin {
         if (empty($tags) || ($tags[0] == '')) return '';
 
         $links = array();
+        // Load Tag Alerts helper if the plugin is not disabled
+        if (!plugin_isdisabled('tagalerts')) {
+            $this->tagalertsHelper = plugin_load('helper','tagalerts');
+        }
         foreach ($tags as $tag) {
             $links[] = $this->tagLink($tag);
         }
-
         return implode(','.DOKU_LF.DOKU_TAB, $links);
     }
 
@@ -153,6 +156,13 @@ class helper_plugin_tag extends DokuWiki_Plugin {
             $url   = wl($tag, array('do'=>'showtag', 'tag'=>$svtag));
         }
         if (!$title) $title = $tag_title;
+        // Use Tag Alerts helper if it has been loaded and is set to style tag links
+        if (($this->tagalertsHelper) and ($conf['plugin']['tagalerts']['inline'] == 1)) {
+            // get the CSS class
+            $class = $this->tagalertsHelper->extraClass($title, $class);
+            // get the tooltip
+            $tag = $this->tagalertsHelper->tooltip($title, $tag);
+        }
         $link = '<a href="'.$url.'" class="'.$class.'" title="'.hsc($tag).
             '" rel="tag">'.hsc($title).'</a>';
         return $link;

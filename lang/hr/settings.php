@@ -19,3 +19,6 @@ $lang['sortorder_o_ascending'] = 'rastući';
 $lang['sortorder_o_descending'] = 'padajući';
 $lang['pagelist_flags']        = 'zastavice oblikovanja za listu oznaka (zarezom odvojene, za listu dostupnih zastavica vidi dokumentaciju dodatka pagelist)';
 $lang['list_tags_of_subns']    = 'Prikaži također oznake iz pod-imeničkih prostora specificiranog imeničkog prostora';
+$lang['tags_list_css']         = 'Odaberi stil koji će se primijeniti na listu oznaka';
+$lang['tags_list_css_o_tags']  = 'podrazumijevani stil';
+$lang['tags_list_css_o_tagstop'] = 'optimizirano za listu oznaka na vrhu stranice';

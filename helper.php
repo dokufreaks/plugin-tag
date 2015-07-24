@@ -114,7 +114,6 @@ class helper_plugin_tag extends DokuWiki_Plugin {
         foreach ($tags as $tag) {
             $links[] = $this->tagLink($tag);
         }
-
         return implode(','.DOKU_LF.DOKU_TAB, $links);
     }
 
@@ -153,8 +152,14 @@ class helper_plugin_tag extends DokuWiki_Plugin {
             $url   = wl($tag, array('do'=>'showtag', 'tag'=>$svtag));
         }
         if (!$title) $title = $tag_title;
-        $link = '<a href="'.$url.'" class="'.$class.'" title="'.hsc($tag).
-            '" rel="tag">'.hsc($title).'</a>';
+        $link = array(
+            'href' => $url,
+            'class' => $class,
+            'tooltip' => hsc($tag),
+            'title' => hsc($title)
+        );
+        trigger_event('PLUGIN_TAG_LINK', $link);
+        $link = '<a href="'.$link['href'].'" class="'.$link['class'].'" title="'.$link['tooltip'].'" rel="tag">'.$link['title'].'</a>';
         return $link;
     }
 

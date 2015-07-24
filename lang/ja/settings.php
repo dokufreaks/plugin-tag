@@ -20,3 +20,6 @@ $lang['sortorder_o_ascending'] = '昇順';
 $lang['sortorder_o_descending'] = '降順';
 $lang['pagelist_flags']        = 'タグリストの表示フラグ（カンマ区切り。使用可能フラグは pagelist プラグインを参照）';
 $lang['list_tags_of_subns']    = '指定名前空間の下位の名前空間のタグも一覧に含む（count 構文）';
+$lang['tags_list_css']         = 'ページタグ一覧に適用されるスタイルを選択してください。';
+$lang['tags_list_css_o_tags']  = 'デフォルトスタイル';
+$lang['tags_list_css_o_tagstop'] = 'ページ上部配置に最適化';

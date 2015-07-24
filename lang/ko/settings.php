@@ -19,3 +19,6 @@ $lang['sortorder_o_ascending'] = '오름차순';
 $lang['sortorder_o_descending'] = '내림차순';
 $lang['pagelist_flags']        = '태그 목록에 대한 서식 플래그 (쉼표로 구분, 사용할 수 있는 플래그에 대해서는 pagelist 플러그인의 설명서를 참고하세요)';
 $lang['list_tags_of_subns']    = '지정된 이름공간의 하위 이름공간에도 있는 태그를 나열 (개수 문법)';
+$lang['tags_list_css']         = '문서의 태그 목록에 적용할 스타일 선택';
+$lang['tags_list_css_o_tags']  = '기본 스타일';
+$lang['tags_list_css_o_tagstop'] = '문서 위에 있는 태그 목록에 최적화';

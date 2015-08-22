@@ -3,7 +3,8 @@
 /**
  * @license    GPL 2 (http://www.gnu.org/licenses/gpl.html)
  * 
- * @author     Esther Brunner <wikidesign@gmail.com>
+ * @author Esther Brunner <wikidesign@gmail.com>
+ * @author Padhie <develop@padhie.de>
  */
 $lang['namespace']             = 'Standard-Namensraum für Tags';
 $lang['toolbar_icon']          = 'Toolbar-Symbol anzeigen (data/cache/* und den Browser-Cache löschen, wenn das Symbol nicht angezeigt wird)';
@@ -19,3 +20,6 @@ $lang['sortorder_o_ascending'] = 'aufsteigend';
 $lang['sortorder_o_descending'] = 'absteigend';
 $lang['pagelist_flags']        = 'Formatieroptionen für die Tagliste (kommasepariert, für eine Liste der verfügbaren Optionen siehe die Dokumentation des Pagelist Plugins)';
 $lang['list_tags_of_subns']    = 'Tags anzeigen, die in Subnamespaces von angegebeben Namespaces liegen (count syntax)';
+$lang['tags_list_css']         = 'Wähle ein Aussehen für die Tag-Liste auf der Seite';
+$lang['tags_list_css_o_tags']  = 'Standartaussehen';
+$lang['tags_list_css_o_tagstop'] = 'Optimierte Tab-Liste für Seitenkopf';

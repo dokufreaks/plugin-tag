@@ -2,6 +2,6 @@ base   tag
 author Michael Hamann, Gina Häussge, Christopher Smith, Michael Klier, Esther Brunner
 email  michael@content-space.de
 date   2015-08-10
-name   tag plugin
+name   Tag Plugin
 desc   tag wiki pages
 url    https://www.dokuwiki.org/plugin:tag

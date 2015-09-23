@@ -62,7 +62,6 @@ class syntax_plugin_tag_topic extends DokuWiki_Syntax_Plugin {
 
         if (($ns == '*') || ($ns == ':')) $ns = '';
         elseif ($ns == '.') $ns = getNS($ID);
-        else $ns = cleanID($ns);
 
         return array($ns, trim($tag), $flags);
     }

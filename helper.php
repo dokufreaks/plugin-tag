@@ -176,6 +176,7 @@ class helper_plugin_tag extends DokuWiki_Plugin {
     function getTopic($ns = '', $num = NULL, $tag = '') {
         if (!$tag) $tag = $_REQUEST['tag'];
         $tag = $this->_parseTagList($tag, true);
+        list($include_namespaces, $exclude_namespaces) = $this->_parseNamespaceList($ns);
         $result = array();
 
         // find the pages using topic.idx
@@ -184,7 +185,7 @@ class helper_plugin_tag extends DokuWiki_Plugin {
         
         foreach ($pages as $page) {
             // exclude pages depending on ACL and namespace
-            if($this->_notVisible($page, $ns)) continue;
+            if($this->_notVisible($page, $include_namespaces, $exclude_namespaces)) continue;
             $tags  = $this->_getSubjectMetadata($page);
             // don't trust index
             if (!$this->_checkPageTags($tags, $tag)) continue;
@@ -392,6 +393,33 @@ class helper_plugin_tag extends DokuWiki_Plugin {
             return $tags;
         }
     }
+    
+    /**
+     * Splits a string into an array of namespaces
+     * 
+     * @param string $namespacesString
+     * @return array Array with included namespaces and excluded namespaces
+     */
+    function _parseNamespaceList($namespacesString) {
+
+        $include_namespaces = array();
+        $exclude_namespaces = array();
+
+        if($namespacesString) {
+            $namespaces = preg_split('/ /', $namespacesString, -1, PREG_SPLIT_NO_EMPTY);
+            foreach($namespaces as $ns) {
+                if($ns{0} == '-' || $ns{0} == '^') {
+                    $exclude_namespaces[] = cleanID(substr($ns, 1));
+                } elseif($ns{0} == '+' || $ns{0} == '@') {
+                    $include_namespaces[] = cleanID(substr($ns, 1));
+                } else {
+                    $include_namespaces[] = cleanID($ns);
+                }
+            }
+        }
+
+        return array($include_namespaces, $exclude_namespaces);
+    }
 
     /**
      * Clean a list (array) of tags using _cleanTag
@@ -474,21 +502,39 @@ class helper_plugin_tag extends DokuWiki_Plugin {
      * Check visibility of the page
      * 
      * @param string $id the page id
-     * @param string $ns the namespace authorized
+     * @param array $namespaces the namespace authorized
      * @return bool if the page is hidden
      */
-    function _notVisible($id, $ns="") {
+    function _notVisible($id, $include_namespaces=array(), $exclude_namespaces=array()) {
         if (isHiddenPage($id)) return true; // discard hidden pages
         // discard if user can't read
         if (auth_quickaclcheck($id) < AUTH_READ) return true;
-        // filter by namespace, root namespace is identified with a dot
-        if($ns == '.') {
-            // root namespace is specified, discard all pages who lay outside the root namespace
-            if(getNS($id) != false) return true;
-        } else {
-            // ("!==0" namespace found at position 0)
-            if ($ns && (strpos(':'.getNS($id).':', ':'.$ns.':') !== 0)) return true;
+        
+        if($include_namespaces) {
+            $idNS = getNS($id);
+            $found = false;
+            foreach((array) $include_namespaces as $ns) {
+                // filter by namespace, root namespace is identified with a dot
+                if($ns == '.' && $idNS == false) {
+                    $found = true;
+                } elseif(strpos(':'.$idNS.':', ':'.$ns.':') === 0) {
+                    $found = true;
+                }
+            }
+            foreach((array) $exclude_namespaces as $ns) {
+                // filter by namespace, root namespace is identified with a dot
+                if($ns == '.' && $idNS == false) {
+                    $found = false;
+                } elseif(strpos(':'.$idNS.':', ':'.$ns.':') === 0) {
+                    $found = false;
+                }
+            }
+            
+            if(false === $found) {
+                return true;
+            }
         }
+        
         return !page_exists($id, '', false);
     }
 

@@ -49,7 +49,7 @@ class syntax_plugin_tag_count extends DokuWiki_Syntax_Plugin {
      * @param Doku_Handler    $handler The handler
      * @return array Data for the renderer
      */
-    function handle($match, $state, $pos, &$handler) {
+    function handle($match, $state, $pos, Doku_Handler $handler) {
 
         $dump = trim(substr($match, 8, -2));     // get given tags
         $dump = explode('&', $dump);             // split to tags and allowed namespaces 
@@ -79,7 +79,7 @@ class syntax_plugin_tag_count extends DokuWiki_Syntax_Plugin {
      * @param array          $data      The data from the handler function
      * @return bool If rendering was successful.
      */
-    function render($mode, &$renderer, $data) {
+    function render($mode, Doku_Renderer $renderer, $data) {
         if ($data == false) return false;
 
         list($tags, $allowedNamespaces) = $data;

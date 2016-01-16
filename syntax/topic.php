@@ -47,7 +47,7 @@ class syntax_plugin_tag_topic extends DokuWiki_Syntax_Plugin {
      * @param Doku_Handler    $handler The handler
      * @return array Data for the renderer
      */
-    function handle($match, $state, $pos, &$handler) {
+    function handle($match, $state, $pos, Doku_Handler $handler) {
         global $ID;
 
         $match = substr($match, 8, -2); // strip {{topic> from start and }} from end
@@ -75,7 +75,7 @@ class syntax_plugin_tag_topic extends DokuWiki_Syntax_Plugin {
      * @param array          $data      The data from the handler function
      * @return bool If rendering was successful.
      */
-    function render($mode, &$renderer, $data) {
+    function render($mode, Doku_Renderer $renderer, $data) {
         list($ns, $tag, $flags) = $data;
 
         /* @var helper_plugin_tag $my */

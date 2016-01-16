@@ -51,7 +51,7 @@ class syntax_plugin_tag_tag extends DokuWiki_Syntax_Plugin {
      * @param Doku_Handler    $handler The handler
      * @return array Data for the renderer
      */
-    function handle($match, $state, $pos, &$handler) {
+    function handle($match, $state, $pos, Doku_Handler $handler) {
         $tags = trim(substr($match, 6, -2));     // strip markup & whitespace
         $tags = preg_replace(array('/[[:blank:]]+/', '/\s+/'), " ", $tags);    // replace linebreaks and multiple spaces with one space character
 
@@ -73,7 +73,7 @@ class syntax_plugin_tag_tag extends DokuWiki_Syntax_Plugin {
      * @param array          $data      The data from the handler function
      * @return bool If rendering was successful.
      */
-    function render($mode, &$renderer, $data) {
+    function render($mode, Doku_Renderer $renderer, $data) {
         if ($data === false) return false;
         /** @var helper_plugin_tag $my */
         if (!$my = $this->loadHelper('tag')) return false;

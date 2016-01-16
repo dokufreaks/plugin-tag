@@ -47,7 +47,7 @@ class syntax_plugin_tag_searchtags extends DokuWiki_Syntax_Plugin {
      * @param Doku_Handler    $handler The handler
      * @return array Data for the renderer
      */
-    function handle($match, $state, $pos, &$handler) {
+    function handle($match, $state, $pos, Doku_Handler $handler) {
         $flags = substr($match, 10, -2); // strip {{searchtags from start and }} from end
         // remove empty flags by using array_filter (removes elements == false)
         $flags = array_filter(explode('&', $flags));
@@ -63,7 +63,7 @@ class syntax_plugin_tag_searchtags extends DokuWiki_Syntax_Plugin {
      * @param array          $data      The data from the handler function
      * @return bool If rendering was successful.
      */
-    function render($mode, &$renderer, $data) {
+    function render($mode, Doku_Renderer $renderer, $data) {
         global $lang;
         $flags = $data;
 

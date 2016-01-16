@@ -7,10 +7,13 @@
  */
 
 // custom language strings for the plugin
+$lang['tag']   = 'Tag';
 $lang['tags']  = 'Tags';
 $lang['topic'] = 'Topic';
+$lang['count'] = '#';
 $lang['toolbar_icon'] = 'Insert Tag-Syntax';
 $lang['empty_output'] = 'Empty Output';
+
 
 
 // search form of tagsearch syntax

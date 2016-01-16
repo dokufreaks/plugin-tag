@@ -22,7 +22,7 @@ $lang['sortorder']              = 'sort order';
 $lang['sortorder_o_ascending']  = 'ascending';
 $lang['sortorder_o_descending'] = 'descending';
 
-$lang['pagelist_flags'] = 'Formatting flags for the taglist (comma-separated, for available flags see the documentation of the pagelist plugin)';
+$lang['pagelist_flags'] = 'Formatting flags for the taglist (comma-separated, for available flags see the documentation of the Pagelist Plugin)';
 
 $lang['list_tags_of_subns'] = 'List also tags in subnamespaces of a specified namespace (count syntax)';
 

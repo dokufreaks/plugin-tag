@@ -5,8 +5,10 @@
  * 
  * @author Davor Turkalj <turki.bsc@gmail.com>
  */
+$lang['tag']                   = 'Oznaka';
 $lang['tags']                  = 'Oznake';
 $lang['topic']                 = 'Teme';
+$lang['count']                 = '#';
 $lang['toolbar_icon']          = 'Ubaci sintaksu oznake';
 $lang['empty_output']          = 'Prazan izlaz';
 $lang['include']               = 'Uključi';

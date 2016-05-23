@@ -22,7 +22,6 @@ $lang['sortorder_o_ascending'] = 'croissant';
 $lang['sortorder_o_descending'] = 'décroissant';
 $lang['pagelist_flags']        = 'Paramètres d\'affichage pour lister les pages (séparés par des virgules, pour la liste des paramètres voir la documentation du plugin pagelist)';
 $lang['list_tags_of_subns']    = 'Lister les tags présents aussi dans les sous-dossiers (syntaxe count)';
-
-$lang['tags_list_css']           = 'Style appliqué à la liste de tags des pages';
-$lang['tags_list_css_o_tags']    = 'style par défaut';
+$lang['tags_list_css']         = 'Style appliqué à la liste de tags des pages';
+$lang['tags_list_css_o_tags']  = 'style par défaut';
 $lang['tags_list_css_o_tagstop'] = 'optimisé pour les listes de tags en haut de page';

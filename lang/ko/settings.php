@@ -6,7 +6,7 @@
  * @author Myeongjin <aranet100@gmail.com>
  */
 $lang['namespace']             = '태그에 대한 기본 이름공간';
-$lang['toolbar_icon']          = '도구 모음 아이콘 보이기 (보이지 않으면 data/cache/* 와 브라우저 캐시를 지우세요)';
+$lang['toolbar_icon']          = '도구 모음 아이콘 보이기 (표시되지 않으면 data/cache/* 와 브라우저 캐시를 지우세요)';
 $lang['sortkey']               = '주제 목록 정렬 기준';
 $lang['sortkey_o_cdate']       = '만든 날짜';
 $lang['sortkey_o_mdate']       = '수정한 날짜';

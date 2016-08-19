@@ -19,7 +19,7 @@ class action_plugin_tag extends DokuWiki_Action_Plugin {
      *
      * @param Doku_Event_Handler $contr
      */
-    function register(&$contr) {
+    function register(Doku_Event_Handler $contr) {
         $contr->register_hook('ACTION_ACT_PREPROCESS', 'BEFORE', $this, '_handle_act', array());
         $contr->register_hook('TPL_ACT_UNKNOWN', 'BEFORE', $this, '_handle_tpl_act', array());
         $contr->register_hook('TPL_METAHEADER_OUTPUT', 'BEFORE', $this, '_handle_keywords', array());
@@ -32,7 +32,7 @@ class action_plugin_tag extends DokuWiki_Action_Plugin {
      * Add a version string to the index so it is rebuilt
      * whenever the stored data format changes.
      */
-    function _indexer_version($event, $param) {
+    function _indexer_version(Doku_Event $event, $param) {
         global $conf;
         $event->data['plugin_tag'] = '0.2.deaccent='.$conf['deaccent'];
     }
@@ -40,7 +40,7 @@ class action_plugin_tag extends DokuWiki_Action_Plugin {
     /**
      * Add all data of the subject metadata to the metadata index.
      */
-    function _indexer_index_tags($event, $param) {
+    function _indexer_index_tags(Doku_Event $event, $param) {
         /* @var helper_plugin_tag $helper */
         if ($helper = $this->loadHelper('tag')) {
             // make sure the tags are cleaned and no duplicate tags are added to the index

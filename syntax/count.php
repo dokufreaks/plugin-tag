@@ -105,8 +105,8 @@ class syntax_plugin_tag_count extends DokuWiki_Syntax_Plugin {
 
             $renderer->doc .= '<table class="'.$class.'">'.DOKU_LF;
             $renderer->doc .= DOKU_TAB.'<tr>'.DOKU_LF.DOKU_TAB.DOKU_TAB;
-            $renderer->doc .= '<th class="'.$col.'">tag</th>';
-            $renderer->doc .= '<th class="'.$col.'">#</th>';
+            $renderer->doc .= '<th class="'.$col.'">'.$this->getLang('tag').'</th>';
+            $renderer->doc .= '<th class="'.$col.'">'.$this->getLang('count').'</th>';
             $renderer->doc .= DOKU_LF.DOKU_TAB.'</tr>'.DOKU_LF;
 
             if(empty($occurrences)) {

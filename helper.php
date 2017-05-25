@@ -507,11 +507,38 @@ class helper_plugin_tag extends DokuWiki_Plugin {
      * @return bool
      */
     function _checkPageTags($pagetags, $tags) {
+        if (count($tags) == 0) return true;
         $result = false;
-        foreach($tags as $tag) {
-            if ($tag{0} == "+" and !in_array(substr($tag, 1), $pagetags)) $result = false;
-            if ($tag{0} == "-" and in_array(substr($tag, 1), $pagetags)) $result = false;
+        $NOTs = 0;
+        $falseNOTs = 0;
+        foreach($tags as $i => $tag) {
+            if ($tag{0} == "+") {
+                if (!in_array(substr($tag, 1), $pagetags)) {
+                    $result = false;
+                } else if ($i == 0) {
+                    // This can happen e.g. in case of a tag list like "+tag1"
+                    // or "+tag1 tag2". If the first tag has a '+' handle
+                    // it like a normal tag, so we set $result to 'true'.
+                    // Also solves situations like "+tag1 +tag2".
+                    $result = true;
+                }
+            }
+            if ($tag{0} == "-") {
+                $NOTs++;
+                if (in_array(substr($tag, 1), $pagetags)) {
+                    $result = false;
+                    $falseNOTs++;
+                } else if ($i == 0) {
+                    $result = true;
+                }
+            }
             if (in_array($tag, $pagetags)) $result = true;
+        }
+        if ($falseNOTs == 0 && count($tags) == $NOTs) {
+            // None of the NOT(-) tags were found (OK) and ALL
+            // tags are NOT tags. Set true because there is no
+            // tag which could cause $result to become true!
+            $result = true;
         }
         return $result;
     }

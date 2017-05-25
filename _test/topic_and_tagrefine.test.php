@@ -4,6 +4,8 @@ if (!defined('DOKU_INC')) die();
 
 /**
  * Tests the tagRefine function of the tag plugin
+ * 
+ * @group plugin_tag
  */
 class plugin_tag_topic_and_tagrefine_test extends DokuWikiTest {
     private $all_pages = array(
@@ -44,7 +46,10 @@ class plugin_tag_topic_and_tagrefine_test extends DokuWikiTest {
 
     public function testMixed() {
         $this->assertTopicRefine(array('tagged_page'), 'mytag -negative_tag');
+    }
 
+    public function testMixedReversed() {
+        $this->assertTopicRefine(array('tagged_page', 'negative_page', 'third_page'), '-negative_tag mytag');
     }
 
     public function testAnd() {
@@ -97,6 +102,7 @@ class plugin_tag_topic_and_tagrefine_test extends DokuWikiTest {
                     break;
                 }
             }
+            $this->assertTrue((count($actual) > 0), $msg_prefix.'Result list is empty!');
             $this->assertTrue($found, $msg_prefix.'Page '.$id.' expected but not found in the result');
         }
 

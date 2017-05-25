@@ -24,7 +24,7 @@ class helper_plugin_tag extends DokuWiki_Plugin {
     /**
      * Constructor gets default preferences and language strings
      */
-    function helper_plugin_tag() {
+    function __construct() {
         global $ID;
 
         $this->namespace = $this->getConf('namespace');

@@ -87,7 +87,8 @@ class syntax_plugin_tag_searchtags extends DokuWiki_Syntax_Plugin {
             }
 
             // print the search form
-            $renderer->doc .= $this->getForm();
+            $nonsform = in_array('nonsform', $flags);
+            $renderer->doc .= $this->getForm($nonsform);
 
             // get the tag input data
             $tags = $this->getTagSearchString();
@@ -123,19 +124,21 @@ class syntax_plugin_tag_searchtags extends DokuWiki_Syntax_Plugin {
      *
      * @return string the HTML code of the search form
      */
-    private function getForm()  {
+    private function getForm($nonsform=false)  {
         global $conf, $lang;
 
-        // Get the list of all namespaces for the dropdown
-        $namespaces = array();
-        search($namespaces,$conf['datadir'],'search_namespaces',array());
+        if (!$nonsform) {
+            // Get the list of all namespaces for the dropdown
+            $namespaces = array();
+            search($namespaces,$conf['datadir'],'search_namespaces',array());
 
-        // build the list in the form value => label from the namespace search result
-        $ns_select = array('' => '');
-        foreach ($namespaces as $ns) {
-            // only display namespaces the user can access when sneaky index is on
-            if ($ns['perm'] > 0 || $conf['sneaky_index'] == 0) {
-                $ns_select[$ns['id']] = $ns['id'];
+            // build the list in the form value => label from the namespace search result
+            $ns_select = array('' => '');
+            foreach ($namespaces as $ns) {
+                // only display namespaces the user can access when sneaky index is on
+                if ($ns['perm'] > 0 || $conf['sneaky_index'] == 0) {
+                    $ns_select[$ns['id']] = $ns['id'];
+                }
             }
         }
 
@@ -144,7 +147,9 @@ class syntax_plugin_tag_searchtags extends DokuWiki_Syntax_Plugin {
         // add a paragraph around the inputs in order to get some margin around the form elements
         $form->addElement(form_makeOpenTag('p'));
         // namespace select
-        $form->addElement(form_makeMenuField('plugin__tag_search_namespace', $ns_select, $this->getNS(), $lang['namespaces']));
+        if (!$nonsform) {
+            $form->addElement(form_makeMenuField('plugin__tag_search_namespace', $ns_select, $this->getNS(), $lang['namespaces']));
+        }
 
         // checkbox for AND
         $attr = array();

@@ -2,7 +2,7 @@
 
 /**
  * @license    GPL 2 (http://www.gnu.org/licenses/gpl.html)
- * 
+ *
  * @author Digna González Otero <digna.gonzalezotero [at] gmail [dot] com>
  * @author Camilo Sampedro <sampedro1903@gmail.com>
  * @author Domingo Redal <docxml@gmail.com>

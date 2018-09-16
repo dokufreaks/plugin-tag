@@ -15,6 +15,6 @@ $meta['pagelist_flags']     = array('string');
 $meta['toolbar_icon']       = array('onoff');
 $meta['list_tags_of_subns'] = array('onoff');
 $meta['tags_list_css']      = array('multichoice',
-                                    '_choices' => array('tags', 'tagstop'));
+                                    '_choices' => array('tags', 'tagstop', 'tagsinline'));
 
 //Setup VIM: ex: et ts=2 :

@@ -33,7 +33,13 @@ class syntax_plugin_tag_tag extends DokuWiki_Syntax_Plugin {
     /**
      * @return string Paragraph type
      */
-    function getPType() { return 'block';}
+    function getPType() { 
+        if ($this->getConf('tags_list_css') == 'tagsinline') {
+            return 'normal';
+        } else {
+            return 'block';
+        }
+    }
 
     /**
      * @param string $mode Parser mode

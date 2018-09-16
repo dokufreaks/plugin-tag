@@ -22,7 +22,7 @@ div.dokuwiki div.tagsinline {
 }
 
 div.dokuwiki div.tags span,
-div.dokuwiki div.tagsinline span,
+div.dokuwiki span.tagsinline span,
 div.dokuwiki div.tagstop span {
   background: transparent url(images/tag.gif) 0px 2px no-repeat;
   padding: 1px 0px 1px 17px;

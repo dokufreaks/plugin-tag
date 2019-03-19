@@ -115,7 +115,7 @@ class action_plugin_tag extends DokuWiki_Action_Plugin {
 	    $event->data[] = array (
 	        'type' => 'format',
 	        'title' => $this->getLang('toolbar_icon'),
-	        'icon' => '../../plugins/tag/images/tag-toolbar.png',
+	        'icon' => '/lib/plugins/tag/images/tag-toolbar.png',
 	        'open' => '{{tag>',
 	    	'close' => '}}'
 	    );

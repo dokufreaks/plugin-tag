@@ -2,7 +2,7 @@
 
 /**
  * @license    GPL 2 (http://www.gnu.org/licenses/gpl.html)
- * 
+ *
  * @author İlker R. Kapaç <irifat@gmail.com>
  */
 $lang['namespace']             = 'Etiketler için varsayılan isim alanı (namespace)';
@@ -19,3 +19,6 @@ $lang['sortorder_o_ascending'] = 'artan';
 $lang['sortorder_o_descending'] = 'azalan';
 $lang['pagelist_flags']        = 'Etiket listesi için biçimlendirme bayrakları (flags) (Virgül ile ayrılmış olarak yazın. Kullanılabilir bayrak listesi için pagelist eklentisinin belgelerine bakın)';
 $lang['list_tags_of_subns']    = 'Tanımlanan isim alanının altındaki isim alanlarını da listele (sözdizimini say)';
+$lang['tags_list_css']         = 'Sayfalardaki etiket listesine uygulanacak biçimlendirmeyi seçin';
+$lang['tags_list_css_o_tags']  = 'Varsayılan biçim';
+$lang['tags_list_css_o_tagstop'] = 'Sayfanın üst tarafında etiket listesi göstermek için uygun';

@@ -79,7 +79,29 @@ class syntax_plugin_tag_topic extends DokuWiki_Syntax_Plugin {
         list($ns, $tag, $flags) = $data;
 
         /* @var helper_plugin_tag $my */
-        if ($my = $this->loadHelper('tag')) $pages = $my->getTopic($ns, '', $tag);
+        if ($my = $this->loadHelper('tag')) {
+            // see if flags tell us to change settings for sorting
+            foreach($flags as $flag) {
+                $separator_pos = strpos($flag, '=');
+                if ($separator_pos === false) {
+                    continue; // no "=" found, skip to next flag
+                }
+
+                $conf_name = trim(strtolower(substr($flag, 0 , $separator_pos)));
+                $conf_val = trim(strtolower(substr($flag, $separator_pos+1)));
+
+                if(in_array($conf_name, array('sortkey', 'sortorder'))) {
+                    $my->conf[$conf_name] = $conf_val;
+                }
+
+                if('sortkey' == $conf_name) {
+                    $my->sort = $conf_val;
+                }
+            }
+            
+            $pages = $my->getTopic($ns, '', $tag);
+        }
+        
         if (!isset($pages) || !$pages) return true; // nothing to display
 
         if ($mode == 'xhtml') {

@@ -2,6 +2,8 @@
 
 /**
  * Tests the basic functionality of the tag and topic syntax
+ * 
+ * @group plugin_tag
  */
 class topic_tag_test extends DokuWikiTest {
     function setup() {

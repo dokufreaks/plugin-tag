@@ -4,6 +4,8 @@ if (!defined('DOKU_INC')) die();
 
 /**
  * Tests the tagRefine function of the tag plugin
+ * 
+ * @group plugin_tag
  */
 class plugin_tag_topic_sorting_test extends DokuWikiTest {
     private $pages = array(

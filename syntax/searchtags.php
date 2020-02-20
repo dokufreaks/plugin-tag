@@ -237,7 +237,7 @@ class syntax_plugin_tag_searchtags extends DokuWiki_Syntax_Plugin {
             $negative_tags = '';
             foreach ($tags as $tag) {
                 $tag = (string)$tag;
-                if ($tag{0} == '-') {
+                if ($tag[0] == '-') {
                     $negative_tags .= $tag.' ';
                 } else {
                     if ($positive_tags === '') {

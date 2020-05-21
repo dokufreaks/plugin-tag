@@ -2,7 +2,8 @@
 
 /**
  * @license    GPL 2 (http://www.gnu.org/licenses/gpl.html)
- * 
+ *
+ * @author Jacob Palm <jacobpalmdk@icloud.com>
  * @author Søren Birk <soer9648@eucl.dk>
  */
 $lang['namespace']             = 'Standard navnerum for tags';
@@ -19,3 +20,6 @@ $lang['sortorder_o_ascending'] = 'stigende';
 $lang['sortorder_o_descending'] = 'faldende';
 $lang['pagelist_flags']        = 'Formateringsflag for tag-listen (kommasepareret - se dokumentationen for pagelist plugin, for tilgængelige flag)';
 $lang['list_tags_of_subns']    = 'List også tags i under-navnerum for et specificeret navnerum (tæl syntaks)';
+$lang['tags_list_css']         = 'Vælg stil der skal anvendes til tag-listen på sider';
+$lang['tags_list_css_o_tags']  = 'standard stil';
+$lang['tags_list_css_o_tagstop'] = 'optimeret til visning af tag-liste øverst på side';

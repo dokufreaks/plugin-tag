@@ -86,7 +86,7 @@ class syntax_plugin_tag_count extends DokuWiki_Syntax_Plugin {
 
         // deactivate (renderer) cache as long as there is no proper cache handling
         // implemented for the count syntax
-        $renderer->info['cache'] = false;
+        $renderer->nocache();
 
         if($mode == "xhtml") {
             /** @var helper_plugin_tag $my */

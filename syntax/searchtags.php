@@ -71,7 +71,7 @@ class syntax_plugin_tag_searchtags extends DokuWiki_Syntax_Plugin {
             /* @var Doku_Renderer_xhtml $renderer */
 
             // prevent caching to ensure content is always fresh
-            $renderer->info['cache'] = false;
+            $renderer->nocache();
 
             /* @var helper_plugin_pagelist $pagelist */
             // let Pagelist Plugin do the work for us

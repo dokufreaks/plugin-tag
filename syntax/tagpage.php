@@ -8,13 +8,6 @@
  * @author   Matthias Schulte <dokuwiki@lupo49.de>
  */
 
-// must be run within Dokuwiki
-if(!defined('DOKU_INC')) die();
-
-if(!defined('DOKU_LF')) define('DOKU_LF', "\n");
-if(!defined('DOKU_TAB')) define('DOKU_TAB', "\t");
-if(!defined('DOKU_PLUGIN')) define('DOKU_PLUGIN', DOKU_INC.'lib/plugins/');
-
 /** Tagpage syntax, allows to link to a given tag */
 class syntax_plugin_tag_tagpage extends DokuWiki_Syntax_Plugin {
 

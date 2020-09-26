@@ -7,9 +7,6 @@
  * @author Michael Hamann <michael@content-space.de>
  */
 
-// must be run within Dokuwiki
-if (!defined('DOKU_INC')) die();
-
 /**
  * Tagsearch syntax, displays a tag search form with results similar to the topic syntax
  */

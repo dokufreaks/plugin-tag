@@ -20,6 +20,7 @@ class action_plugin_tag extends DokuWiki_Action_Plugin {
      * @param Doku_Event_Handler $contr
      */
     function register(Doku_Event_Handler $contr) {
+        $contr->register_hook('PARSER_CACHE_USE', 'BEFORE', $this, '_purgecache', array());
         $contr->register_hook('ACTION_ACT_PREPROCESS', 'BEFORE', $this, '_handle_act', array());
         $contr->register_hook('TPL_ACT_UNKNOWN', 'BEFORE', $this, '_handle_tpl_act', array());
         $contr->register_hook('TPL_METAHEADER_OUTPUT', 'BEFORE', $this, '_handle_keywords', array());
@@ -27,7 +28,17 @@ class action_plugin_tag extends DokuWiki_Action_Plugin {
         $contr->register_hook('INDEXER_VERSION_GET', 'BEFORE', $this, '_indexer_version', array());
         $contr->register_hook('INDEXER_PAGE_ADD', 'BEFORE', $this, '_indexer_index_tags', array());
     }
-
+	
+    /**
+    * when inserting custom sort keys we need to purge the cache
+    */
+    function _purgecache(Doku_Event $event, $param) {
+	$event->preventDefault();
+        $event->stopPropagation();
+        $event->result = false;
+    }
+	
+	
     /**
      * Add a version string to the index so it is rebuilt
      * whenever the stored data format changes.

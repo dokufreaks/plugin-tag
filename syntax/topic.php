@@ -6,11 +6,7 @@
  * @author   Esther Brunner <wikidesign@gmail.com>
  */
 
-// must be run within Dokuwiki
-if (!defined('DOKU_INC')) die();
-
-if (!defined('DOKU_PLUGIN')) define('DOKU_PLUGIN',DOKU_INC.'lib/plugins/');
-
+/
 /**
  * Topic syntax, displays links to all wiki pages with a certain tag
  */
@@ -76,7 +72,6 @@ class syntax_plugin_tag_topic extends DokuWiki_Syntax_Plugin {
      * @return bool If rendering was successful.
      */
     function render($mode, Doku_Renderer $renderer, $data) {
-	global $conf, $my;
         list($ns, $tag, $flags) = $data;
 
         /* @var helper_plugin_tag $my */
@@ -99,11 +94,9 @@ class syntax_plugin_tag_topic extends DokuWiki_Syntax_Plugin {
             }
         }
 
-
         if ($my = $this->loadHelper('tag')) {
             $pages = $my->getTopic($ns, '', $tag);
         }
-
 
         if (!isset($pages) || !$pages) return true; // nothing to display
 
@@ -111,7 +104,7 @@ class syntax_plugin_tag_topic extends DokuWiki_Syntax_Plugin {
             /* @var Doku_Renderer_xhtml $renderer */
 
             // prevent caching to ensure content is always fresh
-            $renderer->info['cache'] = false;
+            $renderer->nocache();
 
             /* @var helper_plugin_pagelist $pagelist */
             // let Pagelist Plugin do the work for us
@@ -144,14 +137,6 @@ class syntax_plugin_tag_topic extends DokuWiki_Syntax_Plugin {
             }
             $renderer->doc .= $pagelist->finishList();      
             return true;
-
-        // for metadata renderer
-/*        } elseif ($mode == 'metadata') {
-            foreach ($pages as $page) {
-                $renderer->meta['relation']['references'][$page['id']] = true;
-            }
-
-            return true;*/ // causes issues with backlinks
         }
         return false;
     }

@@ -22,7 +22,7 @@ class action_plugin_tag extends DokuWiki_Action_Plugin {
         $contr->register_hook('INDEXER_VERSION_GET', 'BEFORE', $this, '_indexer_version', array());
         $contr->register_hook('INDEXER_PAGE_ADD', 'BEFORE', $this, '_indexer_index_tags', array());
     }
-
+	
     /**
      * Add a version string to the index so it is rebuilt
      * whenever the stored data format changes.

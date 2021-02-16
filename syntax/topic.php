@@ -6,7 +6,6 @@
  * @author   Esther Brunner <wikidesign@gmail.com>
  */
 
-/
 /**
  * Topic syntax, displays links to all wiki pages with a certain tag
  */

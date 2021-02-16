@@ -73,7 +73,8 @@ class syntax_plugin_tag_topic extends DokuWiki_Syntax_Plugin {
     function render($mode, Doku_Renderer $renderer, $data) {
         list($ns, $tag, $flags) = $data;
 
-        /* @var helper_plugin_tag $my */
+        /* extract sort flags into array */
+        $sortflags = array();
         foreach($flags as $flag) {
             $separator_pos = strpos($flag, '=');
             if ($separator_pos === false) {
@@ -84,16 +85,13 @@ class syntax_plugin_tag_topic extends DokuWiki_Syntax_Plugin {
             $conf_val = trim(strtolower(substr($flag, $separator_pos+1)));
 
             if(in_array($conf_name, array('sortkey', 'sortorder'))) {
-                $conf['plugin']['tag'][$conf_name] = $conf_val;
-            }
-
-            if('sortkey' == $conf_name) {
-                $conf['plugin']['tag']['sort'] = $conf_val;
-                $my->sort = $conf_val;
+                $sortflags[$conf_name] = $conf_val;
             }
         }
 
+        /* @var helper_plugin_tag $my */
         if ($my = $this->loadHelper('tag')) {
+            $my->overrideSortFlags($sortflags);
             $pages = $my->getTopic($ns, '', $tag);
         }
 

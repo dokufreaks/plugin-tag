@@ -29,6 +29,6 @@ $lang['list_tags_of_subns'] = 'List also tags in subnamespaces of a specified na
 $lang['tags_list_css']           = 'Choose style applied to pages\' tags list';
 $lang['tags_list_css_o_tags']    = 'default style';
 $lang['tags_list_css_o_tagstop'] = 'optimized for tags list at top of page';
-
+$lang['tags_list_css_o_tagsinline'] = 'display tags inline with content';
 
 //Setup VIM: ex: et ts=2 :

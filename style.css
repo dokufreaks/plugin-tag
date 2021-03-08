@@ -16,7 +16,13 @@ div.dokuwiki div.tagstop {
   margin-bottom: .4em;
 }
 
+div.dokuwiki div.tagsinline { 
+  display: inline; 
+  font-size: 100%; 
+}
+
 div.dokuwiki div.tags span,
+div.dokuwiki span.tagsinline span,
 div.dokuwiki div.tagstop span {
   background: transparent url(images/tag.gif) 0px 2px no-repeat;
   padding: 1px 0px 1px 17px;
@@ -26,3 +32,4 @@ div.dokuwiki div.tagstop span {
 div.dokuwiki form.plugin__tag_search label.plus, div.dokuwiki form.plugin__tag_search label.minus {
   display: block;
 }
+

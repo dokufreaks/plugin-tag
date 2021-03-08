@@ -26,7 +26,13 @@ class syntax_plugin_tag_tag extends DokuWiki_Syntax_Plugin {
     /**
      * @return string Paragraph type
      */
-    function getPType() { return 'block';}
+    function getPType() { 
+        if ($this->getConf('tags_list_css') == 'tagsinline') {
+            return 'normal';
+        } else {
+            return 'block';
+        }
+    }
 
     /**
      * @param string $mode Parser mode
@@ -73,11 +79,15 @@ class syntax_plugin_tag_tag extends DokuWiki_Syntax_Plugin {
 
         // XHTML output
         if ($mode == 'xhtml') {
+            $container = 'div';
+            if ($this->getConf('tags_list_css') == 'tagsinline') {
+                $container = 'span';
+            }
             $tags = $my->tagLinks($data);
             if (!$tags) return true;
-            $renderer->doc .= '<div class="'.$this->getConf('tags_list_css').'"><span>'.DOKU_LF.
+            $renderer->doc .= '<'.$container.' class="'.$this->getConf('tags_list_css').'"><span>'.DOKU_LF.
                 DOKU_TAB.$tags.DOKU_LF.
-                '</span></div>'.DOKU_LF;
+                '</span></'.$container.'>'.DOKU_LF;
             return true;
 
         // for metadata renderer

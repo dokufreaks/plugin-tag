@@ -162,13 +162,12 @@ class helper_plugin_tag extends DokuWiki_Plugin {
      * @param string $ns A namespace to which all pages need to belong, "." for only the root namespace
      * @param int    $num The maximum number of pages that shall be returned
      * @param string $tag The tag that shall be searched
-     * @param array|string $notags Exclude pages with tags (Default with noindex|notag)
      * @return array The list of pages
      *
      * @author  Esther Brunner <wikidesign@gmail.com>
      * @author  clso <admin@clso.fun>
      */
-    function getTopic($ns = '', $num = NULL, $tag = '', $notags = NULL) {
+    function getTopic($ns = '', $num = NULL, $tag = '') {
         if (!$tag) $tag = $_REQUEST['tag'];
         $tag = $this->_parseTagList($tag, true);
         $result = array();
@@ -178,18 +177,11 @@ class helper_plugin_tag extends DokuWiki_Plugin {
         if (!count($pages)) return $result;
 
         // initialize exclude tags
+        $notags = $this->getConf('tags_exclude');
         if ($notags) {
-            if (is_string($notags))
-                $notags = [$notags];
-            elseif (!is_array($notags))
-                $notags = ['noindex', 'notag'];
+            $notags = array_map('trim', explode(',', $notags) );
         } else {
-            $notags = $_REQUEST['notags'];
-            if ($notags) {
-                $notags = array_map('trim', explode(',', $notags));
-            } else {
-                $notags = ['noindex', 'notag'];
-            }
+            $notags = [];
         }
 
         foreach ($pages as $page) {

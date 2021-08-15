@@ -165,6 +165,7 @@ class helper_plugin_tag extends DokuWiki_Plugin {
      * @return array The list of pages
      *
      * @author  Esther Brunner <wikidesign@gmail.com>
+     * @author  clso <admin@clso.fun>
      */
     function getTopic($ns = '', $num = NULL, $tag = '') {
         if (!$tag) $tag = $_REQUEST['tag'];

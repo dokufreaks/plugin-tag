@@ -25,4 +25,6 @@ $lang['pagelist_flags'] = '標籤列表的格式化參數 (逗號分隔，可用
 
 $lang['list_tags_of_subns'] = '也將指定命名空間之下子命名空間中的標籤列出 (count 語法)';
 
+$lang['tags_exclude'] = '在搜索結果中排除指定標籤';
+
 //Setup VIM: ex: et ts=2 enc=utf-8 :

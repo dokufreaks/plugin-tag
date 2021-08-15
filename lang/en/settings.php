@@ -32,5 +32,4 @@ $lang['tags_list_css_o_tagstop'] = 'optimized for tags list at top of page';
 
 $lang['tags_exclude'] = 'Exclude tags in search';
 
-
 //Setup VIM: ex: et ts=2 :

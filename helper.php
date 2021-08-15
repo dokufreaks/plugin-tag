@@ -162,11 +162,13 @@ class helper_plugin_tag extends DokuWiki_Plugin {
      * @param string $ns A namespace to which all pages need to belong, "." for only the root namespace
      * @param int    $num The maximum number of pages that shall be returned
      * @param string $tag The tag that shall be searched
+     * @param array|string $notags Exclude pages with tags (Default with noindex|notag)
      * @return array The list of pages
      *
      * @author  Esther Brunner <wikidesign@gmail.com>
+     * @author  clso <admin@clso.fun>
      */
-    function getTopic($ns = '', $num = NULL, $tag = '') {
+    function getTopic($ns = '', $num = NULL, $tag = '', $notags = NULL) {
         if (!$tag) $tag = $_REQUEST['tag'];
         $tag = $this->_parseTagList($tag, true);
         $result = array();
@@ -174,13 +176,31 @@ class helper_plugin_tag extends DokuWiki_Plugin {
         // find the pages using topic.idx
         $pages = $this->_tagIndexLookup($tag);
         if (!count($pages)) return $result;
-        
+
+        // initialize exclude tags
+        if ($notags) {
+            if (is_string($notags))
+                $notags = [$notags];
+            elseif (!is_array($notags))
+                $notags = ['noindex', 'notag'];
+        } else {
+            $notags = $_REQUEST['notags'];
+            if ($notags) {
+                $notags = array_map('trim', explode(',', $notags));
+            } else {
+                $notags = ['noindex', 'notag'];
+            }
+        }
+
         foreach ($pages as $page) {
             // exclude pages depending on ACL and namespace
             if($this->_notVisible($page, $ns)) continue;
             $tags  = $this->_getSubjectMetadata($page);
             // don't trust index
             if (!$this->_checkPageTags($tags, $tag)) continue;
+
+            // exclude pages with tags
+            if(array_intersect($notags, $tags)) continue;
 
             // get metadata
             $meta = p_get_metadata($page);

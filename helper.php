@@ -174,6 +174,14 @@ class helper_plugin_tag extends DokuWiki_Plugin {
         // find the pages using topic.idx
         $pages = $this->_tagIndexLookup($tag);
         if (!count($pages)) return $result;
+
+        // initialize exclude tags
+        $notags = $this->getConf('tags_exclude');
+        if ($notags) {
+            $notags = array_map('trim', explode(',', $notags) );
+        } else {
+            $notags = [];
+        }
         
         foreach ($pages as $page) {
             // exclude pages depending on ACL and namespace
@@ -181,6 +189,9 @@ class helper_plugin_tag extends DokuWiki_Plugin {
             $tags  = $this->_getSubjectMetadata($page);
             // don't trust index
             if (!$this->_checkPageTags($tags, $tag)) continue;
+
+            // exclude pages with tags
+            if(array_intersect($notags, $tags)) continue;
 
             // get metadata
             $meta = p_get_metadata($page);

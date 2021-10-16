@@ -1,15 +1,8 @@
 <?php
-
 /**
  * @license    GPL 2 (http://www.gnu.org/licenses/gpl.html)
  * @author     Esther Brunner <wikidesign@gmail.com>
  */
-
-// must be run within Dokuwiki
-if (!defined('DOKU_INC')) die();
-
-if (!defined('DOKU_LF')) define('DOKU_LF', "\n");
-if (!defined('DOKU_TAB')) define('DOKU_TAB', "\t");
 
 /**
  * Helper part of the tag plugin, allows to query and print tags
@@ -343,7 +336,7 @@ class helper_plugin_tag extends DokuWiki_Plugin {
 
         $clean_tags = array();
         foreach ($tags as $i => $tag) {
-            if (($tag{0} == '+') || ($tag{0} == '-'))
+            if (($tag[0] == '+') || ($tag[0] == '-'))
                 $clean_tags[$i] = substr($tag, 1);
             else
                 $clean_tags[$i] = $tag;
@@ -358,9 +351,9 @@ class helper_plugin_tag extends DokuWiki_Plugin {
             $t = $clean_tags[$i];
             if (!is_array($pages[$t])) $pages[$t] = array();
 
-            if ($tag{0} == '+') {       // AND: add only if in both arrays
+            if ($tag[0] == '+') {       // AND: add only if in both arrays
                 $result = array_intersect($result, $pages[$t]);
-            } elseif ($tag{0} == '-') { // NOT: remove array from docs
+            } elseif ($tag[0] == '-') { // NOT: remove array from docs
                 $result = array_diff($result, $pages[$t]);
             } else {                   // OR: add array to docs
                 $result = array_unique(array_merge($result, $pages[$t]));
@@ -509,8 +502,8 @@ class helper_plugin_tag extends DokuWiki_Plugin {
     function _checkPageTags($pagetags, $tags) {
         $result = false;
         foreach($tags as $tag) {
-            if ($tag{0} == "+" and !in_array(substr($tag, 1), $pagetags)) $result = false;
-            if ($tag{0} == "-" and in_array(substr($tag, 1), $pagetags)) $result = false;
+            if ($tag[0] == "+" and !in_array(substr($tag, 1), $pagetags)) $result = false;
+            if ($tag[0] == "-" and in_array(substr($tag, 1), $pagetags)) $result = false;
             if (in_array($tag, $pagetags)) $result = true;
         }
         return $result;

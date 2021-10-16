@@ -6,11 +6,6 @@
  * @author   Esther Brunner <wikidesign@gmail.com>
  */
 
-// must be run within Dokuwiki
-if (!defined('DOKU_INC')) die();
-
-if (!defined('DOKU_PLUGIN')) define('DOKU_PLUGIN',DOKU_INC.'lib/plugins/');
-
 /**
  * Topic syntax, displays links to all wiki pages with a certain tag
  */
@@ -86,7 +81,7 @@ class syntax_plugin_tag_topic extends DokuWiki_Syntax_Plugin {
             /* @var Doku_Renderer_xhtml $renderer */
 
             // prevent caching to ensure content is always fresh
-            $renderer->info['cache'] = false;
+            $renderer->nocache();
 
             /* @var helper_plugin_pagelist $pagelist */
             // let Pagelist Plugin do the work for us

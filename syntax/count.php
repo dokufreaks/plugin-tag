@@ -9,13 +9,6 @@
  * @license  GPL 2 (http://www.gnu.org/licenses/gpl.html)
  * @author   Matthias Schulte <dokuwiki@lupo49.de>
  */
- 
-// must be run within Dokuwiki
-if (!defined('DOKU_INC')) die();
-
-if (!defined('DOKU_LF')) define('DOKU_LF', "\n");
-if (!defined('DOKU_TAB')) define('DOKU_TAB', "\t");
-if (!defined('DOKU_PLUGIN')) define('DOKU_PLUGIN',DOKU_INC.'lib/plugins/');
 
 /** Count syntax, allows to list tag counts */
 class syntax_plugin_tag_count extends DokuWiki_Syntax_Plugin {
@@ -86,7 +79,7 @@ class syntax_plugin_tag_count extends DokuWiki_Syntax_Plugin {
 
         // deactivate (renderer) cache as long as there is no proper cache handling
         // implemented for the count syntax
-        $renderer->info['cache'] = false;
+        $renderer->nocache();
 
         if($mode == "xhtml") {
             /** @var helper_plugin_tag $my */

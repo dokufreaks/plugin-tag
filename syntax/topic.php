@@ -91,11 +91,18 @@ class syntax_plugin_tag_topic extends DokuWiki_Syntax_Plugin {
             $pagelist->sort = false;
             $pagelist->rsort = false;
 
+            $limit = 0;
             $configflags = explode(',', str_replace(" ", "", $this->getConf('pagelist_flags')));
            	$flags = array_merge($configflags, $flags);	
            	foreach($flags as $key => $flag) {
-           		if($flag == "")	unset($flags[$key]);
-           	}     
+                if($flag == "")	unset($flags[$key]);
+                // Handle "limit=X"
+                elseif (substr($flag, 0, strlen("limit=")) == "limit=") {
+                    $values = explode('=', $flag);
+                    if (count($values) == 2 && $values[1] > $limit)
+                        $limit = $values[1];
+                }
+            }
 
             $pagelist->setFlags($flags);
             $pagelist->startList();
@@ -109,8 +116,12 @@ class syntax_plugin_tag_topic extends DokuWiki_Syntax_Plugin {
             	if($pagelist->rsort) krsort($pages);
             }
 
+            $nb = 1;
             foreach ($pages as $page) {
                 $pagelist->addPage($page);
+                $nb++;
+                if($limit > 0 && $nb > $limit)
+                    break;
             }
             $renderer->doc .= $pagelist->finishList();      
             return true;

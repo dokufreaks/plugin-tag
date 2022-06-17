@@ -46,7 +46,9 @@ class syntax_plugin_tag_tag extends DokuWiki_Syntax_Plugin {
      */
     function handle($match, $state, $pos, Doku_Handler $handler) {
         $tags = trim(substr($match, 6, -2));     // strip markup & whitespace
+        $tags = trim($tags, "\xe2\x80\x8b"); // strip word/wordpad breaklines
         $tags = preg_replace(array('/[[:blank:]]+/', '/\s+/'), " ", $tags);    // replace linebreaks and multiple spaces with one space character
+        $tags = preg_replace('/[\x00-\x1F\x7F]/u', '', $tags); // strip unprintable ascii code out of utf-8 coded string
 
         if (!$tags) return false;
         

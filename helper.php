@@ -4,6 +4,7 @@
  * @author     Esther Brunner <wikidesign@gmail.com>
  */
 
+use dokuwiki\Extension\Event;
 /**
  * Helper part of the tag plugin, allows to query and print tags
  */
@@ -151,9 +152,9 @@ class helper_plugin_tag extends DokuWiki_Plugin {
             'tooltip' => hsc($tag),
             'title' => hsc($title)
         );
-        trigger_event('PLUGIN_TAG_LINK', $link);
         $link = '<a href="'.$link['href'].'" class="'.$link['class'].'" title="'.$link['tooltip'].'" rel="tag">'.$link['title'].'</a>';
         return $link;
+        Event::createAndTrigger('PLUGIN_TAG_LINK', $link);
     }
 
     /**

@@ -103,7 +103,9 @@ class syntax_plugin_tag_topic extends DokuWiki_Syntax_Plugin {
             // Sort pages by pagename if required by flags
             if($pagelist->sort || $pagelist->rsort) {
             	$keys = array();
-            	$fnc = create_function('$a, $b', 'return strcmp(noNS($a["id"]), noNS($b["id"])); ');
+            	$fnc = function($a, $b) {
+                    return strcmp(noNS($a["id"]), noNS($b["id"]));
+                };
             	usort($pages, $fnc);
             	// rsort is true - revserse sort the pages
             	if($pagelist->rsort) krsort($pages);

@@ -5,6 +5,7 @@
  */
 
 use dokuwiki\Extension\Event;
+
 /**
  * Helper part of the tag plugin, allows to query and print tags
  */
@@ -81,7 +82,7 @@ class helper_plugin_tag extends DokuWiki_Plugin {
     }
 
     /**
-     * Returns the column header for th Pagelist Plugin
+     * Returns the column header for the Pagelist Plugin
      */
     function th() {
         return $this->getLang('tags');
@@ -152,9 +153,8 @@ class helper_plugin_tag extends DokuWiki_Plugin {
             'tooltip' => hsc($tag),
             'title' => hsc($title)
         );
-        $link = '<a href="'.$link['href'].'" class="'.$link['class'].'" title="'.$link['tooltip'].'" rel="tag">'.$link['title'].'</a>';
-        return $link;
         Event::createAndTrigger('PLUGIN_TAG_LINK', $link);
+        return '<a href="'.$link['href'].'" class="'.$link['class'].'" title="'.$link['tooltip'].'" rel="tag">'.$link['title'].'</a>';
     }
 
     /**
@@ -175,7 +175,7 @@ class helper_plugin_tag extends DokuWiki_Plugin {
         // find the pages using topic.idx
         $pages = $this->_tagIndexLookup($tag);
         if (!count($pages)) return $result;
-        
+
         foreach ($pages as $page) {
             // exclude pages depending on ACL and namespace
             if($this->_notVisible($page, $ns)) continue;
@@ -251,7 +251,7 @@ class helper_plugin_tag extends DokuWiki_Plugin {
 
         return $pages;
    }
-   
+
    /**
     * Get count of occurrences for a list of tags
     *
@@ -422,15 +422,15 @@ class helper_plugin_tag extends DokuWiki_Plugin {
             $group    = $userdata['grps'][0];
         }
 
-        $replace = array( 
-                '@USER@'  => cleanID($user), 
+        $replace = array(
+                '@USER@'  => cleanID($user),
                 '@NAME@'  => cleanID($INFO['userinfo']['name']),
                 '@GROUP@' => cleanID($group),
-                '@YEAR@'  => date('Y'), 
-                '@MONTH@' => date('m'), 
-                '@DAY@'   => date('d'), 
-                ); 
-        return str_replace(array_keys($replace), array_values($replace), $id); 
+                '@YEAR@'  => date('Y'),
+                '@MONTH@' => date('m'),
+                '@DAY@'   => date('d'),
+                );
+        return str_replace(array_keys($replace), array_values($replace), $id);
     }
 
     /**
@@ -466,7 +466,7 @@ class helper_plugin_tag extends DokuWiki_Plugin {
     }
     /**
      * Check visibility of the page
-     * 
+     *
      * @param string $id the page id
      * @param string $ns the namespace authorized
      * @return bool if the page is hidden
@@ -511,4 +511,4 @@ class helper_plugin_tag extends DokuWiki_Plugin {
     }
 
 }
-// vim:ts=4:sw=4:et:  
+// vim:ts=4:sw=4:et:

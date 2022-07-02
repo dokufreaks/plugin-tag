@@ -55,16 +55,16 @@ class syntax_plugin_tag_searchtags extends DokuWiki_Syntax_Plugin {
     /**
      * Render xhtml output or metadata
      *
-     * @param string         $mode      Renderer mode (supported modes: xhtml and metadata)
+     * @param string         $format      Renderer mode (supported modes: xhtml and metadata)
      * @param Doku_Renderer  $renderer  The renderer
      * @param array          $data      The data from the handler function
      * @return bool If rendering was successful.
      */
-    function render($mode, Doku_Renderer $renderer, $data) {
+    function render($format, Doku_Renderer $renderer, $data) {
         global $lang;
         $flags = $data;
 
-        if ($mode == 'xhtml') {
+        if ($format == 'xhtml') {
             /* @var Doku_Renderer_xhtml $renderer */
 
             // prevent caching to ensure content is always fresh

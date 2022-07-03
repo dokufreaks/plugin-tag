@@ -4,7 +4,7 @@
  * Tests the basic functionality of the tag and topic syntax
  */
 class topic_tag_test extends DokuWikiTest {
-    function setup() {
+    function setup() : void {
         $this->pluginsEnabled[] = 'tag';
         $this->pluginsEnabled[] = 'pagelist';
         parent::setup();

@@ -62,7 +62,8 @@ class action_plugin_tag extends DokuWiki_Action_Plugin {
      * Display the tag page
      *
      * @param Doku_Event $event The TPL_ACT_UNKNOWN event
-     * @param array      $param optional parameters (unused)
+     * @param array $param optional parameters (unused)
+     * @return bool
      */
     function _handle_tpl_act(Doku_Event $event, $param) {
         global $lang;

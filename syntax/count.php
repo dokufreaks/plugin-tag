@@ -45,7 +45,7 @@ class syntax_plugin_tag_count extends DokuWiki_Syntax_Plugin {
     function handle($match, $state, $pos, Doku_Handler $handler) {
 
         $dump = trim(substr($match, 8, -2));     // get given tags
-        $dump = explode('&', $dump);             // split to tags and allowed namespaces 
+        $dump = explode('&', $dump);             // split to tags and allowed namespaces
         $tags = $dump[0];
         $allowedNamespaces = explode(' ', $dump[1]); // split given namespaces into an array
 
@@ -67,12 +67,12 @@ class syntax_plugin_tag_count extends DokuWiki_Syntax_Plugin {
     /**
      * Render xhtml output or metadata
      *
-     * @param string         $mode      Renderer mode (supported modes: xhtml and metadata)
+     * @param string         $format      Renderer mode (supported modes: xhtml and metadata)
      * @param Doku_Renderer  $renderer  The renderer
      * @param array          $data      The data from the handler function
      * @return bool If rendering was successful.
      */
-    function render($mode, Doku_Renderer $renderer, $data) {
+    function render($format, Doku_Renderer $renderer, $data) {
         if ($data == false) return false;
 
         list($tags, $allowedNamespaces) = $data;
@@ -81,7 +81,7 @@ class syntax_plugin_tag_count extends DokuWiki_Syntax_Plugin {
         // implemented for the count syntax
         $renderer->nocache();
 
-        if($mode == "xhtml") {
+        if($format == "xhtml") {
             /** @var helper_plugin_tag $my */
             if(!($my = $this->loadHelper('tag'))) return false;
 
@@ -121,4 +121,4 @@ class syntax_plugin_tag_count extends DokuWiki_Syntax_Plugin {
         return true;
     }
 }
-// vim:ts=4:sw=4:et: 
+// vim:ts=4:sw=4:et:

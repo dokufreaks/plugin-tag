@@ -12,8 +12,8 @@ use dokuwiki\Extension\Event;
 class helper_plugin_tag extends DokuWiki_Plugin {
 
     var $namespace  = '';      // namespace tag links point to
-
     var $sort       = '';      // sort key
+    var $sortorder = '';       // sort order
     var $topic_idx  = array();
 
     /**
@@ -23,8 +23,11 @@ class helper_plugin_tag extends DokuWiki_Plugin {
         global $ID;
 
         $this->namespace = $this->getConf('namespace');
-        if (!$this->namespace) $this->namespace = getNS($ID);
+        if (!$this->namespace) {
+            $this->namespace = getNS($ID);
+        }
         $this->sort = $this->getConf('sortkey');
+        $this->sortorder = $this->getConf('sortorder');
     }
 
     /**
@@ -34,6 +37,13 @@ class helper_plugin_tag extends DokuWiki_Plugin {
      */
     function getMethods() {
         $result = array();
+
+        $result[] = array(
+            'name'   => 'overrideSortFlags',
+            'desc'   => 'takes an array of sortflags and overrides predefined value',
+            'params' => array(
+                'name' => 'string')
+        );
         $result[] = array(
                 'name'   => 'th',
                 'desc'   => 'returns the header for the tags column for pagelist',
@@ -79,6 +89,15 @@ class helper_plugin_tag extends DokuWiki_Plugin {
                 'return' => array('tags' => 'array'),
                 );
         return $result;
+    }
+
+    function overrideSortFlags($newflags = array()) {
+        if(isset($newflags['sortkey'])) {
+            $this->sort = trim($newflags['sortkey']);
+        }
+        if(isset($newflags['sortorder'])) {
+            $this->sortorder = trim($newflags['sortorder']);
+        }
     }
 
     /**
@@ -197,17 +216,31 @@ class helper_plugin_tag extends DokuWiki_Plugin {
             $taglinks = $this->tagLinks($tags);
 
             // determine the sort key
-            if ($this->sort == 'id') $key = $page;
-            elseif ($this->sort == 'ns') {
-                $pos = strrpos($page, ':');
-                if ($pos === false) $key = "\0".$page;
-                else $key = substr_replace($page, "\0\0", $pos, 1);
-                $key = str_replace(':', "\0", $key);
-            } elseif ($this->sort == 'pagename') $key = noNS($page);
-            elseif ($this->sort == 'title') {
-                $key = utf8_strtolower($title);
-                if (empty($key)) $key = str_replace('_', ' ', noNS($page));
-            } else $key = $date;
+            switch($this->sort) {
+                case 'id':
+                    $key = $page;
+                    break;
+                case 'ns':
+                    $pos = strrpos($page, ':');
+                    if ($pos === false) {
+                        $key = "\0".$page;
+                    } else {
+                        $key = substr_replace($page, "\0\0", $pos, 1);
+                    }
+                    $key = str_replace(':', "\0", $key);
+                    break;
+                case 'pagename':
+                    $key = noNS($page);
+                    break;
+                case 'title':
+                    $key = utf8_strtolower($title);
+                    if (empty($key)) {
+                        $key = str_replace('_', ' ', noNS($page));
+                    }
+                    break;
+                default:
+                    $key = $date;
+            }
             // make sure that the key is unique
             $key = $this->_uniqueKey($key, $result);
 
@@ -227,7 +260,7 @@ class helper_plugin_tag extends DokuWiki_Plugin {
         }
 
         // finally sort by sort key
-        if ($this->getConf('sortorder') == 'ascending') ksort($result);
+        if ($this->sortorder == 'ascending') ksort($result);
         else krsort($result);
 
         return $result;

@@ -73,8 +73,28 @@ class syntax_plugin_tag_topic extends DokuWiki_Syntax_Plugin {
     function render($format, Doku_Renderer $renderer, $data) {
         list($ns, $tag, $flags) = $data;
 
+        /* extract sort flags into array */
+        $sortflags = array();
+        foreach($flags as $flag) {
+            $separator_pos = strpos($flag, '=');
+            if ($separator_pos === false) {
+                continue; // no "=" found, skip to next flag
+            }
+
+            $conf_name = trim(strtolower(substr($flag, 0 , $separator_pos)));
+            $conf_val = trim(strtolower(substr($flag, $separator_pos+1)));
+
+            if(in_array($conf_name, array('sortkey', 'sortorder'))) {
+                $sortflags[$conf_name] = $conf_val;
+            }
+        }
+
         /* @var helper_plugin_tag $my */
-        if ($my = $this->loadHelper('tag')) $pages = $my->getTopic($ns, '', $tag);
+        if ($my = $this->loadHelper('tag')) {
+            $my->overrideSortFlags($sortflags);
+            $pages = $my->getTopic($ns, '', $tag);
+        }
+
         if (!isset($pages) || !$pages) return true; // nothing to display
 
         if ($format == 'xhtml') {
@@ -115,14 +135,6 @@ class syntax_plugin_tag_topic extends DokuWiki_Syntax_Plugin {
             }
             $renderer->doc .= $pagelist->finishList();
             return true;
-
-        // for metadata renderer
-/*        } elseif ($format == 'metadata') {
-            foreach ($pages as $page) {
-                $renderer->meta['relation']['references'][$page['id']] = true;
-            }
-
-            return true;*/ // causes issues with backlinks
         }
         return false;
     }

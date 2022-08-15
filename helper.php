@@ -311,6 +311,7 @@ class helper_plugin_tag extends DokuWiki_Plugin {
             // don't return tags without pages
             if ($otags[$tag] == 0) unset($otags[$tag]);
         }
+        ksort($otags);
         return $otags;
     }
 

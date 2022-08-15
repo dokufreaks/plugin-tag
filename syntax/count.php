@@ -9,13 +9,6 @@
  * @license  GPL 2 (http://www.gnu.org/licenses/gpl.html)
  * @author   Matthias Schulte <dokuwiki@lupo49.de>
  */
- 
-// must be run within Dokuwiki
-if (!defined('DOKU_INC')) die();
-
-if (!defined('DOKU_LF')) define('DOKU_LF', "\n");
-if (!defined('DOKU_TAB')) define('DOKU_TAB', "\t");
-if (!defined('DOKU_PLUGIN')) define('DOKU_PLUGIN',DOKU_INC.'lib/plugins/');
 
 /** Count syntax, allows to list tag counts */
 class syntax_plugin_tag_count extends DokuWiki_Syntax_Plugin {
@@ -52,7 +45,7 @@ class syntax_plugin_tag_count extends DokuWiki_Syntax_Plugin {
     function handle($match, $state, $pos, Doku_Handler $handler) {
 
         $dump = trim(substr($match, 8, -2));     // get given tags
-        $dump = explode('&', $dump);             // split to tags and allowed namespaces 
+        $dump = explode('&', $dump);             // split to tags and allowed namespaces
         $tags = $dump[0];
         $allowedNamespaces = explode(' ', $dump[1]); // split given namespaces into an array
 
@@ -74,21 +67,21 @@ class syntax_plugin_tag_count extends DokuWiki_Syntax_Plugin {
     /**
      * Render xhtml output or metadata
      *
-     * @param string         $mode      Renderer mode (supported modes: xhtml and metadata)
+     * @param string         $format      Renderer mode (supported modes: xhtml and metadata)
      * @param Doku_Renderer  $renderer  The renderer
      * @param array          $data      The data from the handler function
      * @return bool If rendering was successful.
      */
-    function render($mode, Doku_Renderer $renderer, $data) {
+    function render($format, Doku_Renderer $renderer, $data) {
         if ($data == false) return false;
 
         list($tags, $allowedNamespaces) = $data;
 
         // deactivate (renderer) cache as long as there is no proper cache handling
         // implemented for the count syntax
-        $renderer->info['cache'] = false;
+        $renderer->nocache();
 
-        if($mode == "xhtml") {
+        if($format == "xhtml") {
             /** @var helper_plugin_tag $my */
             if(!($my = $this->loadHelper('tag'))) return false;
 
@@ -128,4 +121,4 @@ class syntax_plugin_tag_count extends DokuWiki_Syntax_Plugin {
         return true;
     }
 }
-// vim:ts=4:sw=4:et: 
+// vim:ts=4:sw=4:et:

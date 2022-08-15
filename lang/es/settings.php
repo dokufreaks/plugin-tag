@@ -1,11 +1,11 @@
 <?php
 
 /**
- * @license    GPL 2 (http://www.gnu.org/licenses/gpl.html)
+ * @license	GPL 2 (http://www.gnu.org/licenses/gpl.html)
+ * @author	Digna González Otero <digna.gonzalezotero [at] gmail [dot] com>
+ * @author	Camilo Sampedro <sampedro1903@gmail.com>
+ * @author	Domingo Redal <docxml@gmail.com>
  *
- * @author Digna González Otero <digna.gonzalezotero [at] gmail [dot] com>
- * @author Camilo Sampedro <sampedro1903@gmail.com>
- * @author Domingo Redal <docxml@gmail.com>
  */
 $lang['namespace']             = 'Espacio de nombres por defecto para las etiquetas';
 $lang['toolbar_icon']          = 'Mostrar el ícono en la barra (borra data/cache/ y el caché del navegador si no es visible)';

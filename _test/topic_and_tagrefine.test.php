@@ -11,7 +11,7 @@ class plugin_tag_topic_and_tagrefine_test extends DokuWikiTest {
         'negative_page' => array('id' => 'negative_page'),
         'third_page' => array('id' => 'third_page')
     );
-    public function setUp() {
+    public function setUp() : void {
         $this->pluginsEnabled[] = 'tag';
         parent::setUp();
 

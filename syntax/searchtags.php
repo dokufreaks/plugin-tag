@@ -7,9 +7,6 @@
  * @author Michael Hamann <michael@content-space.de>
  */
 
-// must be run within Dokuwiki
-if (!defined('DOKU_INC')) die();
-
 /**
  * Tagsearch syntax, displays a tag search form with results similar to the topic syntax
  */
@@ -58,20 +55,20 @@ class syntax_plugin_tag_searchtags extends DokuWiki_Syntax_Plugin {
     /**
      * Render xhtml output or metadata
      *
-     * @param string         $mode      Renderer mode (supported modes: xhtml and metadata)
+     * @param string         $format      Renderer mode (supported modes: xhtml and metadata)
      * @param Doku_Renderer  $renderer  The renderer
      * @param array          $data      The data from the handler function
      * @return bool If rendering was successful.
      */
-    function render($mode, Doku_Renderer $renderer, $data) {
+    function render($format, Doku_Renderer $renderer, $data) {
         global $lang;
         $flags = $data;
 
-        if ($mode == 'xhtml') {
+        if ($format == 'xhtml') {
             /* @var Doku_Renderer_xhtml $renderer */
 
             // prevent caching to ensure content is always fresh
-            $renderer->info['cache'] = false;
+            $renderer->nocache();
 
             /* @var helper_plugin_pagelist $pagelist */
             // let Pagelist Plugin do the work for us
@@ -87,7 +84,8 @@ class syntax_plugin_tag_searchtags extends DokuWiki_Syntax_Plugin {
             }
 
             // print the search form
-            $renderer->doc .= $this->getForm();
+            $nonsform = in_array('nonsform', $flags);
+            $renderer->doc .= $this->getForm($nonsform);
 
             // get the tag input data
             $tags = $this->getTagSearchString();
@@ -123,19 +121,21 @@ class syntax_plugin_tag_searchtags extends DokuWiki_Syntax_Plugin {
      *
      * @return string the HTML code of the search form
      */
-    private function getForm()  {
+    private function getForm($nonsform=false)  {
         global $conf, $lang;
 
-        // Get the list of all namespaces for the dropdown
-        $namespaces = array();
-        search($namespaces,$conf['datadir'],'search_namespaces',array());
+        if (!$nonsform) {
+            // Get the list of all namespaces for the dropdown
+            $namespaces = array();
+            search($namespaces,$conf['datadir'],'search_namespaces',array());
 
-        // build the list in the form value => label from the namespace search result
-        $ns_select = array('' => '');
-        foreach ($namespaces as $ns) {
-            // only display namespaces the user can access when sneaky index is on
-            if ($ns['perm'] > 0 || $conf['sneaky_index'] == 0) {
-                $ns_select[$ns['id']] = $ns['id'];
+            // build the list in the form value => label from the namespace search result
+            $ns_select = array('' => '');
+            foreach ($namespaces as $ns) {
+                // only display namespaces the user can access when sneaky index is on
+                if ($ns['perm'] > 0 || $conf['sneaky_index'] == 0) {
+                    $ns_select[$ns['id']] = $ns['id'];
+                }
             }
         }
 
@@ -144,7 +144,9 @@ class syntax_plugin_tag_searchtags extends DokuWiki_Syntax_Plugin {
         // add a paragraph around the inputs in order to get some margin around the form elements
         $form->addElement(form_makeOpenTag('p'));
         // namespace select
-        $form->addElement(form_makeMenuField('plugin__tag_search_namespace', $ns_select, $this->getNS(), $lang['namespaces']));
+        if (!$nonsform) {
+            $form->addElement(form_makeMenuField('plugin__tag_search_namespace', $ns_select, $this->getNS(), $lang['namespaces']));
+        }
 
         // checkbox for AND
         $attr = array();
@@ -237,7 +239,7 @@ class syntax_plugin_tag_searchtags extends DokuWiki_Syntax_Plugin {
             $negative_tags = '';
             foreach ($tags as $tag) {
                 $tag = (string)$tag;
-                if ($tag{0} == '-') {
+                if ($tag[0] == '-') {
                     $negative_tags .= $tag.' ';
                 } else {
                     if ($positive_tags === '') {

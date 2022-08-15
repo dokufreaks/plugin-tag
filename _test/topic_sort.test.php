@@ -18,7 +18,7 @@ class plugin_tag_topic_sorting_test extends DokuWikiTest {
     /** @var helper_plugin_tag $helper */
     private $helper;
 
-    public function setUp() {
+    public function setUp() : void {
         global $conf;
         $this->pluginsEnabled[] = 'tag';
         parent::setUp();

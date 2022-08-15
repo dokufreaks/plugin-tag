@@ -8,13 +8,6 @@
  * @author   Matthias Schulte <dokuwiki@lupo49.de>
  */
 
-// must be run within Dokuwiki
-if(!defined('DOKU_INC')) die();
-
-if(!defined('DOKU_LF')) define('DOKU_LF', "\n");
-if(!defined('DOKU_TAB')) define('DOKU_TAB', "\t");
-if(!defined('DOKU_PLUGIN')) define('DOKU_PLUGIN', DOKU_INC.'lib/plugins/');
-
 /** Tagpage syntax, allows to link to a given tag */
 class syntax_plugin_tag_tagpage extends DokuWiki_Syntax_Plugin {
 
@@ -70,19 +63,19 @@ class syntax_plugin_tag_tagpage extends DokuWiki_Syntax_Plugin {
     /**
      * Render xhtml output
      *
-     * @param string         $mode      Renderer mode (supported modes: xhtml)
+     * @param string         $format      Renderer mode (supported modes: xhtml)
      * @param Doku_Renderer  $renderer  The renderer
      * @param array          $data      The data from the handler function
      * @return bool If rendering was successful.
      */
-    function render($mode, Doku_Renderer $renderer, $data) {
+    function render($format, Doku_Renderer $renderer, $data) {
         if($data == false) return false;
 
-        if($mode == "xhtml") {
+        if($format == "xhtml") {
             if($data['dynamic']) {
                 // deactivate (renderer) cache as long as there is no proper cache handling
                 // implemented for the count syntax
-                $renderer->info['cache'] = false;
+                $renderer->nocache();
             }
 
             /** @var helper_plugin_tag $my */
@@ -94,4 +87,4 @@ class syntax_plugin_tag_tagpage extends DokuWiki_Syntax_Plugin {
         return false;
     }
 }
-// vim:ts=4:sw=4:et: 
+// vim:ts=4:sw=4:et:

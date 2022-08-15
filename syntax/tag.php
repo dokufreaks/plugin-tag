@@ -9,13 +9,6 @@
  * @license  GPL 2 (http://www.gnu.org/licenses/gpl.html)
  * @author   Esther Brunner <wikidesign@gmail.com>
  */
- 
-// must be run within Dokuwiki
-if (!defined('DOKU_INC')) die();
-
-if (!defined('DOKU_LF')) define('DOKU_LF', "\n");
-if (!defined('DOKU_TAB')) define('DOKU_TAB', "\t");
-if (!defined('DOKU_PLUGIN')) define('DOKU_PLUGIN',DOKU_INC.'lib/plugins/');
 
 /**
  * Tag syntax plugin, allows to specify tags in a page
@@ -53,10 +46,12 @@ class syntax_plugin_tag_tag extends DokuWiki_Syntax_Plugin {
      */
     function handle($match, $state, $pos, Doku_Handler $handler) {
         $tags = trim(substr($match, 6, -2));     // strip markup & whitespace
+        $tags = trim($tags, "\xe2\x80\x8b"); // strip word/wordpad breaklines
         $tags = preg_replace(array('/[[:blank:]]+/', '/\s+/'), " ", $tags);    // replace linebreaks and multiple spaces with one space character
+        $tags = preg_replace('/[\x00-\x1F\x7F]/u', '', $tags); // strip unprintable ascii code out of utf-8 coded string
 
         if (!$tags) return false;
-        
+
         // load the helper_plugin_tag
         /** @var helper_plugin_tag $my */
         if (!$my = $this->loadHelper('tag')) return false;
@@ -68,18 +63,18 @@ class syntax_plugin_tag_tag extends DokuWiki_Syntax_Plugin {
     /**
      * Render xhtml output or metadata
      *
-     * @param string         $mode      Renderer mode (supported modes: xhtml and metadata)
+     * @param string         $format      Renderer mode (supported modes: xhtml and metadata)
      * @param Doku_Renderer  $renderer  The renderer
      * @param array          $data      The data from the handler function
      * @return bool If rendering was successful.
      */
-    function render($mode, Doku_Renderer $renderer, $data) {
+    function render($format, Doku_Renderer $renderer, $data) {
         if ($data === false) return false;
         /** @var helper_plugin_tag $my */
         if (!$my = $this->loadHelper('tag')) return false;
 
         // XHTML output
-        if ($mode == 'xhtml') {
+        if ($format == 'xhtml') {
             $tags = $my->tagLinks($data);
             if (!$tags) return true;
             $renderer->doc .= '<div class="'.$this->getConf('tags_list_css').'"><span>'.DOKU_LF.
@@ -88,7 +83,7 @@ class syntax_plugin_tag_tag extends DokuWiki_Syntax_Plugin {
             return true;
 
         // for metadata renderer
-        } elseif ($mode == 'metadata') {
+        } elseif ($format == 'metadata') {
             /** @var Doku_Renderer_metadata $renderer */
             // erase tags on persistent metadata no more used
             if (isset($renderer->persistent['subject'])) {
@@ -116,4 +111,4 @@ class syntax_plugin_tag_tag extends DokuWiki_Syntax_Plugin {
         return false;
     }
 }
-// vim:ts=4:sw=4:et: 
+// vim:ts=4:sw=4:et:

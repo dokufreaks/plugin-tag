@@ -1,7 +1,7 @@
 <?php
 /**
  * Tag Plugin, topic component: displays links to all wiki pages with a certain tag
- * 
+ *
  * @license  GPL 2 (http://www.gnu.org/licenses/gpl.html)
  * @author   Esther Brunner <wikidesign@gmail.com>
  */
@@ -65,12 +65,12 @@ class syntax_plugin_tag_topic extends DokuWiki_Syntax_Plugin {
     /**
      * Render xhtml output or metadata
      *
-     * @param string         $mode      Renderer mode (supported modes: xhtml and metadata)
+     * @param string         $format      Renderer mode (supported modes: xhtml and metadata)
      * @param Doku_Renderer  $renderer  The renderer
      * @param array          $data      The data from the handler function
      * @return bool If rendering was successful.
      */
-    function render($mode, Doku_Renderer $renderer, $data) {
+    function render($format, Doku_Renderer $renderer, $data) {
         list($ns, $tag, $flags) = $data;
 
         /* extract sort flags into array */
@@ -97,7 +97,7 @@ class syntax_plugin_tag_topic extends DokuWiki_Syntax_Plugin {
 
         if (!isset($pages) || !$pages) return true; // nothing to display
 
-        if ($mode == 'xhtml') {
+        if ($format == 'xhtml') {
             /* @var Doku_Renderer_xhtml $renderer */
 
             // prevent caching to ensure content is always fresh
@@ -112,18 +112,19 @@ class syntax_plugin_tag_topic extends DokuWiki_Syntax_Plugin {
             $pagelist->rsort = false;
 
             $configflags = explode(',', str_replace(" ", "", $this->getConf('pagelist_flags')));
-           	$flags = array_merge($configflags, $flags);	
+           	$flags = array_merge($configflags, $flags);
            	foreach($flags as $key => $flag) {
            		if($flag == "")	unset($flags[$key]);
-           	}     
+           	}
 
             $pagelist->setFlags($flags);
             $pagelist->startList();
 
             // Sort pages by pagename if required by flags
             if($pagelist->sort || $pagelist->rsort) {
-            	$keys = array();
-            	$fnc = create_function('$a, $b', 'return strcmp(noNS($a["id"]), noNS($b["id"])); ');
+            	$fnc = function($a, $b) {
+                    return strcmp(noNS($a["id"]), noNS($b["id"]));
+                };
             	usort($pages, $fnc);
             	// rsort is true - revserse sort the pages
             	if($pagelist->rsort) krsort($pages);
@@ -132,10 +133,10 @@ class syntax_plugin_tag_topic extends DokuWiki_Syntax_Plugin {
             foreach ($pages as $page) {
                 $pagelist->addPage($page);
             }
-            $renderer->doc .= $pagelist->finishList();      
+            $renderer->doc .= $pagelist->finishList();
             return true;
         }
         return false;
     }
 }
-// vim:ts=4:sw=4:et: 
+// vim:ts=4:sw=4:et:

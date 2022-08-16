@@ -96,29 +96,28 @@ class syntax_plugin_tag_count extends DokuWiki_Syntax_Plugin {
             $class = "inline"; // valid: inline, ul, pagelist
             $col = "page";
 
-            $renderer->doc .= '<table class="'.$class.'">'.DOKU_LF;
-            $renderer->doc .= DOKU_TAB.'<tr>'.DOKU_LF.DOKU_TAB.DOKU_TAB;
+            $renderer->doc .= '<table class="'.$class.'">';
+            $renderer->doc .= '<tr>';
             $renderer->doc .= '<th class="'.$col.'">'.$this->getLang('tag').'</th>';
             $renderer->doc .= '<th class="'.$col.'">'.$this->getLang('count').'</th>';
-            $renderer->doc .= DOKU_LF.DOKU_TAB.'</tr>'.DOKU_LF;
+            $renderer->doc .= '</tr>';
 
             if(empty($occurrences)) {
                 // Skip output
-                $renderer->doc .= DOKU_TAB.'<tr>'.DOKU_LF.DOKU_TAB.DOKU_TAB;
-                $renderer->doc .= DOKU_TAB.DOKU_TAB.'<td class="'.$class.'" colspan="2">'.$this->getLang('empty_output').'</td>'.DOKU_LF;
-                $renderer->doc .= DOKU_LF.DOKU_TAB.'</tr>'.DOKU_LF;
+                $renderer->doc .= '<tr>';
+                $renderer->doc .= '<td class="'.$class.'" colspan="2">'.$this->getLang('empty_output').'</td>';
+                $renderer->doc .= '</tr>';
             } else {
                 foreach($occurrences as $tagname => $count) {
                     if($count <= 0) continue; // don't display tags with zero occurrences
-                    $renderer->doc .= DOKU_TAB.'<tr>'.DOKU_LF.DOKU_TAB.DOKU_TAB;
-                    $renderer->doc .= DOKU_TAB.DOKU_TAB.'<td class="'.$class.'">'.$my->tagLink($tagname).'</td>'.DOKU_LF;
-                    $renderer->doc .= DOKU_TAB.DOKU_TAB.'<td class="'.$class.'">'.$count.'</td>'.DOKU_LF;
-                    $renderer->doc .= DOKU_LF.DOKU_TAB.'</tr>'.DOKU_LF;
+                    $renderer->doc .= '<tr>';
+                    $renderer->doc .= '<td class="'.$class.'">'.$my->tagLink($tagname).'</td>';
+                    $renderer->doc .= '<td class="'.$class.'">'.$count.'</td>';
+                    $renderer->doc .= '</tr>';
                 }
             }
-            $renderer->doc .= '</table>'.DOKU_LF;
+            $renderer->doc .= '</table>';
         }
         return true;
     }
 }
-// vim:ts=4:sw=4:et:

@@ -30,6 +30,8 @@ class syntax_plugin_tag_topic extends DokuWiki_Syntax_Plugin {
      * @param string $mode Parser mode
      */
     function connectTo($mode) {
+        //syntax without options catches wrong used syntax too
+        $this->Lexer->addSpecialPattern('\{\{topic>}\}',$mode,'plugin_tag_topic');
         $this->Lexer->addSpecialPattern('\{\{topic>.+?\}\}',$mode,'plugin_tag_topic');
     }
 
@@ -139,4 +141,3 @@ class syntax_plugin_tag_topic extends DokuWiki_Syntax_Plugin {
         return false;
     }
 }
-// vim:ts=4:sw=4:et:

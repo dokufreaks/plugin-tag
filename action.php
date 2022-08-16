@@ -68,7 +68,7 @@ class action_plugin_tag extends DokuWiki_Action_Plugin {
      * @return bool
      */
     function _handle_tpl_act(Doku_Event $event, $param) {
-        global $lang;
+        global $lang, $INPUT;
 
         if($event->data != 'showtag') return;
         $event->preventDefault();
@@ -76,8 +76,8 @@ class action_plugin_tag extends DokuWiki_Action_Plugin {
         $tagns = $this->getConf('namespace');
         $flags = explode(',', str_replace(" ", "", $this->getConf('pagelist_flags')));
 
-        $tag   = trim(str_replace($this->getConf('namespace').':', '', $_REQUEST['tag']));
-        $ns    = trim($_REQUEST['ns']);
+        $tag   = trim(str_replace($tagns.':', '', $INPUT->str('tag')));
+        $ns    = trim($INPUT->str('ns'));
 
         /* @var helper_plugin_tag $helper */
         if ($helper = $this->loadHelper('tag')) $pages = $helper->getTopic($ns, '', $tag);
@@ -96,7 +96,7 @@ class action_plugin_tag extends DokuWiki_Action_Plugin {
                 $pagelist->addPage($page);
             }
 
-            print '<h1>TAG: ' . hsc(str_replace('_', ' ', $_REQUEST['tag'])) . '</h1>' . DOKU_LF;
+            print '<h1>TAG: ' . hsc(str_replace('_', ' ', $INPUT->str('tag'))) . '</h1>' . DOKU_LF;
             print '<div class="level1">' . DOKU_LF;
             print $pagelist->finishList();
             print '</div>' . DOKU_LF;

@@ -187,7 +187,8 @@ class helper_plugin_tag extends DokuWiki_Plugin {
      * @author  Esther Brunner <wikidesign@gmail.com>
      */
     function getTopic($ns = '', $num = NULL, $tag = '') {
-        if (!$tag) $tag = $_REQUEST['tag'];
+        global $INPUT;
+        if (!$tag) $tag = $INPUT->str('tag');
         $tag = $this->_parseTagList($tag, true);
         $result = array();
 
@@ -208,10 +209,10 @@ class helper_plugin_tag extends DokuWiki_Plugin {
             $perm = auth_quickaclcheck($page);
 
             // skip drafts unless for users with create privilege
-            $draft = ($meta['type'] == 'draft');
+            $draft = isset($meta['type']) && $meta['type'] == 'draft';
             if ($draft && ($perm < AUTH_CREATE)) continue;
 
-            $title = $meta['title'];
+            $title = $meta['title'] ?? '';
             $date  = ($this->sort == 'mdate' ? $meta['date']['modified'] : $meta['date']['created'] );
             $taglinks = $this->tagLinks($tags);
 
@@ -445,9 +446,9 @@ class helper_plugin_tag extends DokuWiki_Plugin {
      */
     function _applyMacro($id) {
         /** @var DokuWiki_Auth_Plugin $auth */
-        global $INFO, $auth;
+        global $INFO, $auth, $INPUT;
 
-        $user     = $_SERVER['REMOTE_USER'];
+        $user     = $INPUT->server->str('REMOTE_USER');
         $group    = '';
         // .htaccess auth doesn't provide the auth object
         if($auth) {
@@ -457,7 +458,7 @@ class helper_plugin_tag extends DokuWiki_Plugin {
 
         $replace = array(
                 '@USER@'  => cleanID($user),
-                '@NAME@'  => cleanID($INFO['userinfo']['name']),
+                '@NAME@'  => cleanID($INFO['userinfo']['name'] ?? ''),
                 '@GROUP@' => cleanID($group),
                 '@YEAR@'  => date('Y'),
                 '@MONTH@' => date('m'),

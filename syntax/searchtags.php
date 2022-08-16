@@ -30,7 +30,7 @@ class syntax_plugin_tag_searchtags extends DokuWiki_Syntax_Plugin {
      * @param string $mode Parser mode
      */
     function connectTo($mode) {
-        $this->Lexer->addSpecialPattern('\{\{searchtags\}\}',$mode,'plugin_tag_searchtags');
+        $this->Lexer->addSpecialPattern('\{\{searchtags}}', $mode,'plugin_tag_searchtags');
         // make sure that flags really start with & and media files starting with "searchtags" still work
         $this->Lexer->addSpecialPattern('\{\{searchtags&.*?\}\}',$mode,'plugin_tag_searchtags');
     }
@@ -45,7 +45,7 @@ class syntax_plugin_tag_searchtags extends DokuWiki_Syntax_Plugin {
      * @return array Data for the renderer
      */
     function handle($match, $state, $pos, Doku_Handler $handler) {
-        $flags = substr($match, 10, -2); // strip {{searchtags from start and }} from end
+        $flags = substr($match, 12, -2); // strip {{searchtags from start and }} from end
         // remove empty flags by using array_filter (removes elements == false)
         $flags = array_filter(explode('&', $flags));
 

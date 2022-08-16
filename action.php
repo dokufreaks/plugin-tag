@@ -12,17 +12,19 @@ class action_plugin_tag extends DokuWiki_Action_Plugin {
     /**
      * register the eventhandlers
      *
-     * @param Doku_Event_Handler $contr
+     * @param Doku_Event_Handler $controller
      */
-    function register(Doku_Event_Handler $contr) {
-        $contr->register_hook('ACTION_ACT_PREPROCESS', 'BEFORE', $this, '_handle_act', array());
-        $contr->register_hook('TPL_ACT_UNKNOWN', 'BEFORE', $this, '_handle_tpl_act', array());
-        $contr->register_hook('TPL_METAHEADER_OUTPUT', 'BEFORE', $this, '_handle_keywords', array());
-        if($this->getConf('toolbar_icon')) $contr->register_hook('TOOLBAR_DEFINE', 'AFTER', $this, 'insert_toolbar_button', array ());
-        $contr->register_hook('INDEXER_VERSION_GET', 'BEFORE', $this, '_indexer_version', array());
-        $contr->register_hook('INDEXER_PAGE_ADD', 'BEFORE', $this, '_indexer_index_tags', array());
+    function register(Doku_Event_Handler $controller) {
+        $controller->register_hook('ACTION_ACT_PREPROCESS', 'BEFORE', $this, '_handle_act', array());
+        $controller->register_hook('TPL_ACT_UNKNOWN', 'BEFORE', $this, '_handle_tpl_act', array());
+        $controller->register_hook('TPL_METAHEADER_OUTPUT', 'BEFORE', $this, '_handle_keywords', array());
+        if($this->getConf('toolbar_icon')) {
+            $controller->register_hook('TOOLBAR_DEFINE', 'AFTER', $this, 'insert_toolbar_button', array ());
+        }
+        $controller->register_hook('INDEXER_VERSION_GET', 'BEFORE', $this, '_indexer_version', array());
+        $controller->register_hook('INDEXER_PAGE_ADD', 'BEFORE', $this, '_indexer_index_tags', array());
     }
-	
+
     /**
      * Add a version string to the index so it is rebuilt
      * whenever the stored data format changes.

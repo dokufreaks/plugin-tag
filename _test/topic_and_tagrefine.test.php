@@ -6,11 +6,11 @@ if (!defined('DOKU_INC')) die();
  * Tests the tagRefine function of the tag plugin
  */
 class plugin_tag_topic_and_tagrefine_test extends DokuWikiTest {
-    private $all_pages = array(
-        'tagged_page' => array('id' => 'tagged_page'),
-        'negative_page' => array('id' => 'negative_page'),
-        'third_page' => array('id' => 'third_page')
-    );
+    private $all_pages = [
+        'tagged_page' => ['id' => 'tagged_page'],
+        'negative_page' => ['id' => 'negative_page'],
+        'third_page' => ['id' => 'third_page']
+    ];
     public function setUp() : void {
         $this->pluginsEnabled[] = 'tag';
         parent::setUp();
@@ -35,35 +35,35 @@ class plugin_tag_topic_and_tagrefine_test extends DokuWikiTest {
     }
 
     public function testEmptyTag() {
-        $this->assertTopicRefine(array('tagged_page', 'negative_page', 'third_page'), '');
+        $this->assertTopicRefine(['tagged_page', 'negative_page', 'third_page'], '');
     }
 
     public function testOnlyNegative() {
-        $this->assertTopicRefine(array('tagged_page', 'third_page'), '-negative_tag');
+        $this->assertTopicRefine(['tagged_page', 'third_page'], '-negative_tag');
     }
 
     public function testMixed() {
-        $this->assertTopicRefine(array('tagged_page'), 'mytag -negative_tag');
+        $this->assertTopicRefine(['tagged_page'], 'mytag -negative_tag');
 
     }
 
     public function testAnd() {
-        $this->assertTopicRefine(array('tagged_page'), '+mytag +test2tag');
+        $this->assertTopicRefine(['tagged_page'], '+mytag +test2tag');
     }
 
     public function testAndOr() {
-        $this->assertTopicRefine(array('tagged_page',  'third_page'), '+test2tag third_tag');
+        $this->assertTopicRefine(['tagged_page',  'third_page'], '+test2tag third_tag');
     }
 
     public function testOrAnd() {
-        $this->assertTopicRefine(array('tagged_page'), 'mytag +test2tag');
+        $this->assertTopicRefine(['tagged_page'], 'mytag +test2tag');
     }
 
     public function testRefineDoesntAdd() {
         /** @var helper_plugin_tag $helper */
         $helper = plugin_load('helper', 'tag');
-        $pages = $helper->tagRefine(array(), 'mytag');
-        $this->hasPages(array(), $pages, 'Refine with empty input array and "mytag" query: ');
+        $pages = $helper->tagRefine([], 'mytag');
+        $this->hasPages([], $pages, 'Refine with empty input array and "mytag" query: ');
     }
 
     /**

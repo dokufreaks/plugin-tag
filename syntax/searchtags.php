@@ -80,7 +80,9 @@ class syntax_plugin_tag_searchtags extends DokuWiki_Syntax_Plugin {
             $configflags = explode(',', str_replace(" ", "", $this->getConf('pagelist_flags')));
             $flags = array_merge($configflags, $flags);
             foreach($flags as $key => $flag) {
-                if($flag == "")	unset($flags[$key]);
+                if($flag == "")	{
+                    unset($flags[$key]);
+                }
             }
 
             // print the search form
@@ -90,9 +92,11 @@ class syntax_plugin_tag_searchtags extends DokuWiki_Syntax_Plugin {
             // get the tag input data
             $tags = $this->getTagSearchString();
 
-            if ($tags != NULL) {
-                /* @var helper_plugin_tag $my */
-                if ($my = $this->loadHelper('tag')) $pages = $my->getTopic($this->getNS(), '', $tags);
+            if ($tags != null) {
+                /* @var helper_plugin_tag $helper */
+                if ($helper = $this->loadHelper('tag')) {
+                    $pages = $helper->getTopic($this->getNS(), '', $tags);
+                }
 
                 // Display a message when no pages were found
                 if (!isset($pages) || !$pages) {
@@ -126,11 +130,11 @@ class syntax_plugin_tag_searchtags extends DokuWiki_Syntax_Plugin {
 
         if (!$nonsform) {
             // Get the list of all namespaces for the dropdown
-            $namespaces = array();
-            search($namespaces,$conf['datadir'],'search_namespaces',array());
+            $namespaces = [];
+            search($namespaces,$conf['datadir'],'search_namespaces', []);
 
             // build the list in the form value => label from the namespace search result
-            $ns_select = array('' => '');
+            $ns_select = ['' => ''];
             foreach ($namespaces as $ns) {
                 // only display namespaces the user can access when sneaky index is on
                 if ($ns['perm'] > 0 || $conf['sneaky_index'] == 0) {
@@ -150,13 +154,17 @@ class syntax_plugin_tag_searchtags extends DokuWiki_Syntax_Plugin {
 
         // checkbox for AND
         $attr = array();
-        if ($this->useAnd()) $attr['checked'] = 'checked';
+        if ($this->useAnd()) {
+            $attr['checked'] = 'checked';
+        }
         $form->addElement(form_makeCheckboxField('plugin__tag_search_and', 1, $this->getLang('use_and'), '', '', $attr));
         $form->addElement(form_makeCloseTag('p'));
 
         // load the tag list - only tags that actually have pages assigned that the current user can access are listed
         /* @var helper_plugin_tag $my */
-        if ($my = $this->loadHelper('tag')) $tags = $my->tagOccurrences(array(), NULL, true);
+        if ($my = $this->loadHelper('tag')) {
+            $tags = $my->tagOccurrences(array(), NULL, true);
+        }
         // sort tags by name ($tags is in the form $tag => $count)
         ksort($tags);
 
@@ -187,12 +195,16 @@ class syntax_plugin_tag_searchtags extends DokuWiki_Syntax_Plugin {
                 $form->addElement(form_makeOpenTag('tr'));
                 $form->addElement(form_makeOpenTag('td'));
                 $attr = array();
-                if ($this->isSelected($tag)) $attr['checked'] = 'checked';
+                if ($this->isSelected($tag)) {
+                    $attr['checked'] = 'checked';
+                }
                 $form->addElement(form_makeCheckboxField('plugin__tag_search_tags[]', $tag, '+', '', 'plus', $attr));
                 $form->addElement(form_makeCloseTag('td'));
                 $form->addElement(form_makeOpenTag('td'));
                 $attr = array();
-                if ($this->isSelected('-'.$tag)) $attr['checked'] = 'checked';
+                if ($this->isSelected('-'.$tag)) {
+                    $attr['checked'] = 'checked';
+                }
                 $form->addElement(form_makeCheckboxField('plugin__tag_search_tags[]', '-'.$tag, '-', '', 'minus', $attr));
                 $form->addElement(form_makeCloseTag('td'));
                 $form->addElement(form_makeOpenTag('td'));
@@ -219,8 +231,9 @@ class syntax_plugin_tag_searchtags extends DokuWiki_Syntax_Plugin {
      * @return string the cleaned namespace id
      */
     private function getNS() {
-        if (isset($_POST['plugin__tag_search_namespace'])) {
-            return cleanID($_POST['plugin__tag_search_namespace']);
+        global $INPUT;
+        if ($INPUT->post->has('plugin__tag_search_namespace')) {
+            return cleanID($INPUT->post->str('plugin__tag_search_namespace'));
         } else {
             return '';
         }
@@ -228,13 +241,14 @@ class syntax_plugin_tag_searchtags extends DokuWiki_Syntax_Plugin {
 
     /**
      * Returns the tag search string from the selected tags
-     * @return string|NULL the tag search or NULL when no tags were selected
+     * @return string|null the tag search or null when no tags were selected
      */
     private function getTagSearchString() {
-        if (isset($_POST['plugin__tag_search_tags']) && is_array($_POST['plugin__tag_search_tags'])) {
-            $tags = $_POST['plugin__tag_search_tags'];
-            // wWhen and is set, prepend "+" to each tag
-            $plus = (isset($_POST['plugin__tag_search_and']) ? '+' : '');
+        global $INPUT;
+        if ($INPUT->post->has('plugin__tag_search_tags') && is_array($INPUT->post->param('plugin__tag_search_tags'))) {
+            $tags = $INPUT->post->arr('plugin__tag_search_tags');
+            // When 'and' is set, prepend "+" to each tag
+            $plus = $this->useAnd() ? '+' : '';
             $positive_tags = '';
             $negative_tags = '';
             foreach ($tags as $tag) {
@@ -251,7 +265,7 @@ class syntax_plugin_tag_searchtags extends DokuWiki_Syntax_Plugin {
             }
             return $positive_tags.$negative_tags;
         } else {
-            return NULL; // return NULL when no tags were selected so no results will be displayed
+            return null; // return NULL when no tags were selected so no results will be displayed
         }
     }
 
@@ -262,8 +276,9 @@ class syntax_plugin_tag_searchtags extends DokuWiki_Syntax_Plugin {
      * @return bool if the tag was checked
      */
     private function isSelected($tag) {
-        if (isset($_POST['plugin__tag_search_tags']) && is_array($_POST['plugin__tag_search_tags'])) {
-            return in_array($tag, $_POST['plugin__tag_search_tags'], true);
+        global $INPUT;
+        if ($INPUT->post->has('plugin__tag_search_tags')) {
+            return in_array($tag, $INPUT->post->arr('plugin__tag_search_tags'), true);
         } else {
             return false; // no tags in the post data - no tag selected
         }
@@ -275,7 +290,8 @@ class syntax_plugin_tag_searchtags extends DokuWiki_Syntax_Plugin {
      * @return bool if the query should use AND
      */
     private function useAnd() {
-        return isset($_POST['plugin__tag_search_and']);
+        global $INPUT;
+        return $INPUT->post->has('plugin__tag_search_and');
     }
 }
 // vim:ts=4:sw=4:et:

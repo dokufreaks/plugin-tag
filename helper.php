@@ -48,62 +48,74 @@ class helper_plugin_tag extends DokuWiki_Plugin {
      *
      * @return array Method description
      */
-        $result = array();
     public function getMethods() {
+        $result = [];
 
-        $result[] = array(
+        $result[] = [
             'name'   => 'overrideSortFlags',
             'desc'   => 'takes an array of sortflags and overrides predefined value',
-            'params' => array(
-                'name' => 'string')
-        );
-        $result[] = array(
+            'params' => [
+                'name' => 'string'
+            ]
+        ];
+        $result[] = [
                 'name'   => 'th',
                 'desc'   => 'returns the header for the tags column for pagelist',
-                'return' => array('header' => 'string'),
-                );
-        $result[] = array(
+                'return' => ['header' => 'string'],
+        ];
+        $result[] = [
                 'name'   => 'td',
                 'desc'   => 'returns the tag links of a given page',
-                'params' => array('id' => 'string'),
-                'return' => array('links' => 'string'),
-                );
-        $result[] = array(
+                'params' => ['id' => 'string'],
+                'return' => ['links' => 'string'],
+        ];
+        $result[] = [
                 'name'   => 'tagLinks',
                 'desc'   => 'generates tag links for given words',
-                'params' => array('tags' => 'array'),
-                'return' => array('links' => 'string'),
-                );
-        $result[] = array(
+                'params' => ['tags' => 'array'],
+                'return' => ['links' => 'string'],
+        ];
+        $result[] = [
                 'name'   => 'getTopic',
                 'desc'   => 'returns a list of pages tagged with the given keyword',
-                'params' => array(
+                'params' => [
                     'namespace (optional)' => 'string',
                     'number (not used)' => 'integer',
-                    'tag (required)' => 'string'),
-                'return' => array('pages' => 'array'),
-                );
-        $result[] = array(
+                    'tag (required)' => 'string'
+                ],
+                'return' => ['pages' => 'array'],
+        ];
+        $result[] = [
                 'name'   => 'tagRefine',
                 'desc'   => 'refines an array of pages with tags',
-                'params' => array(
+                'params' => [
                     'pages to refine' => 'array',
-                    'refinement tags' => 'string'),
-                'return' => array('pages' => 'array'),
-                );
-        $result[] = array(
+                    'refinement tags' => 'string'
+                ],
+                'return' => ['pages' => 'array'],
+        ];
+        $result[] = [
                 'name'   => 'tagOccurrences',
                 'desc'   => 'returns a list of tags with their number of occurrences',
-                'params' => array(
+                'params' => [
                     'list of tags to get the occurrences for' => 'array',
                     'namespaces to which the search shall be restricted' => 'array',
                     'if all tags shall be returned (then the first parameter is ignored)' => 'boolean',
-                    'if the namespaces shall be searched recursively' => 'boolean'),
-                'return' => array('tags' => 'array'),
-                );
+                    'if the namespaces shall be searched recursively' => 'boolean'
+                ],
+                'return' => ['tags' => 'array'],
+        ];
         return $result;
     }
 
+    /**
+     * Takes an array of sortflags and overrides predefined value
+     *
+     * @param array $newflags recognizes:
+     *      'sortkey' => string,
+     *      'sortorder' => string
+     * @return void
+     */
     public function overrideSortFlags($newflags = []) {
         if(isset($newflags['sortkey'])) {
             $this->sort = trim($newflags['sortkey']);
@@ -122,6 +134,9 @@ class helper_plugin_tag extends DokuWiki_Plugin {
 
     /**
      * Returns the cell data for the Pagelist Plugin
+     *
+     * @param string $id page id
+     * @return string html content for cell of table
      */
     public function td($id) {
         $subject = $this->getTagsFromPageMetadata($id);
@@ -142,8 +157,10 @@ class helper_plugin_tag extends DokuWiki_Plugin {
      * @param array $tags an array of tags
      * @return string HTML link tags
      */
-        if (empty($tags) || ($tags[0] == '')) return '';
     public function tagLinks($tags) {
+        if (empty($tags) || ($tags[0] == '')) {
+            return '';
+        }
 
         $links = array();
         foreach ($tags as $tag) {
@@ -163,15 +180,17 @@ class helper_plugin_tag extends DokuWiki_Plugin {
     public function tagLink($tag, $title = '', $dynamic = false) {
         global $conf;
         $svtag = $tag;
-        $tag_title = str_replace('_', ' ', noNS($tag));
+        $tagTitle = str_replace('_', ' ', noNS($tag));
         resolve_pageid($this->namespace, $tag, $exists); // resolve shortcuts
         if ($exists) {
             $class = 'wikilink1';
             $url   = wl($tag);
             if ($conf['useheading']) {
-                // important: set sendond param to false to prevent recursion!
+                // important: set render param to false to prevent recursion!
                 $heading = p_get_first_heading($tag, false);
-                if ($heading) $tag_title = $heading;
+                if ($heading) {
+                    $tagTitle = $heading;
+                }
             }
         } else {
             if ($dynamic) {
@@ -184,17 +203,21 @@ class helper_plugin_tag extends DokuWiki_Plugin {
             } else {
                 $class = 'wikilink1';
             }
-            $url   = wl($tag, array('do'=>'showtag', 'tag'=>$svtag));
+            $url   = wl($tag, ['do'=>'showtag', 'tag'=>$svtag]);
         }
-        if (!$title) $title = $tag_title;
-        $link = array(
+        if (!$title) {
+            $title = $tagTitle;
+        }
+        $link = [
             'href' => $url,
             'class' => $class,
             'tooltip' => hsc($tag),
             'title' => hsc($title)
-        );
+        ];
         Event::createAndTrigger('PLUGIN_TAG_LINK', $link);
-        return '<a href="'.$link['href'].'" class="'.$link['class'].'" title="'.$link['tooltip'].'" rel="tag">'.$link['title'].'</a>';
+        return '<a href="'.$link['href'].'" class="'.$link['class'].'" title="'.$link['tooltip'].'" rel="tag">'
+                .$link['title']
+                .'</a>';
     }
 
     /**
@@ -335,10 +358,15 @@ class helper_plugin_tag extends DokuWiki_Plugin {
     */
     public function tagOccurrences($tags, $namespaces = null, $allTags = false, $isRecursive = null) {
         // map with trim here in order to remove newlines from tags
-        if($allTags) $tags = array_map('trim', idx_getIndex('subject', '_w'));
-        if(!$namespaces || $namespaces[0] == '' || !is_array($namespaces)) $namespaces = NULL; // $namespaces not specified
+        if($allTags) {
+            $tags = array_map('trim', idx_getIndex('subject', '_w'));
+        }
         $tags = $this->cleanTagList($tags);
         $tagOccurrences = []; //occurrences
+        // $namespaces not specified
+        if(!$namespaces || $namespaces[0] == '' || !is_array($namespaces)) {
+            $namespaces = null;
+        }
 
         $indexer = idx_get_indexer();
         $indexedPagesWithTags = $indexer->lookupKey('subject', $tags, array($this, 'tagCompare'));
@@ -391,14 +419,16 @@ class helper_plugin_tag extends DokuWiki_Plugin {
     }
 
     /**
-     * Get the subject metadata cleaning the result
+     * Get tags from the 'subject' metadata field
      *
      * @param string $id the page id
      * @return array
      */
     protected function getTagsFromPageMetadata($id){
         $tags = p_get_metadata($id, 'subject');
-        if (!is_array($tags)) $tags = explode(' ', $tags);
+        if (!is_array($tags)) {
+            $tags = explode(' ', $tags);
+        }
         return array_unique($tags);
     }
 
@@ -456,7 +486,7 @@ class helper_plugin_tag extends DokuWiki_Plugin {
      */
     public function parseTagList($tags, $clean = false) {
 
-        // support for "quoted phrase tags"
+        // support for "quoted phrase tags", replaces spaces by underscores
         if (preg_match_all('#".*?"#', $tags, $matches)) {
             foreach ($matches[0] as $match) {
                 $replace = str_replace(' ', '_', substr($match, 1, -1));
@@ -475,13 +505,19 @@ class helper_plugin_tag extends DokuWiki_Plugin {
 
     /**
      * Clean a list (array) of tags using _cleanTag
+     *
+     * @param string[] $tags
+     * @return string[]
      */
     public function cleanTagList($tags) {
         return array_unique(array_map([$this, 'cleanTag'], $tags));
     }
 
     /**
-     * Cleans a tag using cleanID while preserving a possible prefix of + or -
+     * callback: Cleans a tag using cleanID while preserving a possible prefix of + or -, and replace placeholders
+     *
+     * @param string $tag
+     * @return string
      */
     protected function cleanTag($tag) {
         $prefix = substr($tag, 0, 1);
@@ -494,7 +530,10 @@ class helper_plugin_tag extends DokuWiki_Plugin {
     }
 
     /**
-     * Makes user or date dependent topic lists possible
+     * Makes user or date dependent topic lists possible by replacing placeholders in tags
+     *
+     * @param string $tag
+     * @return string
      */
     protected function replacePlaceholders($tag) {
         global $INFO, $INPUT;
@@ -508,28 +547,34 @@ class helper_plugin_tag extends DokuWiki_Plugin {
             $group = '';
         }
 
-        $replace = array(
+        $replace = [
                 '@USER@'  => cleanID($user),
                 '@NAME@'  => cleanID($INFO['userinfo']['name'] ?? ''),
                 '@GROUP@' => cleanID($group), //FIXME or delete, is unreliable because just first entry of group array is used, regardless the order of groups..
                 '@YEAR@'  => date('Y'),
                 '@MONTH@' => date('m'),
                 '@DAY@'   => date('d'),
-                );
-        return str_replace(array_keys($replace), array_values($replace), $id);
+        ];
+        return str_replace(array_keys($replace), array_values($replace), $tag);
     }
 
     /**
      * Non-recursive function to check whether an array key is unique
      *
-     * @author    Esther Brunner <wikidesign@gmail.com>
+     * @param int|string $key
+     * @param array $result
+     * @return float|int|string
+     *
      * @author    Ilya S. Lebedev <ilya@lebedev.net>
+     * @author    Esther Brunner <wikidesign@gmail.com>
      */
     protected function uniqueKey($key, $result) {
 
         // increase numeric keys by one
         if (is_numeric($key)) {
-            while (array_key_exists($key, $result)) $key++;
+            while (array_key_exists($key, $result)) {
+                $key++;
+            }
             return $key;
 
             // append a number to literal keys
@@ -545,7 +590,11 @@ class helper_plugin_tag extends DokuWiki_Plugin {
     }
 
     /**
-     * Opposite of _notVisible
+     * Opposite of isNotVisible()
+     *
+     * @param string $id the page id
+     * @param string $ns
+     * @return bool if the page is shown
      */
     public function isVisible($id, $ns='') {
         return !$this->isNotVisible($id, $ns);
@@ -558,24 +607,37 @@ class helper_plugin_tag extends DokuWiki_Plugin {
      * @param string $ns the namespace authorized
      * @return bool if the page is hidden
      */
-        if (isHiddenPage($id)) return true; // discard hidden pages
     public function isNotVisible($id, $ns="") {
+        // discard hidden pages
+        if (isHiddenPage($id)) {
+            return true;
+        }
         // discard if user can't read
-        if (auth_quickaclcheck($id) < AUTH_READ) return true;
+        if (auth_quickaclcheck($id) < AUTH_READ) {
+            return true;
+        }
 
         // filter by namespace, root namespace is identified with a dot
         if($ns == '.') {
             // root namespace is specified, discard all pages who lay outside the root namespace
-            if(getNS($id) != false) return true;
+            if(getNS($id) !== false) {
+                return true;
+            }
         } else {
-            // ("!==0" namespace found at position 0)
-            if ($ns && (strpos(':'.getNS($id).':', ':'.$ns.':') !== 0)) return true;
+            // hide if ns is not matching the page id (match gives strpos===0)
+            if ($ns && strpos(':'.getNS($id).':', ':'.$ns.':') !== 0) {
+                return true;
+            }
         }
         return !page_exists($id, '', false);
     }
 
     /**
-     * Helper function for the indexer in order to avoid interpreting wildcards
+     * callback Helper function for the indexer in order to avoid interpreting wildcards
+     *
+     * @param string $tag1 tag being searched
+     * @param string $tag2 tag from index
+     * @return bool is equal?
      */
     public function tagCompare($tag1, $tag2) {
         return $tag1 === $tag2;

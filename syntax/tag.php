@@ -47,7 +47,7 @@ class syntax_plugin_tag_tag extends DokuWiki_Syntax_Plugin {
     function handle($match, $state, $pos, Doku_Handler $handler) {
         $tags = trim(substr($match, 6, -2));     // strip markup & whitespace
         $tags = trim($tags, "\xe2\x80\x8b"); // strip word/wordpad breaklines
-        $tags = preg_replace(array('/[[:blank:]]+/', '/\s+/'), " ", $tags);    // replace linebreaks and multiple spaces with one space character
+        $tags = preg_replace(['/[[:blank:]]+/', '/\s+/'], " ", $tags);    // replace linebreaks and multiple spaces with one space character
         $tags = preg_replace('/[\x00-\x1F\x7F]/u', '', $tags); // strip unprintable ascii code out of utf-8 coded string
 
         if (!$tags) return false;
@@ -76,7 +76,9 @@ class syntax_plugin_tag_tag extends DokuWiki_Syntax_Plugin {
         // XHTML output
         if ($format == 'xhtml') {
             $tags = $my->tagLinks($data);
-            if (!$tags) return true;
+            if (!$tags) {
+                return true;
+            }
             $renderer->doc .= '<div class="'.$this->getConf('tags_list_css').'"><span>'.DOKU_LF.
                 DOKU_TAB.$tags.DOKU_LF.
                 '</span></div>'.DOKU_LF;
@@ -88,17 +90,21 @@ class syntax_plugin_tag_tag extends DokuWiki_Syntax_Plugin {
             // erase tags on persistent metadata no more used
             if (isset($renderer->persistent['subject'])) {
                 unset($renderer->persistent['subject']);
-                $renderer->meta['subject'] = array();
+                $renderer->meta['subject'] = [];
             }
 
-            if (!isset($renderer->meta['subject'])) $renderer->meta['subject'] = array();
+            if (!isset($renderer->meta['subject'])) {
+                $renderer->meta['subject'] = [];
+            }
 
             // each registered tags in metadata and index should be valid IDs
             $data = array_map('cleanID', $data);
             // merge with previous tags and make the values unique
             $renderer->meta['subject'] = array_unique(array_merge($renderer->meta['subject'], $data));
 
-            if ($renderer->capture) $renderer->doc .= DOKU_LF.implode(' ', $data).DOKU_LF;
+            if ($renderer->capture) {
+                $renderer->doc .= DOKU_LF.implode(' ', $data).DOKU_LF;
+            }
 
             // add references if tag page exists
             foreach ($data as $tag) {

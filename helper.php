@@ -496,22 +496,22 @@ class helper_plugin_tag extends DokuWiki_Plugin {
     /**
      * Makes user or date dependent topic lists possible
      */
-        /** @var DokuWiki_Auth_Plugin $auth */
-        global $INFO, $auth, $INPUT;
     protected function replacePlaceholders($tag) {
+        global $INFO, $INPUT;
 
-        $user     = $INPUT->server->str('REMOTE_USER');
-        $group    = '';
-        // .htaccess auth doesn't provide the auth object
-        if($auth) {
-            $userdata = $auth->getUserData($user);
-            $group    = $userdata['grps'][0];
+        $user = $INPUT->server->str('REMOTE_USER');
+
+        //only available for logged-in users
+        if(isset($INFO['userinfo']['grps'])) {
+            $group = $INFO['userinfo']['grps'][0];
+        }   else {
+            $group = '';
         }
 
         $replace = array(
                 '@USER@'  => cleanID($user),
                 '@NAME@'  => cleanID($INFO['userinfo']['name'] ?? ''),
-                '@GROUP@' => cleanID($group),
+                '@GROUP@' => cleanID($group), //FIXME or delete, is unreliable because just first entry of group array is used, regardless the order of groups..
                 '@YEAR@'  => date('Y'),
                 '@MONTH@' => date('m'),
                 '@DAY@'   => date('d'),

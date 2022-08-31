@@ -61,7 +61,7 @@ class syntax_plugin_tag_count extends DokuWiki_Syntax_Plugin {
         /** @var helper_plugin_tag $my */
         if(!($my = $this->loadHelper('tag'))) return false;
 
-        return array($my->_parseTagList($tags), $allowedNamespaces);
+        return array($my->parseTagList($tags), $allowedNamespaces);
     }
 
     /**

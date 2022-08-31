@@ -57,7 +57,7 @@ class syntax_plugin_tag_tag extends DokuWiki_Syntax_Plugin {
         if (!$my = $this->loadHelper('tag')) return false;
 
         // split tags and returns for renderer
-        return $my->_parseTagList($tags);
+        return $my->parseTagList($tags);
     }
 
     /**
@@ -102,7 +102,7 @@ class syntax_plugin_tag_tag extends DokuWiki_Syntax_Plugin {
 
             // add references if tag page exists
             foreach ($data as $tag) {
-                resolve_pageid($my->namespace, $tag, $exists); // resolve shortcuts
+                resolve_pageid($my->getNamespace(), $tag, $exists); // resolve shortcuts
                 $renderer->meta['relation']['references'][$tag] = $exists;
             }
 

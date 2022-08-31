@@ -72,7 +72,7 @@ class syntax_plugin_tag_searchtags extends DokuWiki_Syntax_Plugin {
 
             /* @var helper_plugin_pagelist $pagelist */
             // let Pagelist Plugin do the work for us
-            if ((!$pagelist = $this->loadHelper('pagelist'))) {
+            if (!$pagelist = $this->loadHelper('pagelist')) {
                 return false;
             }
 

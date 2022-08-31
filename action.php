@@ -45,7 +45,7 @@ class action_plugin_tag extends DokuWiki_Action_Plugin {
             if (!is_array($tags)) {
                 $event->data['metadata']['subject'] = array();
             } else {
-                $event->data['metadata']['subject'] = $helper->_cleanTagList($tags);
+                $event->data['metadata']['subject'] = $helper->cleanTagList($tags);
             }
         }
     }
@@ -137,5 +137,3 @@ class action_plugin_tag extends DokuWiki_Action_Plugin {
         }
     }
 }
-
-// vim:ts=4:sw=4:et:

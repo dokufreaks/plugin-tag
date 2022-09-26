@@ -49,15 +49,18 @@ class syntax_plugin_tag_tagpage extends DokuWiki_Syntax_Plugin {
      * @return array Data for the renderer
      */
     function handle($match, $state, $pos, Doku_Handler $handler) {
-        $params            = array();
-        $dump              = trim(substr($match, 10, -2)); // get given tag
-        $dump              = explode('|', $dump, 2); // split to tags, link name and options
-        $params['title']   = $dump[1];
-        $dump              = explode('&', $dump[0]);
-        $params['dynamic'] = ($dump[1] == 'dynamic');
-        $params['tag']     = trim($dump[0]);
+        // get given tag
+        $dump = trim(substr($match, 10, -2));
 
-        return $params;
+        // split into tag, link name and options
+        [$title, $dump] = array_pad(explode('|', $dump, 2), 2, '');
+        $dump           = array_pad(explode('&', $dump), 2, '');
+
+        return [
+            'tag'     => trim($dump[0]),
+            'title'   => $title,
+            'dynamic' => $dump[1] == 'dynamic',
+        ];
     }
 
     /**

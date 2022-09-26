@@ -46,9 +46,9 @@ class syntax_plugin_tag_topic extends DokuWiki_Syntax_Plugin {
         global $ID;
 
         $match = substr($match, 8, -2); // strip {{topic> from start and }} from end
-        list($match, $flags) = explode('&', $match, 2);
+        list($match, $flags) = array_pad(explode('&', $match, 2), 2, '');
         $flags = explode('&', $flags);
-        list($ns, $tag) = explode('?', $match);
+        list($ns, $tag) = array_pad(explode('?', $match), 2, '');
 
         if (!$tag) {
             $tag = $ns;

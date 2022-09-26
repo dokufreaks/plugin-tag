@@ -208,7 +208,7 @@ class helper_plugin_tag extends DokuWiki_Plugin {
             $perm = auth_quickaclcheck($page);
 
             // skip drafts unless for users with create privilege
-            $draft = ($meta['type'] == 'draft');
+            $draft = ($meta['type'] ?? '') == 'draft';
             if ($draft && ($perm < AUTH_CREATE)) continue;
 
             $title = $meta['title'];
@@ -444,21 +444,20 @@ class helper_plugin_tag extends DokuWiki_Plugin {
      * Makes user or date dependent topic lists possible
      */
     function _applyMacro($id) {
-        /** @var DokuWiki_Auth_Plugin $auth */
-        global $INFO, $auth;
+        global $USERINFO;
 
-        $user     = $_SERVER['REMOTE_USER'];
-        $group    = '';
-        // .htaccess auth doesn't provide the auth object
-        if($auth) {
-            $userdata = $auth->getUserData($user);
-            $group    = $userdata['grps'][0];
+        if($USERINFO) {
+            $name  = cleanID($USERINFO['name']);
+            $group = cleanID($USERINFO['grps'][0]);
+        } else {
+            $name  = '';
+            $group = '';
         }
 
         $replace = array(
-                '@USER@'  => cleanID($user),
-                '@NAME@'  => cleanID($INFO['userinfo']['name']),
-                '@GROUP@' => cleanID($group),
+                '@USER@'  => cleanID($_SERVER['REMOTE_USER']),
+                '@NAME@'  => $name,
+                '@GROUP@' => $group,
                 '@YEAR@'  => date('Y'),
                 '@MONTH@' => date('m'),
                 '@DAY@'   => date('d'),

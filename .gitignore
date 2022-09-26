@@ -1,0 +1,11 @@
+# Editor and temporary files
+*.swp
+*.bak
+*.old
+*~
+*.DS_Store
+*.iml
+.idea/
+.buildpath
+.project
+.settings/

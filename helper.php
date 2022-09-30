@@ -5,6 +5,7 @@
  */
 
 use dokuwiki\Extension\Event;
+use dokuwiki\Utf8\PhpString;
 
 /**
  * Helper part of the tag plugin, allows to query and print tags
@@ -283,7 +284,7 @@ class helper_plugin_tag extends DokuWiki_Plugin {
                     $sortkey = noNS($page);
                     break;
                 case 'title':
-                    $sortkey = utf8_strtolower($title);
+                    $sortkey = PhpString::strtolower($title);
                     if (empty($sortkey)) {
                         $sortkey = str_replace('_', ' ', noNS($page));
                     }
@@ -372,8 +373,9 @@ class helper_plugin_tag extends DokuWiki_Plugin {
         $indexedPagesWithTags = $indexer->lookupKey('subject', $tags, array($this, 'tagCompare'));
 
         $isRootAllowed = !($namespaces === null) && in_array('.', $namespaces);
-        if ($isRecursive === null)
+        if ($isRecursive === null) {
             $isRecursive = $this->getConf('list_tags_of_subns');
+        }
 
         foreach ($tags as $tag) {
             if (!isset($indexedPagesWithTags[$tag])) continue;

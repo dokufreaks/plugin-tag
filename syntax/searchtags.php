@@ -47,9 +47,7 @@ class syntax_plugin_tag_searchtags extends DokuWiki_Syntax_Plugin {
     function handle($match, $state, $pos, Doku_Handler $handler) {
         $flags = substr($match, 12, -2); // strip {{searchtags from start and }} from end
         // remove empty flags by using array_filter (removes elements == false)
-        $flags = array_filter(explode('&', $flags));
-
-        return $flags;
+        return array_filter(explode('&', $flags));
     }
 
     /**

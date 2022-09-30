@@ -42,7 +42,7 @@ class syntax_plugin_tag_tag extends DokuWiki_Syntax_Plugin {
      * @param int    $state The state of the handler
      * @param int    $pos The position in the document
      * @param Doku_Handler    $handler The handler
-     * @return array Data for the renderer
+     * @return array|false Data for the renderer
      */
     function handle($match, $state, $pos, Doku_Handler $handler) {
         $tags = trim(substr($match, 6, -2));     // strip markup & whitespace
@@ -53,11 +53,13 @@ class syntax_plugin_tag_tag extends DokuWiki_Syntax_Plugin {
         if (!$tags) return false;
 
         // load the helper_plugin_tag
-        /** @var helper_plugin_tag $my */
-        if (!$my = $this->loadHelper('tag')) return false;
+        /** @var helper_plugin_tag $helper */
+        if (!$helper = $this->loadHelper('tag')) {
+            return false;
+        }
 
         // split tags and returns for renderer
-        return $my->parseTagList($tags);
+        return $helper->parseTagList($tags);
     }
 
     /**
@@ -70,18 +72,20 @@ class syntax_plugin_tag_tag extends DokuWiki_Syntax_Plugin {
      */
     function render($format, Doku_Renderer $renderer, $data) {
         if ($data === false) return false;
-        /** @var helper_plugin_tag $my */
-        if (!$my = $this->loadHelper('tag')) return false;
+        /** @var helper_plugin_tag $helper */
+        if (!$helper = $this->loadHelper('tag')) return false;
 
         // XHTML output
         if ($format == 'xhtml') {
-            $tags = $my->tagLinks($data);
+            $tags = $helper->tagLinks($data);
             if (!$tags) {
                 return true;
             }
-            $renderer->doc .= '<div class="'.$this->getConf('tags_list_css').'"><span>'.DOKU_LF.
-                DOKU_TAB.$tags.DOKU_LF.
-                '</span></div>'.DOKU_LF;
+            $renderer->doc .= '<div class="'.$this->getConf('tags_list_css').'">'
+                . '<span>'.DOKU_LF
+                . DOKU_TAB.$tags.DOKU_LF
+                . '</span>'
+                . '</div>'.DOKU_LF;
             return true;
 
         // for metadata renderer

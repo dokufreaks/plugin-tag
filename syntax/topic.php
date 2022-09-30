@@ -46,7 +46,6 @@ class syntax_plugin_tag_topic extends DokuWiki_Syntax_Plugin {
      */
     function handle($match, $state, $pos, Doku_Handler $handler) {
         global $ID;
-
         $match = substr($match, 8, -2); // strip {{topic> from start and }} from end
         list($match, $flags) = array_pad(explode('&', $match, 2), 2, '');
         $flags = explode('&', $flags);
@@ -57,11 +56,15 @@ class syntax_plugin_tag_topic extends DokuWiki_Syntax_Plugin {
             $ns   = '';
         }
 
-        if (($ns == '*') || ($ns == ':')) $ns = '';
-        elseif ($ns == '.') $ns = getNS($ID);
-        else $ns = cleanID($ns);
+        if ($ns == '*' || $ns == ':') {
+            $ns = '';
+        } elseif ($ns == '.') {
+            $ns = getNS($ID);
+        } else {
+            $ns = cleanID($ns);
+        }
 
-        return array($ns, trim($tag), $flags);
+        return [$ns, trim($tag), $flags];
     }
 
     /**
@@ -76,7 +79,7 @@ class syntax_plugin_tag_topic extends DokuWiki_Syntax_Plugin {
         list($ns, $tag, $flags) = $data;
 
         /* extract sort flags into array */
-        $sortflags = array();
+        $sortflags = [];
         foreach($flags as $flag) {
             $separator_pos = strpos($flag, '=');
             if ($separator_pos === false) {
@@ -86,15 +89,15 @@ class syntax_plugin_tag_topic extends DokuWiki_Syntax_Plugin {
             $conf_name = trim(strtolower(substr($flag, 0 , $separator_pos)));
             $conf_val = trim(strtolower(substr($flag, $separator_pos+1)));
 
-            if(in_array($conf_name, array('sortkey', 'sortorder'))) {
+            if(in_array($conf_name, ['sortkey', 'sortorder'])) {
                 $sortflags[$conf_name] = $conf_val;
             }
         }
 
-        /* @var helper_plugin_tag $my */
-        if ($my = $this->loadHelper('tag')) {
-            $my->overrideSortFlags($sortflags);
-            $pages = $my->getTopic($ns, '', $tag);
+        /* @var helper_plugin_tag $helper */
+        if ($helper = $this->loadHelper('tag')) {
+            $helper->overrideSortFlags($sortflags);
+            $pages = $helper->getTopic($ns, '', $tag);
         }
 
         if (!isset($pages) || !$pages) return true; // nothing to display
@@ -107,7 +110,7 @@ class syntax_plugin_tag_topic extends DokuWiki_Syntax_Plugin {
 
             /* @var helper_plugin_pagelist $pagelist */
             // let Pagelist Plugin do the work for us
-            if ((!$pagelist = $this->loadHelper('pagelist'))) {
+            if (!$pagelist = $this->loadHelper('pagelist')) {
                 return false;
             }
             $pagelist->sort = false;
@@ -116,7 +119,9 @@ class syntax_plugin_tag_topic extends DokuWiki_Syntax_Plugin {
             $configflags = explode(',', str_replace(" ", "", $this->getConf('pagelist_flags')));
            	$flags = array_merge($configflags, $flags);
            	foreach($flags as $key => $flag) {
-           		if($flag == "")	unset($flags[$key]);
+           		if($flag == "") {
+                    unset($flags[$key]);
+                }
            	}
 
             $pagelist->setFlags($flags);
@@ -129,7 +134,9 @@ class syntax_plugin_tag_topic extends DokuWiki_Syntax_Plugin {
                 };
             	usort($pages, $fnc);
             	// rsort is true - revserse sort the pages
-            	if($pagelist->rsort) krsort($pages);
+            	if($pagelist->rsort) {
+                    krsort($pages);
+                }
             }
 
             foreach ($pages as $page) {

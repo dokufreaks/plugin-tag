@@ -40,28 +40,36 @@ class syntax_plugin_tag_count extends DokuWiki_Syntax_Plugin {
      * @param int    $state The state of the handler
      * @param int    $pos The position in the document
      * @param Doku_Handler    $handler The handler
-     * @return array Data for the renderer
+     * @return array|false Data for the renderer
      */
     function handle($match, $state, $pos, Doku_Handler $handler) {
 
-        $dump = trim(substr($match, 8, -2));     // get given tags
-        $dump = explode('&', $dump);             // split to tags and allowed namespaces
-        $tags = $dump[0];
-        $allowedNamespaces = explode(' ', $dump[1]); // split given namespaces into an array
+        $match = trim(substr($match, 8, -2));     // get given tags
+        [$tags, $nsstring] = array_pad(explode('&', $match,2),2,'');             // split to tags and allowed namespaces
+        $allowedNamespaces = explode(' ', $nsstring); // split given namespaces into an array
 
         if($allowedNamespaces && $allowedNamespaces[0] == '') {
             unset($allowedNamespaces[0]);    // When exists, remove leading space after the delimiter
             $allowedNamespaces = array_values($allowedNamespaces);
         }
 
-        if (empty($allowedNamespaces)) $allowedNamespaces = null;
+        if (empty($allowedNamespaces)) {
+            $allowedNamespaces = null;
+        }
 
-        if (!$tags) $tags = '+';
+        if (!$tags) {
+            $tags = '+';
+        }
 
-        /** @var helper_plugin_tag $my */
-        if(!($my = $this->loadHelper('tag'))) return false;
+        /** @var helper_plugin_tag $helper */
+        if(!($helper = $this->loadHelper('tag'))) {
+            return false;
+        }
 
-        return array($my->_parseTagList($tags), $allowedNamespaces);
+        return [
+            $helper->parseTagList($tags),
+            $allowedNamespaces
+        ];
     }
 
     /**
@@ -73,7 +81,7 @@ class syntax_plugin_tag_count extends DokuWiki_Syntax_Plugin {
      * @return bool If rendering was successful.
      */
     function render($format, Doku_Renderer $renderer, $data) {
-        if ($data == false) return false;
+        if ($data === false) return false;
 
         list($tags, $allowedNamespaces) = $data;
 
@@ -82,43 +90,43 @@ class syntax_plugin_tag_count extends DokuWiki_Syntax_Plugin {
         $renderer->nocache();
 
         if($format == "xhtml") {
-            /** @var helper_plugin_tag $my */
-            if(!($my = $this->loadHelper('tag'))) return false;
+            /** @var helper_plugin_tag $helper */
+            if(!($helper = $this->loadHelper('tag'))) return false;
 
             // get tags and their occurrences
             if($tags[0] == '+') {
                 // no tags given, list all tags for allowed namespaces
-                $occurrences = $my->tagOccurrences($tags, $allowedNamespaces, true);
+                $occurrences = $helper->tagOccurrences($tags, $allowedNamespaces, true);
             } else {
-                $occurrences = $my->tagOccurrences($tags, $allowedNamespaces);
+                $occurrences = $helper->tagOccurrences($tags, $allowedNamespaces);
             }
 
             $class = "inline"; // valid: inline, ul, pagelist
             $col = "page";
 
-            $renderer->doc .= '<table class="'.$class.'">'.DOKU_LF;
-            $renderer->doc .= DOKU_TAB.'<tr>'.DOKU_LF.DOKU_TAB.DOKU_TAB;
+            $renderer->doc .= '<table class="'.$class.'">';
+            $renderer->doc .= '<tr>';
             $renderer->doc .= '<th class="'.$col.'">'.$this->getLang('tag').'</th>';
             $renderer->doc .= '<th class="'.$col.'">'.$this->getLang('count').'</th>';
-            $renderer->doc .= DOKU_LF.DOKU_TAB.'</tr>'.DOKU_LF;
+            $renderer->doc .= '</tr>';
 
             if(empty($occurrences)) {
                 // Skip output
-                $renderer->doc .= DOKU_TAB.'<tr>'.DOKU_LF.DOKU_TAB.DOKU_TAB;
-                $renderer->doc .= DOKU_TAB.DOKU_TAB.'<td class="'.$class.'" colspan="2">'.$this->getLang('empty_output').'</td>'.DOKU_LF;
-                $renderer->doc .= DOKU_LF.DOKU_TAB.'</tr>'.DOKU_LF;
+                $renderer->doc .= '<tr>';
+                $renderer->doc .= '<td class="'.$class.'" colspan="2">'.$this->getLang('empty_output').'</td>';
+                $renderer->doc .= '</tr>';
             } else {
                 foreach($occurrences as $tagname => $count) {
                     if($count <= 0) continue; // don't display tags with zero occurrences
-                    $renderer->doc .= DOKU_TAB.'<tr>'.DOKU_LF.DOKU_TAB.DOKU_TAB;
-                    $renderer->doc .= DOKU_TAB.DOKU_TAB.'<td class="'.$class.'">'.$my->tagLink($tagname).'</td>'.DOKU_LF;
-                    $renderer->doc .= DOKU_TAB.DOKU_TAB.'<td class="'.$class.'">'.$count.'</td>'.DOKU_LF;
-                    $renderer->doc .= DOKU_LF.DOKU_TAB.'</tr>'.DOKU_LF;
+
+                    $renderer->doc .= '<tr>';
+                    $renderer->doc .= '<td class="'.$class.'">'.$helper->tagLink($tagname).'</td>';
+                    $renderer->doc .= '<td class="'.$class.'">'.$count.'</td>';
+                    $renderer->doc .= '</tr>';
                 }
             }
-            $renderer->doc .= '</table>'.DOKU_LF;
+            $renderer->doc .= '</table>';
         }
         return true;
     }
 }
-// vim:ts=4:sw=4:et:

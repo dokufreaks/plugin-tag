@@ -112,8 +112,16 @@ class syntax_plugin_tag_tag extends DokuWiki_Syntax_Plugin {
 
             // add references if tag page exists
             foreach ($data as $tag) {
-                resolve_pageid($my->getNamespace(), $tag, $exists); // resolve shortcuts
-                $renderer->meta['relation']['references'][$tag] = $exists;
+                // resolve shortcuts
+                // Igor and later
+                if (class_exists('dokuwiki\File\PageResolver')) {
+                    $resolver = new dokuwiki\File\PageResolver($helper->getNamespace() . ':something');
+                    $tag = $resolver->resolveId($tag);
+                } else {
+                    // Compatibility with older releases
+                    resolve_pageid($helper->getNamespace(), $tag, $exists);
+                }
+                $renderer->meta['relation']['references'][$tag] = page_exists($tag);
             }
 
             return true;

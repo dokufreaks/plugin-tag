@@ -182,7 +182,15 @@ class helper_plugin_tag extends DokuWiki_Plugin {
         global $conf;
         $svtag = $tag;
         $tagTitle = str_replace('_', ' ', noNS($tag));
-        resolve_pageid($this->namespace, $tag, $exists); // resolve shortcuts
+        // Igor and later
+        if (class_exists('dokuwiki\File\PageResolver')) {
+            $resolver = new dokuwiki\File\PageResolver($this->namespace . ':something');
+            $tag = $resolver->resolveId($tag);
+            $exists = page_exists($tag);
+        } else {
+            // Compatibility with older releases
+            resolve_pageid($this->namespace, $tag, $exists);
+        }
         if ($exists) {
             $class = 'wikilink1';
             $url   = wl($tag);

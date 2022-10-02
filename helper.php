@@ -13,9 +13,10 @@ use dokuwiki\Utf8\PhpString;
 class helper_plugin_tag extends DokuWiki_Plugin {
 
     /**
+     * @deprecated 2022-10-02 Use the helper_plugin_tag::getNamespace() function instead!
      * @var string namespace tag links point to
      */
-    protected $namespace;
+    public $namespace;
     /**
      * @var string sort key: 'cdate', 'mdate', 'pagename', 'id', 'ns', 'title'
      */

@@ -135,7 +135,7 @@ class action_plugin_tag extends DokuWiki_Action_Plugin {
 
         // Replace underscores with blanks
         foreach($event->data['meta'] as &$meta) {
-            if($meta['name'] == 'keywords') {
+            if(isset($meta['name']) && $meta['name'] == 'keywords') {
                 $meta['content'] = str_replace('_', ' ', $meta['content']);
             }
         }

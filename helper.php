@@ -6,6 +6,7 @@
 
 use dokuwiki\Extension\Event;
 use dokuwiki\Utf8\PhpString;
+use dokuwiki\Utf8\Sort;
 
 /**
  * Helper part of the tag plugin, allows to query and print tags
@@ -438,6 +439,7 @@ class helper_plugin_tag extends DokuWiki_Plugin
                 unset($tagOccurrences[$tag]);
             }
         }
+        Sort::ksort($tagOccurrences);
         return $tagOccurrences;
     }
 

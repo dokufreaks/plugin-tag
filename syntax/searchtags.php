@@ -177,8 +177,6 @@ class syntax_plugin_tag_searchtags extends DokuWiki_Syntax_Plugin
         if ($my = $this->loadHelper('tag')) {
             $tags = $my->tagOccurrences(array(), NULL, true);
         }
-        // sort tags by name ($tags is in the form $tag => $count)
-        ksort($tags);
 
         // display error message when no tags were found
         if (!isset($tags) || $tags == NULL) {

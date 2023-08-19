@@ -15,21 +15,21 @@ class action_plugin_tag extends DokuWiki_Action_Plugin {
      * @param Doku_Event_Handler $controller
      */
     public function register(Doku_Event_Handler $controller) {
-        $controller->register_hook('ACTION_ACT_PREPROCESS', 'BEFORE', $this, 'catchTagAction', array());
-        $controller->register_hook('TPL_ACT_UNKNOWN', 'BEFORE', $this, 'performTagAction', array());
-        $controller->register_hook('TPL_METAHEADER_OUTPUT', 'BEFORE', $this, 'beautifyKeywordsInMetaHeader', array());
+        $controller->register_hook('ACTION_ACT_PREPROCESS', 'BEFORE', $this, 'catchTagAction');
+        $controller->register_hook('TPL_ACT_UNKNOWN', 'BEFORE', $this, 'performTagAction');
+        $controller->register_hook('TPL_METAHEADER_OUTPUT', 'BEFORE', $this, 'beautifyKeywordsInMetaHeader');
         if($this->getConf('toolbar_icon')) {
-            $controller->register_hook('TOOLBAR_DEFINE', 'AFTER', $this, 'insertToolbarButton', array ());
+            $controller->register_hook('TOOLBAR_DEFINE', 'AFTER', $this, 'insertToolbarButton');
         }
-        $controller->register_hook('INDEXER_VERSION_GET', 'BEFORE', $this, 'setTagIndexversion', array());
-        $controller->register_hook('INDEXER_PAGE_ADD', 'BEFORE', $this, 'addTagsToIndex', array());
+        $controller->register_hook('INDEXER_VERSION_GET', 'BEFORE', $this, 'setTagIndexversion');
+        $controller->register_hook('INDEXER_PAGE_ADD', 'BEFORE', $this, 'addTagsToIndex');
     }
 
     /**
      * Add a version string to the index so it is rebuilt
      * whenever the stored data format changes.
      */
-    public function setTagIndexversion(Doku_Event $event, $param) {
+    public function setTagIndexversion(Doku_Event $event) {
         global $conf;
         $event->data['plugin_tag'] = '0.2.deaccent='.$conf['deaccent'];
     }
@@ -37,13 +37,13 @@ class action_plugin_tag extends DokuWiki_Action_Plugin {
     /**
      * Add all data of the subject metadata to the metadata index.
      */
-    public function addTagsToIndex(Doku_Event $event, $param) {
+    public function addTagsToIndex(Doku_Event $event) {
         /* @var helper_plugin_tag $helper */
         if ($helper = $this->loadHelper('tag')) {
             // make sure the tags are cleaned and no duplicate tags are added to the index
             $tags = p_get_metadata($event->data['page'], 'subject');
             if (!is_array($tags)) {
-                $event->data['metadata']['subject'] = array();
+                $event->data['metadata']['subject'] = [];
             } else {
                 $event->data['metadata']['subject'] = $helper->cleanTagList($tags);
             }
@@ -55,7 +55,7 @@ class action_plugin_tag extends DokuWiki_Action_Plugin {
      *
      * @author Michael Klier <chi@chimeric.de>
      */
-    public function catchTagAction(Doku_Event $event, $param) {
+    public function catchTagAction(Doku_Event $event) {
         if($event->data != 'showtag') return;
         $event->preventDefault();
     }
@@ -64,10 +64,9 @@ class action_plugin_tag extends DokuWiki_Action_Plugin {
      * Display the tag page
      *
      * @param Doku_Event $event The TPL_ACT_UNKNOWN event
-     * @param array $param optional parameters (unused)
      * @return void
      */
-    public function performTagAction(Doku_Event $event, $param) {
+    public function performTagAction(Doku_Event $event) {
         global $lang, $INPUT;
 
         if($event->data != 'showtag') return;
@@ -98,10 +97,10 @@ class action_plugin_tag extends DokuWiki_Action_Plugin {
                 $pagelist->addPage($page);
             }
 
-            print '<div class="level1">' . DOKU_LF;
             print '<h1>'. sprintf($this->getLang('tagpageheading'), hsc(str_replace('_', ' ', $INPUT->str('tag')))) . '</h1>';
+            print '<div class="level1">';
             print $pagelist->finishList();
-            print '</div>' . DOKU_LF;
+            print '</div>';
 
         } else {
             print '<div class="level1"><p>' . $lang['nothingfound'] . '</p></div>';
@@ -111,7 +110,7 @@ class action_plugin_tag extends DokuWiki_Action_Plugin {
     /**
      * Inserts the tag toolbar button
      */
-    public function insertToolbarButton(Doku_Event $event, $param) {
+    public function insertToolbarButton(Doku_Event $event) {
         $event->data[] = array(
             'type' => 'format',
             'title' => $this->getLang('toolbar_icon'),

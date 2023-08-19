@@ -176,7 +176,7 @@ class helper_plugin_tag extends DokuWiki_Plugin
         foreach ($tags as $tag) {
             $links[] = $this->tagLink($tag);
         }
-        return implode(',' . DOKU_LF . DOKU_TAB, $links);
+        return implode(',' . DOKU_LF, $links);
     }
 
     /**

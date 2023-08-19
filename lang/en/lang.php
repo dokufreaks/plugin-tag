@@ -9,6 +9,7 @@
  */
 
 // custom language strings for the plugin
+$lang['tagpageheading'] = 'TAG: %s';
 $lang['tag']			= 'Tag';
 $lang['tags']			= 'Tags';
 $lang['topic']			= 'Topic';

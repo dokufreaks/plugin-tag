@@ -113,31 +113,18 @@ class syntax_plugin_tag_topic extends DokuWiki_Syntax_Plugin {
             if (!$pagelist = $this->loadHelper('pagelist')) {
                 return false;
             }
-            $pagelist->sort = false;
-            $pagelist->rsort = false;
 
             $configflags = explode(',', str_replace(" ", "", $this->getConf('pagelist_flags')));
-           	$flags = array_merge($configflags, $flags);
-           	foreach($flags as $key => $flag) {
-           		if($flag == "") {
+            $flags[] = 'defaultsortby=pagename'; //default sortby if a sort requested
+            $flags = array_merge($configflags, $flags);
+            foreach ($flags as $key => $flag) {
+                if ($flag == "") {
                     unset($flags[$key]);
                 }
-           	}
+            }
 
             $pagelist->setFlags($flags);
             $pagelist->startList();
-
-            // Sort pages by pagename if required by flags
-            if($pagelist->sort || $pagelist->rsort) {
-            	$fnc = function($a, $b) {
-                    return strcmp(noNS($a["id"]), noNS($b["id"]));
-                };
-            	usort($pages, $fnc);
-            	// rsort is true - revserse sort the pages
-            	if($pagelist->rsort) {
-                    krsort($pages);
-                }
-            }
 
             foreach ($pages as $page) {
                 $pagelist->addPage($page);

@@ -116,10 +116,10 @@ class syntax_plugin_tag_count extends DokuWiki_Syntax_Plugin
                 $occurrences = $helper->tagOccurrences($tags, $allowedNamespaces);
             }
 
-            $class = "tag_count_table inline"; // valid: inline, ul, pagelist
+            $class = "inline"; // valid: inline, ul, pagelist
             $col = "page";
 
-            $renderer->doc .= '<table class="' . $class . '">';
+            $renderer->doc .= '<table class="tag_count_table ' . $class . '">';
             $renderer->doc .= '<tr>';
             $renderer->doc .= '<th class="' . $col . '">' . $this->getLang('tag') . '</th>';
             $renderer->doc .= '<th class="' . $col . '">' . $this->getLang('count') . '</th>';

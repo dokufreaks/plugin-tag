@@ -13,25 +13,38 @@
 /**
  * Tag syntax plugin, allows to specify tags in a page
  */
-class syntax_plugin_tag_tag extends DokuWiki_Syntax_Plugin {
+class syntax_plugin_tag_tag extends DokuWiki_Syntax_Plugin
+{
 
     /**
      * @return string Syntax type
      */
-    function getType() { return 'substition'; }
+    function getType()
+    {
+        return 'substition';
+    }
+
     /**
      * @return int Sort order
      */
-    function getSort() { return 305; }
+    function getSort()
+    {
+        return 305;
+    }
+
     /**
      * @return string Paragraph type
      */
-    function getPType() { return 'block';}
+    function getPType()
+    {
+        return 'block';
+    }
 
     /**
      * @param string $mode Parser mode
      */
-    function connectTo($mode) {
+    function connectTo($mode)
+    {
         $this->Lexer->addSpecialPattern('\{\{tag>.*?\}\}', $mode, 'plugin_tag_tag');
     }
 
@@ -39,14 +52,15 @@ class syntax_plugin_tag_tag extends DokuWiki_Syntax_Plugin {
      * Handle matches of the tag syntax
      *
      * @param string $match The match of the syntax
-     * @param int    $state The state of the handler
-     * @param int    $pos The position in the document
-     * @param Doku_Handler    $handler The handler
+     * @param int $state The state of the handler
+     * @param int $pos The position in the document
+     * @param Doku_Handler $handler The handler
      * @return array|false Data for the renderer
      */
-    function handle($match, $state, $pos, Doku_Handler $handler) {
+    function handle($match, $state, $pos, Doku_Handler $handler)
+    {
         $tags = trim(substr($match, 6, -2));     // strip markup & whitespace
-        $tags = trim($tags, "\xe2\x80\x8b"); // strip word/wordpad breaklines
+        $tags = str_replace("\xe2\x80\x8b", '', $tags); // strip word/wordpad breaklines(U+200b)
         $tags = preg_replace(['/[[:blank:]]+/', '/\s+/'], " ", $tags);    // replace linebreaks and multiple spaces with one space character
         $tags = preg_replace('/[\x00-\x1F\x7F]/u', '', $tags); // strip unprintable ascii code out of utf-8 coded string
 
@@ -65,12 +79,13 @@ class syntax_plugin_tag_tag extends DokuWiki_Syntax_Plugin {
     /**
      * Render xhtml output or metadata
      *
-     * @param string         $format      Renderer mode (supported modes: xhtml and metadata)
-     * @param Doku_Renderer  $renderer  The renderer
-     * @param array          $data      The data from the handler function
+     * @param string $format Renderer mode (supported modes: xhtml and metadata)
+     * @param Doku_Renderer $renderer The renderer
+     * @param array $data The data from the handler function
      * @return bool If rendering was successful.
      */
-    function render($format, Doku_Renderer $renderer, $data) {
+    function render($format, Doku_Renderer $renderer, $data)
+    {
         if ($data === false) return false;
         /** @var helper_plugin_tag $helper */
         if (!$helper = $this->loadHelper('tag')) return false;
@@ -81,14 +96,14 @@ class syntax_plugin_tag_tag extends DokuWiki_Syntax_Plugin {
             if (!$tags) {
                 return true;
             }
-            $renderer->doc .= '<div class="'.$this->getConf('tags_list_css').'">'
-                . '<span>'.DOKU_LF
-                . DOKU_TAB.$tags.DOKU_LF
+            $renderer->doc .= '<div class="' . $this->getConf('tags_list_css') . '">'
+                . '<span>' . DOKU_LF
+                . DOKU_TAB . $tags . DOKU_LF
                 . '</span>'
-                . '</div>'.DOKU_LF;
+                . '</div>' . DOKU_LF;
             return true;
 
-        // for metadata renderer
+            // for metadata renderer
         } elseif ($format == 'metadata') {
             /** @var Doku_Renderer_metadata $renderer */
             // erase tags on persistent metadata no more used
@@ -107,7 +122,7 @@ class syntax_plugin_tag_tag extends DokuWiki_Syntax_Plugin {
             $renderer->meta['subject'] = array_unique(array_merge($renderer->meta['subject'], $data));
 
             if ($renderer->capture) {
-                $renderer->doc .= DOKU_LF.implode(' ', $data).DOKU_LF;
+                $renderer->doc .= DOKU_LF . implode(' ', $data) . DOKU_LF;
             }
 
             // add references if tag page exists

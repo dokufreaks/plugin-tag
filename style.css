@@ -1,7 +1,7 @@
 div.dokuwiki div.tags,
 div.dokuwiki div.tagstop {
   font-size: 95%;
-  text-align: right;
+  text-align: end;
 }
 
 div.dokuwiki div.tags {

@@ -553,7 +553,7 @@ class helper_plugin_tag extends DokuWiki_Plugin {
 
         //only available for logged-in users
         if(isset($USERINFO)) {
-            if(is_array($USERINFO)) {
+            if(is_array($USERINFO) && isset($USERINFO['name'])) {
                 $name  = cleanID($USERINFO['name']);
             }
             else {

@@ -557,14 +557,14 @@ class helper_plugin_tag extends DokuWiki_Plugin {
                 $name  = cleanID($USERINFO['name']);
             }
             else {
-                $name = 'Unknown user';
+                $name = '';
             }
             // FIXME or delete, is unreliable because just first entry of group array is used, regardless the order of groups..
-            if(is_array($USERINFO) && is_array($USERINFO['grps'])) {
+            if(is_array($USERINFO) && isset($USERINFO['grps'])) {
                 $group = cleanID($USERINFO['grps'][0]);
             }
             else {
-                $group = 'Unknwon group';
+                $group = '';
             }
         } else {
             $name  = '';

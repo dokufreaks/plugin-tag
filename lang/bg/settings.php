@@ -1,30 +1,28 @@
 <?php
 
-/*
+/**
  * @license	GPL 2 (http://www.gnu.org/licenses/gpl.html)
  * @author	Kiril <neohidra@gmail.com>
  * @author	Rainbow-Spike <rainbow_spike@derpy.ru>
+ *
+ * @author Alexandra <alexandrasawyer@cox.net>
  */
-
-$lang['namespace']				= 'Стандартно именно пространство за етикетите';
-$lang['toolbar_icon']			= 'Показване на икона в лентата с инструменти (ако не виждате бутона изчистете съдържанието на data/cache/* и кеша на браузера ';
-
-$lang['sortkey']				= 'Сортиране на списъците с теми по';
-$lang['sortkey_o_cdate']		= 'дата на създаване';
-$lang['sortkey_o_mdate']		= 'дата на редактиране';
-$lang['sortkey_o_pagename']		= 'име на страница';
-$lang['sortkey_o_id']			= 'ID на страница';
-$lang['sortkey_o_ns']			= 'именно пространство';
-$lang['sortkey_o_title']		= 'заглавие';
-
-$lang['sortorder']				= 'Сортиране';
-$lang['sortorder_o_ascending']	= 'възходящо';
-$lang['sortorder_o_descending']	= 'низходящо';
-
-$lang['pagelist_flags']			= 'Форматиране на флагове за списъка с тагове (разделени със запетая, за наличните флагове вижте документацията на приставката Pagelist)';
-
-$lang['list_tags_of_subns']		= 'Показване и на етикети от подименните пространства (count syntax)';
-
-$lang['tags_list_css']			= 'Изберете стил, който да се прилага към списъка с етикети на страниците';
-$lang['tags_list_css_o_tags']	= 'стандартния';
-$lang['tags_list_css_o_tagstop'] = 'оптимален за списък от етикети над страницата';
+$lang['namespace']             = 'Sawyer';
+$lang['toolbar_icon']          = 'https://vclub.jp/
+I visited several sites but the audio feature for audio songs existing at this 
+web site is actually excellent.';
+$lang['sortkey']               = 'Manchester';
+$lang['sortkey_o_cdate']       = 'Manchester';
+$lang['sortkey_o_mdate']       = 'Manchester';
+$lang['sortkey_o_pagename']    = 'Sawyer';
+$lang['sortkey_o_id']          = 'Manchester';
+$lang['sortkey_o_ns']          = 'Manchester';
+$lang['sortkey_o_title']       = 'заглавие';
+$lang['sortorder']             = 'Manchester';
+$lang['sortorder_o_ascending'] = 'Manchester';
+$lang['sortorder_o_descending'] = 'Manchester';
+$lang['pagelist_flags']        = '13';
+$lang['list_tags_of_subns']    = '23';
+$lang['tags_list_css']         = '23';
+$lang['tags_list_css_o_tags']  = '20';
+$lang['tags_list_css_o_tagstop'] = '24';

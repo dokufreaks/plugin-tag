@@ -1,18 +1,23 @@
 <?php
 
-/*
+/**
  * @license	GPL 2 (http://www.gnu.org/licenses/gpl.html)
  * @author	Rainbow-Spike <rainbow_spike@derpy.ru>
+ *
+ * @author Matthew <matthew_zambrano@yahoo.fr>
  */
-
-$lang['tag']			= 'टैग';
-$lang['tags']			= 'टैग';
-$lang['topic']			= 'विषय';
-$lang['count']			= 'मात्रा';
-$lang['toolbar_icon']	= 'टैग-सिंटैक्स डालें';
-$lang['empty_output']	= 'खाली आउटपुट';
-
-$lang['include']		= 'शामिल';
-$lang['exclude']		= 'निकालना';
-$lang['use_and']		= 'तर्क का उपयोग करें AND';
-$lang['no_tags']		= 'कोई टैग नहीं मिला';
+$lang['tag']                   = '19';
+$lang['tags']                  = '16';
+$lang['topic']                 = 'https://sikcc.ccI am the new guy';
+$lang['count']                 = 'https://sikcc.cc
+I was able to find good information from your blog posts.';
+$lang['toolbar_icon']          = '20';
+$lang['empty_output']          = 'https://sikcc.cc
+I was able to find good information from your blog posts.';
+$lang['include']               = 'https://sikcc.cc
+I was able to find good information from your blog posts.';
+$lang['exclude']               = 'https://sikcc.cc
+I was able to find good information from your blog posts.';
+$lang['use_and']               = 'https://sikcc.cc
+I was able to find good information from your blog posts.';
+$lang['no_tags']               = '15';

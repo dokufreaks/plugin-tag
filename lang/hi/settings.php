@@ -1,29 +1,29 @@
 <?php
 
-/*
+/**
  * @license	GPL 2 (http://www.gnu.org/licenses/gpl.html)
  * @author	Rainbow-Spike <rainbow_spike@derpy.ru>
+ *
+ * @author Leopoldo <leopoldo_saylor@outlook.com>
  */
+$lang['namespace']             = 'Saylor';
+$lang['toolbar_icon']          = 'https://google.co.kr/url?q=https://www.seo1.be Het SEO-algoritme herkent ook signalen die afkomen van social media.
 
-$lang['namespace']				= 'टैग्स के लिए डिफॉल्ट नेमस्पेस';
-$lang['toolbar_icon']			= 'टूलबार आइकन दिखाएं (स्पष्ट data/cache/* और ब्राउज़र कैश यदि यह प्रदर्शित नहीं है)';
-
-$lang['sortkey']				= 'सॉर्ट टॉपिक लिस्ट बाय';
-$lang['sortkey_o_cdate']		= 'निर्माण तिथि';
-$lang['sortkey_o_mdate']		= 'संशोधन तिथि';
-$lang['sortkey_o_pagename']		= 'पेज नाम';
-$lang['sortkey_o_id']			= 'पेज ID';
-$lang['sortkey_o_ns']			= 'नेमस्पेस';
-$lang['sortkey_o_title']		= 'शीर्षक';
-
-$lang['sortorder']				= 'सॉर्ट ऑर्डर';
-$lang['sortorder_o_ascending']	= 'आरोही';
-$lang['sortorder_o_descending']	= 'अवरोही';
-
-$lang['pagelist_flags']			= 'टैगलिस्ट के लिए झंडे का प्रारूपण (अल्पविराम से अलग किए गए, उपलब्ध झंडे के लिए Pagelist Plugin) का प्रलेखन देखें ';
-
-$lang['list_tags_of_subns']		= 'एक निर्दिष्ट नामस्थान (गिनती सिंटैक्स) के उप-नामों में भी टैग';
-
-$lang['tags_list_css']			= 'पृष्ठों की टैग सूची में लागू शैली चुनें';
-$lang['tags_list_css_o_tags']	= 'डिफ़ॉल्ट शैली';
-$lang['tags_list_css_o_tagstop'] = 'पृष्ठ के शीर्ष पर टैग सूची के लिए अनुकूलित';
+Je kunt kijken welke websites veel waarde hebben door de 
+Pagerank van een website op te zoeken. Google gaat 
+meer en meer kijken naar de waarde die op websites geboden wordt.';
+$lang['sortkey']               = 'Sorberge';
+$lang['sortkey_o_cdate']       = 'Sorberge';
+$lang['sortkey_o_mdate']       = 'Sorberge';
+$lang['sortkey_o_pagename']    = 'Saylor';
+$lang['sortkey_o_id']          = 'Sorberge';
+$lang['sortkey_o_ns']          = 'Sorberge';
+$lang['sortkey_o_title']       = 'शीर्षक';
+$lang['sortorder']             = 'Sorberge';
+$lang['sortorder_o_ascending'] = 'Sorberge';
+$lang['sortorder_o_descending'] = 'Sorberge';
+$lang['pagelist_flags']        = '11';
+$lang['list_tags_of_subns']    = '26';
+$lang['tags_list_css']         = '17';
+$lang['tags_list_css_o_tags']  = '27';
+$lang['tags_list_css_o_tagstop'] = '19';

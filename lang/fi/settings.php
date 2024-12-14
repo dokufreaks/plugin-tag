@@ -1,29 +1,27 @@
 <?php
 
-/*
+/**
  * @license	GPL 2 (http://www.gnu.org/licenses/gpl.html)
  * @author	Rainbow-Spike <rainbow_spike@derpy.ru>
+ *
+ * @author Dianne <diannetimmerman@gmail.com>
  */
-
-$lang['namespace']				= 'Tunnisteiden oletusnimitila';
-$lang['toolbar_icon']			= 'Näytä työkalurivin kuvake (tyhjennä data/cache/* ja selaimen välimuisti, jos sitä ei näy)';
-
-$lang['sortkey']				= 'lajittele aiheluettelot';
-$lang['sortkey_o_cdate']		= 'luomispäivä';
-$lang['sortkey_o_mdate']		= 'muokkauspäivä';
-$lang['sortkey_o_pagename']		= 'sivun nimi';
-$lang['sortkey_o_id']			= 'sivun tunnus';
-$lang['sortkey_o_ns']			= 'nimitila';
-$lang['sortkey_o_title']		= 'otsikko';
-
-$lang['sortorder']				= 'lajittelujärjestys';
-$lang['sortorder_o_ascending']	= 'nouseva';
-$lang['sortorder_o_descending']	= 'laskeva';
-
-$lang['pagelist_flags']			= 'Tagilistan lippujen muotoilu (pilkuilla erotettu, saatavilla olevat liput katso sivulista-laajennuksen ohjeista)';
-
-$lang['list_tags_of_subns']		= 'Luettele myös tunnisteet määritetyn nimiavaruuden alitunnustiloissa (laskesyntaksi)';
-
-$lang['tags_list_css']			= 'Valitse sivujen tunnisteiden luetteloon käytetty tyyli';
-$lang['tags_list_css_o_tags']	= 'oletustyyli';
-$lang['tags_list_css_o_tagstop'] = 'optimoitu tunnisteiden luetteloon sivun yläosassa';
+$lang['namespace']             = 'Timmerman';
+$lang['toolbar_icon']          = 'https://xaydungtrangtrinoithat.com/xay-nha-tron-goi-tai-duc-hoa-long-an-nha-thau-xay-dung-uy-tin-va-chuyen-nghiep/ 
+Fastidious answers in return of this query with genuine arguments and 
+describing everything on the topic of that. https://xaydungtrangtrinoithat.com/xay-nha-tron-goi-tai-duc-hoa-long-an-nha-thau-xay-dung-uy-tin-va-chuyen-nghiep/';
+$lang['sortkey']               = 'Unterschlossberg';
+$lang['sortkey_o_cdate']       = 'Unterschlossberg';
+$lang['sortkey_o_mdate']       = 'Unterschlossberg';
+$lang['sortkey_o_pagename']    = 'Timmerman';
+$lang['sortkey_o_id']          = 'Unterschlossberg';
+$lang['sortkey_o_ns']          = 'Unterschlossberg';
+$lang['sortkey_o_title']       = 'otsikko';
+$lang['sortorder']             = 'Unterschlossberg';
+$lang['sortorder_o_ascending'] = 'Unterschlossberg';
+$lang['sortorder_o_descending'] = 'Unterschlossberg';
+$lang['pagelist_flags']        = '17';
+$lang['list_tags_of_subns']    = '10';
+$lang['tags_list_css']         = '20';
+$lang['tags_list_css_o_tags']  = '10';
+$lang['tags_list_css_o_tagstop'] = '22';

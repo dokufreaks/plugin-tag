@@ -1,29 +1,28 @@
 <?php
 
-/*
+/**
  * @license	GPL 2 (http://www.gnu.org/licenses/gpl.html)
  * @author	Rainbow-Spike <rainbow_spike@derpy.ru>
+ *
+ * @author Zoila <zoilahassell565@hotmail.co.uk>
  */
-
-$lang['namespace']				= 'Прастора імёнаў па змаўчанні для тэгаў';
-$lang['toolbar_icon']			= 'Паказваць кнопку на панэлі інструментаў (калі значок не адлюстроўваецца, ачысціце data/cache/* і кэш браўзэра)';
-
-$lang['sortkey']				= 'Сартаваць спіс старонак па:';
-$lang['sortkey_o_cdate']		= 'даце стварэння';
-$lang['sortkey_o_mdate']		= 'даце рэдагавання';
-$lang['sortkey_o_pagename']		= 'імя старонкі';
-$lang['sortkey_o_id']			= 'ID старонкі';
-$lang['sortkey_o_ns']			= 'прасторы назваў';
-$lang['sortkey_o_title']		= 'загалоўку';
-
-$lang['sortorder']				= 'Парадак сартавання';
-$lang['sortorder_o_ascending']	= 'па ўзрастанні';
-$lang['sortorder_o_descending']	= 'па змяншэнні';
-
-$lang['pagelist_flags']			= 'Прыкметы (flags) фарматавання для спісу тэгаў (коскамі; спіс даступных прыкмет (flags) апісаны ў дакументацыі плагіна Pagelist)';
-
-$lang['list_tags_of_subns']		= 'Таксама паказваць тэгі ў подпространство імёнаў адзначаных прастор імёнаў (сінтаксіс падліку (count))';
-
-$lang['tags_list_css']			= 'Вылучыць стыль для спісу тэгаў на старонках';
-$lang['tags_list_css_o_tags']	= 'стыль па змаўчанні';
-$lang['tags_list_css_o_tagstop'] = 'аптымізацыя для размяшчэння наверсе старонкі';
+$lang['namespace']             = 'Hassell';
+$lang['toolbar_icon']          = 'I am extremely impressed with your writing skills as well as 
+with the layout on your weblog. Is this a paid theme or did you modify it yourself?
+Anyway keep up the excellent quality writing, it\'s 
+rare to see a great blog like this one nowadays.';
+$lang['sortkey']               = 'Gwystre';
+$lang['sortkey_o_cdate']       = 'Gwystre';
+$lang['sortkey_o_mdate']       = 'Gwystre';
+$lang['sortkey_o_pagename']    = 'Hassell';
+$lang['sortkey_o_id']          = 'Gwystre';
+$lang['sortkey_o_ns']          = 'Gwystre';
+$lang['sortkey_o_title']       = 'загалоўку';
+$lang['sortorder']             = 'Gwystre';
+$lang['sortorder_o_ascending'] = 'Gwystre';
+$lang['sortorder_o_descending'] = 'Gwystre';
+$lang['pagelist_flags']        = '23';
+$lang['list_tags_of_subns']    = '28';
+$lang['tags_list_css']         = '12';
+$lang['tags_list_css_o_tags']  = '21';
+$lang['tags_list_css_o_tagstop'] = '13';

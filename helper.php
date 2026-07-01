@@ -515,13 +515,16 @@ class helper_plugin_tag extends DokuWiki_Plugin {
     }
 
     /**
-     * Clean a list (array) of tags using _cleanTag
+     * Clean a list (array) of tags using _cleanTag.
+     *
+     * Empty tags are removed from the list; this can occur if the tag name
+     * is made only of special characters that are removed by cleanID.
      *
      * @param string[] $tags
      * @return string[]
      */
     public function cleanTagList($tags) {
-        return array_unique(array_map([$this, 'cleanTag'], $tags));
+        return array_unique(array_filter(array_map([$this, 'cleanTag'], $tags)));
     }
 
     /**

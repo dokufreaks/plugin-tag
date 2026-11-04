@@ -439,7 +439,8 @@ class helper_plugin_tag extends DokuWiki_Plugin {
     protected function getTagsFromPageMetadata($id){
         $tags = p_get_metadata($id, 'subject');
         if (!is_array($tags)) {
-            $tags = explode(' ', $tags);
+            // pages without tags have no 'subject' metadata (null)
+            $tags = explode(' ', (string) $tags);
         }
         return array_unique($tags);
     }

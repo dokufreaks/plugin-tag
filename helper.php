@@ -5,6 +5,8 @@
  */
 
 use dokuwiki\Extension\Event;
+use dokuwiki\Search\Collection\PageMetaCollection;
+use dokuwiki\Search\MetadataSearch;
 use dokuwiki\Utf8\PhpString;
 
 /**
@@ -369,7 +371,7 @@ class helper_plugin_tag extends DokuWiki_Plugin {
     public function tagOccurrences($tags, $namespaces = null, $allTags = false, $isRecursive = null) {
         // map with trim here in order to remove newlines from tags
         if($allTags) {
-            $tags = array_map('trim', idx_getIndex('subject', '_w'));
+            $tags = $this->getAllIndexedTags();
         }
         $tags = $this->cleanTagList($tags);
         $tagOccurrences = []; //occurrences
@@ -378,8 +380,7 @@ class helper_plugin_tag extends DokuWiki_Plugin {
             $namespaces = null;
         }
 
-        $indexer = idx_get_indexer();
-        $indexedPagesWithTags = $indexer->lookupKey('subject', $tags, array($this, 'tagCompare'));
+        $indexedPagesWithTags = $this->lookupPagesByTags($tags);
 
         $isRootAllowed = !($namespaces === null) && in_array('.', $namespaces);
         if ($isRecursive === null) {
@@ -461,11 +462,10 @@ class helper_plugin_tag extends DokuWiki_Plugin {
             }
         }
 
-        $indexer = idx_get_indexer();
-        $pages = $indexer->lookupKey('subject', $cleanTags, [$this, 'tagCompare']);
+        $pages = $this->lookupPagesByTags($cleanTags);
         // use all pages as basis if the first tag isn't an "or"-tag or if there are no tags given
         if (empty($queryTags) || $cleanTags[0] != $queryTags[0]) {
-            $result = $indexer->getPages();
+            $result = $this->getAllIndexedPages();
         }
 
         foreach ($queryTags as $i => $queryTag) {
@@ -654,6 +654,52 @@ class helper_plugin_tag extends DokuWiki_Plugin {
             }
         }
         return !page_exists($id, '', false);
+    }
+
+    /**
+     * Looks up the pages for the given tags in the 'subject' metadata index
+     *
+     * Uses the new search API (DokuWiki 2026+) if available, falls back to the
+     * legacy indexer on older DokuWiki releases.
+     *
+     * @param string[] $tags
+     * @return array [tag => [pageid, ...]]
+     */
+    protected function lookupPagesByTags($tags) {
+        $tags = array_map('strval', array_values($tags));
+        if ($tags === []) return [];
+
+        if (class_exists(MetadataSearch::class)) {
+            return (new MetadataSearch())->lookupKey('subject', $tags);
+        }
+        return idx_get_indexer()->lookupKey('subject', $tags, [$this, 'tagCompare']);
+    }
+
+    /**
+     * Returns all tags stored in the 'subject' metadata index
+     *
+     * @return string[]
+     */
+    protected function getAllIndexedTags() {
+        if (class_exists(PageMetaCollection::class)) {
+            // minimum frequency 1, no maximum, minimum length 1 => all used tags
+            $histogram = (new PageMetaCollection('subject'))->histogram(1, 0, 1);
+            // array_keys() turns numeric tags into integers, convert back
+            return array_map('strval', array_keys($histogram));
+        }
+        return array_map('trim', idx_getIndex('subject', '_w'));
+    }
+
+    /**
+     * Returns all pages in the search index
+     *
+     * @return string[]
+     */
+    protected function getAllIndexedPages() {
+        if (class_exists(MetadataSearch::class)) {
+            return (new MetadataSearch())->getPages();
+        }
+        return idx_get_indexer()->getPages();
     }
 
     /**
